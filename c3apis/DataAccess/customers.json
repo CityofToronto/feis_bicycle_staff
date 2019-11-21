@@ -1,0 +1,10 @@
+{
+  "single_name": "string",
+  "first_name": "string",
+  "last_name": "string",
+  "description": "string",
+  "civic_address": "string",
+  "municipality": "string",
+  "province": "string",
+  "postal_code": "string"
+}
