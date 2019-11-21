@@ -24,11 +24,13 @@ function renderLocationsPage($pageContainer, query, auth) {
       },
       {
         title: 'Name',
+        className: 'addMinWidth',
         data: 'name',
         type: 'string'
       },
       {
         title: 'Description',
+        className: 'addMinWidth',
         data: 'description',
         type: 'string'
       },
@@ -36,7 +38,7 @@ function renderLocationsPage($pageContainer, query, auth) {
         title: 'Modified On',
         data: '__ModifiedOn',
         type: 'date',
-        width: 150,
+        width: '125px',
         render(data) {
           const dataMoment = moment(data);
           if (dataMoment.isValid()) {
@@ -50,7 +52,7 @@ function renderLocationsPage($pageContainer, query, auth) {
       {
         title: 'Modified By',
         data: '__Owner',
-        width: 150
+        width: '125px'
       }
     ],
 
