@@ -13,32 +13,31 @@ function renderLocationsPage($pageContainer, query, auth) {
     columns: [
       {
         title: 'Action',
-        className: 'excludeFromButtons',
+        className: 'excludeFromButtons openButtonWidth',
         data: 'id',
         orderable: false,
         render(data) {
           return `<a href="#locations/${data}" class="btn btn-default">Open</a>`;
         },
-        searchable: false,
-        width: '57px'
+        searchable: false
       },
       {
         title: 'Name',
-        className: 'addMinWidth',
+        className: 'minWidth',
         data: 'name',
         type: 'string'
       },
       {
         title: 'Description',
-        className: 'addMinWidth',
+        className: 'minWidthLarge',
         data: 'description',
         type: 'string'
       },
       {
         title: 'Modified On',
+        className: 'minWidth',
         data: '__ModifiedOn',
         type: 'date',
-        width: '125px',
         render(data) {
           const dataMoment = moment(data);
           if (dataMoment.isValid()) {
@@ -46,13 +45,21 @@ function renderLocationsPage($pageContainer, query, auth) {
           } else {
             return '-';
           }
-
-        }
+        },
+        width: '200px'
       },
       {
         title: 'Modified By',
+        className: 'minWidth',
         data: '__Owner',
-        width: '125px'
+        type: 'string'
+      },
+      {
+        title: 'Status',
+        className: 'minWidth',
+        data: '__Status',
+        type: 'string',
+        choices: [{ text: 'Active' }, { text: 'Inactive' }]
       }
     ],
 

@@ -145,8 +145,17 @@
         }
 
         td, th {
-          &.addMinWidth {
+          &.openButtonWidth {
+            min-width: 57px;
+            width: 57px;
+          }
+
+          &.minWidth {
             min-width: 200px;
+          }
+
+          &.minWidthLarge {
+            min-width: 600px;
           }
         }
 
