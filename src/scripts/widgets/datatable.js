@@ -1,4 +1,4 @@
-/* global $ */
+/* global $ moment */
 /* global deepCloneObject fixButtonLinks oData_escapeValue oData_getErrorMessage query_objectToString stringToFunction */
 /* global renderAlert */
 
@@ -33,6 +33,37 @@ function renderDatatable($container, definition, options = {}) {
         .filter((select, index, array) => array.indexOf(select) === index)
         .join(',');
 
+      const dateFilter = (column, filterString) => {
+        if (filterString.indexOf('to') !== -1) {
+          const [startDate, endDate] = filterString.split('to');
+          const momentStartDate = moment(startDate);
+          const momentEndDate = moment(endDate);
+          if (momentStartDate.isValid() || momentEndDate.isValid()) {
+            let returnValues = [];
+            if (momentStartDate.isValid()) {
+              returnValues.push(`${column} ge ${oData_escapeValue(momentStartDate.startOf('day').format())}`);
+            }
+            if (momentEndDate.isValid()) {
+              returnValues.push(`${column} le ${oData_escapeValue(momentEndDate.endOf('day').format())}`);
+            }
+            return `(${returnValues.join(' and ')})`;
+          } else {
+            return false;
+          }
+        } else {
+          const momentDate = moment(filterString);
+          if (momentDate.isValid()) {
+            const returnValues = [
+              `${column} ge ${oData_escapeValue(momentDate.startOf('day').format())}`,
+              `${column} le ${oData_escapeValue(momentDate.endOf('day').format())}`
+            ];
+            return `(${returnValues.join(' and ')})`;
+          } else {
+            return false;
+          }
+        }
+      };
+
       // $filter
       const filters = data.columns
         .map((column, index) => {
@@ -40,10 +71,10 @@ function renderDatatable($container, definition, options = {}) {
             switch (definition.columns[index].type) {
               case 'boolean':
               case 'number':
-                return `${column.data} eq ${oData_escapeValue(column.search.value)}`;
+                return `(${column.data} eq ${oData_escapeValue(column.search.value)})`;
 
               case 'date':
-                return `${column.data} eq ${oData_escapeValue(column.search.value)}`;
+                return dateFilter(column.data, column.search.value);
 
               case 'function':
                 return `(${stringToFunction(definition.columns[index].filter)(column, definition.columns[index])})`;
@@ -243,7 +274,7 @@ function renderDatatable($container, definition, options = {}) {
     <table class="table table-bordered table-striped" width="100%">
       <thead>
         <tr>
-          ${definition.columns.map((column) => `<th>${column.title || ''}</th>`).join('')}
+          ${definition.columns.map((column) => `<th>${column.orderable === false ? '<button style="display:none;"></button>' : ''}${column.title || ''}</th>`).join('')}
         </tr>
         <tr>
           ${definition.columns.map(buildFilter).join('')}
@@ -277,7 +308,13 @@ function renderDatatable($container, definition, options = {}) {
     return returnValue;
   };
 
-  $table.DataTable(definition);
+  const datatable = window.datatable = $table.DataTable(definition);
+
+  $table.on('keyup change', 'thead th input, thead th select', (event) => {
+    const $target = $(event.target);
+    datatable.column($target.attr('data-column-index')).search($target.val());
+    datatable.draw();
+  });
 
   // TODO: Footer
 

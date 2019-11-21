@@ -15,7 +15,7 @@ function renderLocationsPage($pageContainer, query, auth) {
         title: 'Action',
         className: 'excludeFromButtons',
         data: 'id',
-        // orderable: false,
+        orderable: false,
         render(data) {
           return `<a href="#locations/${data}" class="btn btn-default">Open</a>`;
         },
@@ -42,7 +42,7 @@ function renderLocationsPage($pageContainer, query, auth) {
         render(data) {
           const dataMoment = moment(data);
           if (dataMoment.isValid()) {
-            return dataMoment.format('YYYY/MM/DD ha');
+            return dataMoment.format('YYYY/MM/DD');
           } else {
             return '-';
           }
