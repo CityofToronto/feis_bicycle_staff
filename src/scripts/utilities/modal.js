@@ -55,8 +55,8 @@ function showConfirm(message, {
 /* exported showModalForm */
 function showModalForm(definition, options = {}) {
   options.model = options.model || new Backbone.Model(),
-  options.includeMeta = options.includeMeta || false,
-  options.saveButtonLabel = options.saveButtonLabel || null;
+    options.includeMeta = options.includeMeta || false,
+    options.saveButtonLabel = options.saveButtonLabel || null;
 
   const {
     title = 'Form',
@@ -85,9 +85,14 @@ function showModalForm(definition, options = {}) {
     });
 
     definition = deepCloneObject(definition);
-    definition.betterSuccess = definition.betterSuccess || (() => {
-      $modalElement.modal('hide');
-    });
+
+    const originalBetterSuccess = definition.betterSuccess || function (args, callback) { callback(); };
+    definition.betterSuccess = function (args) {
+      return originalBetterSuccess.call(this, args, () => {
+        $modalElement.modal('hide');
+      });
+    };
+
     definition.id = definition.id || showModalForm.genFormId();
 
     renderForm($modalElement.find('.modal-body'), definition, options);
@@ -144,30 +149,25 @@ function showPrompt(message, defaultValue = '', {
 
 /* exported showLogin */
 // TODO: Test function
-function showLogin(authConfig, options = {}) {
+function showLogin(auth, options = {}) {
   options.title = options.title || 'Login';
   options.confirmButtonLabel = options.confirmButtonLabel || 'Login';
   options.confirmButtonBootstrapType = options.confirmButtonBootstrapType || 'primary';
-
-  const model = new Backbone.Model();
+  options.model = options.model || new Backbone.Model();
+  options.saveMessage = null;
 
   const definition = {
-    betterSuccess($modalElement, $form, model, $disabled) {
-      auth_login(authConfig, authConfig.app || 'app', model.get('user'), model.get('pwd')).then(() => {
-        $disabled.prop('disabled', false);
-        $modalElement.modal('hide');
+    betterSuccess({ $form, formValidator, model }, callback) {
+      auth_login(auth, model.get('user'), model.get('pwd')).then(() => {
+        callback();
       }, () => {
-        $disabled.prop('disabled', false);
-
-        const validator = $form.data('formValidation');
-        validator.updateStatus('user', 'NOT_VALIDATED');
-        validator.updateStatus('pwd', 'NOT_VALIDATED');
+        formValidator.updateStatus('user', 'NOT_VALIDATED');
+        formValidator.updateStatus('pwd', 'NOT_VALIDATED');
 
         renderAlert(
           $form.find('.panel-body'),
           '<strong>Login failed.</strong> Please review your user name and password and try again.',
-          renderAlert.positions.TOP,
-          renderAlert.types.DANGER
+          { bootstrayType: 'danger' }
         );
       });
     },
@@ -199,6 +199,6 @@ function showLogin(authConfig, options = {}) {
     ]
   };
 
-  return showModalForm(definition, model, options)
-    .then(() => auth_checkLogin(authConfig));
+  return showModalForm(definition, options)
+    .then(() => auth_checkLogin(auth));
 }
