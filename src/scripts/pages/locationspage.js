@@ -60,7 +60,7 @@ function renderLocationsPage($pageContainer, query, auth) {
       },
       {
         title: 'Modified By',
-        className: 'minWidth',
+        className: 'minWidthSmall',
         data: '__Owner',
         type: 'string'
       },
