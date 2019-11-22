@@ -233,7 +233,7 @@ function renderDatatable($container, definition, options = {}) {
             Menu <span class="caret"></span>
           </button>
           <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
-            <li><a href="#">Reload</a></li>
+            <li><a href="#" class="menu-reload">Reload</a></li>
             <li><a href="#">Copy</a></li>
             <li><a href="#">Print</a></li>
             <li role="separator" class="divider"></li>
@@ -253,12 +253,6 @@ function renderDatatable($container, definition, options = {}) {
                 </li>
               `)}
             ` : ''}
-            <!--
-            <li class="dropdown-header">Views</li>
-            <li><a href="#">Default <span class="glyphicon glyphicon-ok" aria-hidden="true"></span></a></li>
-            <li><a href="#">Active Locations</a></li>
-            <li><a href="#">Inactive Locations</a></li>
-            -->
           </ul>
         </div>
       </div>
@@ -380,6 +374,10 @@ function renderDatatable($container, definition, options = {}) {
       datatable.column(index).search('');
     });
     datatable.draw();
+  });
+
+  $container.on('keyup click', '.menu-reload', () => {
+    datatable.ajax.reload();
   });
 
   $table.on('keyup change', 'thead th input, thead th select', (event) => {
