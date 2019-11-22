@@ -77,6 +77,14 @@ function renderLocationsPage($pageContainer, query, auth) {
     newButtonLabel: 'New Locker Location',
     newButtonFragment: 'locations/new',
 
-    stateSaveWebStorageKey: 'locations'
+    stateSaveWebStorageKey: 'locations',
+
+    related: [
+      {
+        title: 'test',
+        fragment: 'home',
+        isCurrent: true
+      }
+    ]
   });
 }

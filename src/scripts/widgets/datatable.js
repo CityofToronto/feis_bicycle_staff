@@ -14,6 +14,7 @@ function renderDatatable($container, definition, options = {}) {
     stateSaveWebStorage = sessionStorage,
     stateSaveWebStorageKey,
 
+    related
   } = options;
 
   definition = deepCloneObject(definition);
@@ -229,7 +230,7 @@ function renderDatatable($container, definition, options = {}) {
         <button class="btn btn-default btn-reset">Reset Filters</button>
         <div class="dropdown btn-action">
           <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-            Action <span class="caret"></span>
+            Menu <span class="caret"></span>
           </button>
           <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
             <li><a href="#">Reload</a></li>
@@ -240,7 +241,17 @@ function renderDatatable($container, definition, options = {}) {
             <li><a href="#">CSV</a></li>
             <li><a href="#">Excel</a></li>
             <li><a href="#">PDF</a></li>
-            <li role="separator" class="divider"></li>
+            ${related && related.length > 0 ? `
+              <li role="separator" class="divider"></li>
+              ${related.map(({ title, fragment, isCurrent }) => `
+                <li>
+                  <a ${fragment ? `href="#${fragment}"` : ''}>
+                    ${title ? title : 'Untitled'}
+                    ${isCurrent ? '<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>' : ''}
+                  </a>
+                </li>
+              `)}
+            ` : ''}
             <!--
             <li class="dropdown-header">Views</li>
             <li><a href="#">Default <span class="glyphicon glyphicon-ok" aria-hidden="true"></span></a></li>
