@@ -102,6 +102,7 @@
 
       label {
         float: right;
+        font-weight: normal;
 
         @media (min-width: 768px) {
           padding-top: 22px;
@@ -122,7 +123,7 @@
       }
 
       label {
-        // float: right;
+        font-weight: normal;
         display: block;
 
         input {
