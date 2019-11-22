@@ -45,7 +45,7 @@ function renderLockersPage($pageContainer, query, auth) {
       {
         title: 'Status',
         data: '__Status',
-        choices: [{ text: '-- Select --', value: '' }, { text: 'Active' }, { text: 'Inactive' }],
+        choices: '/* @echo C3DATAMEDIA_LOCATIONS_STATUS_CHOICES */',
         width: '90px'
       }
     ],
@@ -67,7 +67,7 @@ function renderLockersPage($pageContainer, query, auth) {
         }, {});
         this.dataTable().api().columns.adjust().draw();
       }, () => {
-        console.log('error');
+        // console.log('error');
       });
       }
     },

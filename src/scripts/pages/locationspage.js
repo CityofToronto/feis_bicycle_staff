@@ -13,44 +13,57 @@ function renderLocationsPage($pageContainer, query, auth) {
     columns: [
       {
         title: 'Action',
-        className: 'excludeFromButtons',
+        className: 'excludeFromButtons openButtonWidth',
         data: 'id',
-        // orderable: false,
+        orderable: false,
         render(data) {
           return `<a href="#locations/${data}" class="btn btn-default">Open</a>`;
         },
-        searchable: false,
-        width: '57px'
+        searchable: false
       },
       {
         title: 'Name',
+        className: 'minWidth',
         data: 'name',
         type: 'string'
       },
       {
         title: 'Description',
+        className: 'minWidth',
         data: 'description',
         type: 'string'
       },
       {
         title: 'Modified On',
+        className: 'minWidth',
         data: '__ModifiedOn',
         type: 'date',
-        width: 150,
         render(data) {
           const dataMoment = moment(data);
           if (dataMoment.isValid()) {
-            return dataMoment.format('YYYY/MM/DD ha');
+            return dataMoment.format('YYYY/MM/DD');
           } else {
             return '-';
           }
-
-        }
+        },
+        width: '200px'
       },
       {
         title: 'Modified By',
+        className: 'minWidth',
         data: '__Owner',
-        width: 150
+        type: 'string'
+      },
+      {
+        title: 'Status',
+        className: 'statusWidth',
+        data: '__Status',
+        type: 'string',
+        searchType: 'equals',
+        choices: [{ text: 'Active' }, { text: 'Inactive' }],
+        render(data) {
+          return `<span class="label label-${data === 'Active' ? 'success' : data === 'Inactive' ? 'danger' : 'default'}" style="font-size: 90%;">${data}</span>`;
+        }
       }
     ],
 
@@ -64,6 +77,14 @@ function renderLocationsPage($pageContainer, query, auth) {
     newButtonLabel: 'New Locker Location',
     newButtonFragment: 'locations/new',
 
-    stateSaveWebStorageKey: 'locations'
+    stateSaveWebStorageKey: 'locations',
+
+    related: [
+      {
+        title: 'test',
+        fragment: 'home',
+        isCurrent: true
+      }
+    ]
   });
 }

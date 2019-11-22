@@ -156,9 +156,9 @@ function renderForm($container, definition, {
               postRender({ field }) {
                 $(`#${field.id}`).prop('readonly', true);
                 model.on(`change:${field.bindTo}`, () => {
-                  $(`#${field.id}`).val(moment(model.get(field.bindTo)).format('YYYY/MM/DD h:mm:ss a'));
+                  $(`#${field.id}`).val(moment(model.get(field.bindTo)).format('YYYY/MM/DD h:mm:ss A'));
                 });
-                $(`#${field.id}`).val(moment(model.get(field.bindTo)).format('YYYY/MM/DD h:mm:ss a'));
+                $(`#${field.id}`).val(moment(model.get(field.bindTo)).format('YYYY/MM/DD h:mm:ss A'));
               }
             },
             {
@@ -169,9 +169,9 @@ function renderForm($container, definition, {
               postRender({ field }) {
                 $(`#${field.id}`).prop('readonly', true);
                 model.on(`change:${field.bindTo}`, () => {
-                  $(`#${field.id}`).val(moment(model.get(field.bindTo)).format('YYYY/MM/DD h:mm:ss a'));
+                  $(`#${field.id}`).val(moment(model.get(field.bindTo)).format('YYYY/MM/DD h:mm:ss A'));
                 });
-                $(`#${field.id}`).val(moment(model.get(field.bindTo)).format('YYYY/MM/DD h:mm:ss a'));
+                $(`#${field.id}`).val(moment(model.get(field.bindTo)).format('YYYY/MM/DD h:mm:ss A'));
               }
             },
             {
@@ -322,13 +322,13 @@ function renderForm($container, definition, {
           }
         }).then(() => {
           if (field.choices) {
-            const choicesMap = stringToFunction(field.choicesMap);
             if (field.choicesMap) {
+              const choicesMap = stringToFunction(field.choicesMap);
               field.choices = choicesMap(field.choices);
             }
 
             if (field.type === 'dropdown' && (field.choices.length === 0 || field.choices[0].value !== '')) {
-              field.choices.unshift({ text: `- Select -`, value: '' });
+              field.choices.unshift({ text: '- Select -', value: '' });
             }
 
             let value;
