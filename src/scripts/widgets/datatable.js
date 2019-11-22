@@ -21,147 +21,150 @@ function renderDatatable($container, definition, options = {}) {
 
   definition.ajax = definition.ajax || function (data, callback, settings) {
     // const config = this.api().settings().init();
-    if (settings.oFeatures.bServerSide) {
-      const queryObject = {};
+    function doAjax() {
+      if (settings.oFeatures.bServerSide) {
+        const queryObject = {};
 
-      // $count
-      queryObject['$count'] = true;
+        // $count
+        queryObject['$count'] = true;
 
-      // $select
-      queryObject['$select'] = data.columns
-        .filter((column) => typeof column.data === 'string')
-        .map((column) => column.data)
-        .filter((select, index, array) => array.indexOf(select) === index)
-        .join(',');
+        // $select
+        queryObject['$select'] = data.columns
+          .filter((column) => typeof column.data === 'string')
+          .map((column) => column.data)
+          .filter((select, index, array) => array.indexOf(select) === index)
+          .join(',');
 
-      const dateFilter = (column, filterString) => {
-        if (filterString.indexOf('to') !== -1) {
-          const [startDate, endDate] = filterString.split('to');
-          const momentStartDate = moment(startDate);
-          const momentEndDate = moment(endDate);
-          if (momentStartDate.isValid() || momentEndDate.isValid()) {
-            let returnValues = [];
-            if (momentStartDate.isValid()) {
-              returnValues.push(`${column} ge ${oData_escapeValue(momentStartDate.startOf('day').format())}`);
-            }
-            if (momentEndDate.isValid()) {
-              returnValues.push(`${column} le ${oData_escapeValue(momentEndDate.endOf('day').format())}`);
-            }
-            return `(${returnValues.join(' and ')})`;
-          } else {
-            return false;
-          }
-        } else {
-          const momentDate = moment(filterString);
-          if (momentDate.isValid()) {
-            const returnValues = [
-              `${column} ge ${oData_escapeValue(momentDate.startOf('day').format())}`,
-              `${column} le ${oData_escapeValue(momentDate.endOf('day').format())}`
-            ];
-            return `(${returnValues.join(' and ')})`;
-          } else {
-            return false;
-          }
-        }
-      };
-
-      // $filter
-      const filters = data.columns
-        .map((column, index) => {
-          if (column.searchable && column.search && column.search.value && column.search.value.trim()) {
-            switch (definition.columns[index].type) {
-              case 'boolean':
-              case 'number':
-                return `(${column.data} eq ${oData_escapeValue(column.search.value)})`;
-
-              case 'date':
-                return dateFilter(column.data, column.search.value);
-
-              case 'function':
-                return `(${stringToFunction(definition.columns[index].filter)(column, definition.columns[index])})`;
-
-              default:
-                if (definition.columns[index].searchType === 'equals') {
-                  return `(tolower(${column.data}) eq '${oData_escapeValue(column.search.value.toLowerCase())}')`;
-                } else {
-                  return `(${column.search.value
-                    .split(' ')
-                    .filter((value, index, array) => value && array.indexOf(value) === index)
-                    .map((value) => `contains(tolower(${column.data}),'${oData_escapeValue(value.toLowerCase())}')`)
-                    .join(' and ')})`;
-                }
-
+        const dateFilter = (column, filterString) => {
+          if (filterString.indexOf('to') !== -1) {
+            const [startDate, endDate] = filterString.split('to');
+            const momentStartDate = moment(startDate);
+            const momentEndDate = moment(endDate);
+            if (momentStartDate.isValid() || momentEndDate.isValid()) {
+              let returnValues = [];
+              if (momentStartDate.isValid()) {
+                returnValues.push(`${column} ge ${oData_escapeValue(momentStartDate.startOf('day').format())}`);
+              }
+              if (momentEndDate.isValid()) {
+                returnValues.push(`${column} le ${oData_escapeValue(momentEndDate.endOf('day').format())}`);
+              }
+              return `(${returnValues.join(' and ')})`;
+            } else {
+              return false;
             }
           } else {
-            return false;
+            const momentDate = moment(filterString);
+            if (momentDate.isValid()) {
+              const returnValues = [
+                `${column} ge ${oData_escapeValue(momentDate.startOf('day').format())}`,
+                `${column} le ${oData_escapeValue(momentDate.endOf('day').format())}`
+              ];
+              return `(${returnValues.join(' and ')})`;
+            } else {
+              return false;
+            }
           }
-        })
-        .filter((value) => value);
-      if (filters.length > 0) {
-        queryObject['$filter'] = filters.join(' and ');// + 'and (' + $filter + ')';
-      }
+        };
 
-      // $orderby
-      if (data.order.length > 0) {
-        queryObject['$orderby'] = data.order
-          .map((order) => {
-            let orderBy = data.columns[order.column].data;
-            switch (definition.columns[order.column].type) {
-              case 'boolean':
-              case 'number':
-              case 'date':
-                return `${orderBy} ${order.dir}`;
-              case 'function':
-                return stringToFunction(definition.columns[order.column].orderBy)(order, orderBy, definition.columns[order.column]);
-              default:
-                return `tolower(${orderBy}) ${order.dir}`;
+        // $filter
+        const filters = data.columns
+          .map((column, index) => {
+            if (column.searchable && column.search && column.search.value && column.search.value.trim()) {
+              switch (definition.columns[index].type) {
+                case 'boolean':
+                case 'number':
+                  return `(${column.data} eq ${oData_escapeValue(column.search.value)})`;
+
+                case 'date':
+                  return dateFilter(column.data, column.search.value);
+
+                case 'function':
+                  return `(${stringToFunction(definition.columns[index].filter)(column, definition.columns[index])})`;
+
+                default:
+                  if (definition.columns[index].searchType === 'equals') {
+                    return `(tolower(${column.data}) eq '${oData_escapeValue(column.search.value.toLowerCase())}')`;
+                  } else {
+                    return `(${column.search.value
+                      .split(' ')
+                      .filter((value, index, array) => value && array.indexOf(value) === index)
+                      .map((value) => `contains(tolower(${column.data}),'${oData_escapeValue(value.toLowerCase())}')`)
+                      .join(' and ')})`;
+                  }
+
+              }
+            } else {
+              return false;
             }
           })
-          .filter((value) => value)
-          .join(',');
-      }
-
-      // $search
-      if (data.search && data.search.value) {
-        queryObject['$search'] = `"${data.search.value}"`;
-      }
-
-      // $skip
-      queryObject['$skip'] = data.start;
-
-      // $top
-      queryObject['$top'] = data.length;
-
-      $.ajax({
-        url: `${url}?${query_objectToString(queryObject)}`,
-        method: 'GET',
-        contentType: 'application/json; charset=utf-8',
-        beforeSend(jqXHR) {
-          if (auth && auth.sId) {
-            jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
-          }
+          .filter((value) => value);
+        if (filters.length > 0) {
+          queryObject['$filter'] = filters.join(' and ');// + 'and (' + $filter + ')';
         }
-      }).then((response) => {
-        callback({
-          data: response.value,
-          draw: data.draw,
-          recordsTotal: response['@odata.count'],
-          recordsFiltered: response['@odata.count']
+
+        // $orderby
+        if (data.order.length > 0) {
+          queryObject['$orderby'] = data.order
+            .map((order) => {
+              let orderBy = data.columns[order.column].data;
+              switch (definition.columns[order.column].type) {
+                case 'boolean':
+                case 'number':
+                case 'date':
+                  return `${orderBy} ${order.dir}`;
+                case 'function':
+                  return stringToFunction(definition.columns[order.column].orderBy)(order, orderBy, definition.columns[order.column]);
+                default:
+                  return `tolower(${orderBy}) ${order.dir}`;
+              }
+            })
+            .filter((value) => value)
+            .join(',');
+        }
+
+        // $search
+        if (data.search && data.search.value) {
+          queryObject['$search'] = `"${data.search.value}"`;
+        }
+
+        // $skip
+        queryObject['$skip'] = data.start;
+
+        // $top
+        queryObject['$top'] = data.length;
+
+        $.ajax({
+          url: `${url}?${query_objectToString(queryObject)}`,
+          method: 'GET',
+          contentType: 'application/json; charset=utf-8',
+          beforeSend(jqXHR) {
+            if (auth && auth.sId) {
+              jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+            }
+          }
+        }).then((response) => {
+          callback({
+            data: response.value,
+            draw: data.draw,
+            recordsTotal: response['@odata.count'],
+            recordsFiltered: response['@odata.count']
+          });
+        }, (jqXHR, textStatus, errorThrown) => {
+          renderAlert(this.closest('.table-responsive'), oData_getErrorMessage(jqXHR, errorThrown), {
+            bootstrayType: 'danger',
+            position: 'before'
+          });
+
+          callback({ data: [], draw: data.draw, recordsTotal: 0, recordsFiltered: 0 });
+
+          // TODO: ACCESS CHECK FOR RELOAD
         });
-      }, (jqXHR, textStatus, errorThrown) => {
-        renderAlert(this.closest('.table-responsive'), oData_getErrorMessage(jqXHR, errorThrown), {
-          bootstrayType: 'danger',
-          position: 'before'
-        });
 
-        callback({ data: [], draw: data.draw, recordsTotal: 0, recordsFiltered: 0 });
-
-        // TODO: ACCESS CHECK FOR RELOAD
-      });
-
-    } else {
-      callback({ data: definition.data || [] });
+      } else {
+        callback({ data: definition.data || [] });
+      }
     }
+    doAjax();
   };
 
   definition.buttons = definition.buttons || [
@@ -218,7 +221,6 @@ function renderDatatable($container, definition, options = {}) {
     }
   });
 
-  // TODO: Topper
   $container.empty();
 
   $container.append(`
@@ -258,12 +260,6 @@ function renderDatatable($container, definition, options = {}) {
       </div>
     </div>
   `);
-
-  // Promise.resolve().then(() => {
-
-  // }).then(() => {
-
-  // });
 
   function buildFilter(column, index) {
     if (column.searchable !== false) {
@@ -385,8 +381,6 @@ function renderDatatable($container, definition, options = {}) {
     datatable.column($target.attr('data-column-index')).search($target.val());
     datatable.draw();
   });
-
-  // TODO: Footer
 
   if (newButtonLabel && newButtonFragment) {
     $container.append(`
