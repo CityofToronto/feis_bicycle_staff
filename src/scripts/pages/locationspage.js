@@ -34,6 +34,16 @@ function renderLocationsPage($pageContainer, query, auth) {
         type: 'string'
       },
       {
+        title: 'Lockers',
+        className: 'minWidthSmall',
+        data: 'id',
+        type: 'string',
+        render() {
+          return '...';
+        },
+        searchable: false
+      },
+      {
         title: 'Modified On',
         className: 'minWidth',
         data: '__ModifiedOn',
