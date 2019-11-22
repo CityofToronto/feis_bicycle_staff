@@ -1,5 +1,5 @@
 /* global $ moment */
-/* global deepCloneObject fixButtonLinks oData_escapeValue oData_getErrorMessage query_objectToString stringToFunction */
+/* global auth_checkLogin showLogin deepCloneObject fixButtonLinks oData_escapeValue oData_getErrorMessage query_objectToString stringToFunction */
 /* global renderAlert */
 
 /* exported renderDatatable */
@@ -157,7 +157,17 @@ function renderDatatable($container, definition, options = {}) {
 
           callback({ data: [], draw: data.draw, recordsTotal: 0, recordsFiltered: 0 });
 
-          // TODO: ACCESS CHECK FOR RELOAD
+          if (auth) {
+            auth_checkLogin(auth, true).then((isLoggedIn) => {
+              if (!isLoggedIn) {
+                showLogin(auth).then((isLoggedIn) => {
+                  if (isLoggedIn) {
+                    doAjax();
+                  }
+                });
+              }
+            });
+          }
         });
 
       } else {
