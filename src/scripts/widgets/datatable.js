@@ -250,13 +250,13 @@ function renderDatatable($container, definition, options = {}) {
           </button>
           <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
             <li><a href="#" class="menu-reload">Reload</a></li>
-            <li><a href="#">Copy</a></li>
-            <li><a href="#">Print</a></li>
+            <li><a href="#" class="menu-copy">Copy</a></li>
+            <li><a href="#" class="menu-print">Print</a></li>
             <li role="separator" class="divider"></li>
             <li class="dropdown-header">Download as</li>
-            <li><a href="#">CSV</a></li>
-            <li><a href="#">Excel</a></li>
-            <li><a href="#">PDF</a></li>
+            <li><a href="#" class="menu-csv">CSV</a></li>
+            <li><a href="#" class="menu-excel">Excel</a></li>
+            <li><a href="#" class="menu-pdf">PDF</a></li>
             ${related && related.length > 0 ? `
               <li role="separator" class="divider"></li>
               <li class="dropdown-header">Views</li>
@@ -388,6 +388,26 @@ function renderDatatable($container, definition, options = {}) {
 
   $innerContainer.on('keyup click', '.menu-reload', () => {
     datatable.ajax.reload();
+  });
+
+  $innerContainer.on('keyup click', '.menu-copy', () => {
+    $innerContainer.find('.dt-buttons .buttons-copy').click();
+  });
+
+  $innerContainer.on('keyup click', '.menu-print', () => {
+    $innerContainer.find('.dt-buttons .buttons-print').click();
+  });
+
+  $innerContainer.on('keyup click', '.menu-csv', () => {
+    $innerContainer.find('.dt-buttons .buttons-csv').click();
+  });
+
+  $innerContainer.on('keyup click', '.menu-excel', () => {
+    $innerContainer.find('.dt-buttons .buttons-excel').click();
+  });
+
+  $innerContainer.on('keyup click', '.menu-pdf', () => {
+    $innerContainer.find('.dt-buttons .buttons-pdf').click();
   });
 
   $table.on('keyup change', 'thead th input, thead th select', (event) => {
