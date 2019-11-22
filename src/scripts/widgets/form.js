@@ -156,9 +156,9 @@ function renderForm($container, definition, {
               postRender({ field }) {
                 $(`#${field.id}`).prop('readonly', true);
                 model.on(`change:${field.bindTo}`, () => {
-                  $(`#${field.id}`).val(moment(model.get(field.bindTo)).format('YYYY/MM/DD h:mm:ss a'));
+                  $(`#${field.id}`).val(moment(model.get(field.bindTo)).format('YYYY/MM/DD h:mm:ss A'));
                 });
-                $(`#${field.id}`).val(moment(model.get(field.bindTo)).format('YYYY/MM/DD h:mm:ss a'));
+                $(`#${field.id}`).val(moment(model.get(field.bindTo)).format('YYYY/MM/DD h:mm:ss A'));
               }
             },
             {
@@ -169,9 +169,9 @@ function renderForm($container, definition, {
               postRender({ field }) {
                 $(`#${field.id}`).prop('readonly', true);
                 model.on(`change:${field.bindTo}`, () => {
-                  $(`#${field.id}`).val(moment(model.get(field.bindTo)).format('YYYY/MM/DD h:mm:ss a'));
+                  $(`#${field.id}`).val(moment(model.get(field.bindTo)).format('YYYY/MM/DD h:mm:ss A'));
                 });
-                $(`#${field.id}`).val(moment(model.get(field.bindTo)).format('YYYY/MM/DD h:mm:ss a'));
+                $(`#${field.id}`).val(moment(model.get(field.bindTo)).format('YYYY/MM/DD h:mm:ss A'));
               }
             },
             {
