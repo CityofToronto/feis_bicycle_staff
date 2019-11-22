@@ -17,6 +17,10 @@ function renderDatatable($container, definition, options = {}) {
     related
   } = options;
 
+  $container.empty();
+  const $innerContainer = $('<div class="datatableWidget"></div>');
+  $container.append($innerContainer);
+
   definition = deepCloneObject(definition);
 
   definition.ajax = definition.ajax || function (data, callback, settings) {
@@ -150,7 +154,7 @@ function renderDatatable($container, definition, options = {}) {
             recordsFiltered: response['@odata.count']
           });
         }, (jqXHR, textStatus, errorThrown) => {
-          renderAlert(this.closest('.table-responsive'), oData_getErrorMessage(jqXHR, errorThrown), {
+          renderAlert($innerContainer.find('.row-btn-top'), oData_getErrorMessage(jqXHR, errorThrown), {
             bootstrayType: 'danger',
             position: 'before'
           });
@@ -231,10 +235,10 @@ function renderDatatable($container, definition, options = {}) {
     }
   });
 
-  $container.empty();
+  $innerContainer.empty();
 
-  $container.append(`
-    <div class="row row-btn">
+  $innerContainer.append(`
+    <div class="row row-btn-top">
       <div class="col-sm-6">
         ${newButtonLabel && newButtonFragment ? `<a class="btn btn-default" href="#${newButtonFragment}">${newButtonLabel}</a>` : ''}
       </div>
@@ -346,7 +350,7 @@ function renderDatatable($container, definition, options = {}) {
 
   $table.find('thead').append($filterRow);
 
-  $table.appendTo($container);
+  $table.appendTo($innerContainer);
 
   definition.orderCellsTop = definition.orderCellsTop != null ? definition.orderCellsTop : true;
 
@@ -373,7 +377,7 @@ function renderDatatable($container, definition, options = {}) {
 
   const datatable = window.datatable = $table.DataTable(definition);
 
-  $container.on('keyup click', '.btn-reset', () => {
+  $innerContainer.on('keyup click', '.btn-reset', () => {
     datatable.search('');
     datatable.columns()[0].forEach((index) => {
       $table.find(`[data-column-index="${index}"]`).val('');
@@ -382,7 +386,7 @@ function renderDatatable($container, definition, options = {}) {
     datatable.draw();
   });
 
-  $container.on('keyup click', '.menu-reload', () => {
+  $innerContainer.on('keyup click', '.menu-reload', () => {
     datatable.ajax.reload();
   });
 
@@ -393,7 +397,7 @@ function renderDatatable($container, definition, options = {}) {
   });
 
   if (newButtonLabel && newButtonFragment) {
-    $container.append(`
+    $innerContainer.append(`
       <div class="row">
         <div class="col-sm-12">
           <a class="btn btn-default" href="#${newButtonFragment}">${newButtonLabel}</a>
