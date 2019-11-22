@@ -157,6 +157,11 @@
           &.minWidthLarge {
             min-width: 600px;
           }
+
+          &.statusWidth {
+            min-width: 100px;
+            width: 100px;
+          }
         }
 
         thead {

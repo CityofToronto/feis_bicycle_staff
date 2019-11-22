@@ -322,13 +322,13 @@ function renderForm($container, definition, {
           }
         }).then(() => {
           if (field.choices) {
-            const choicesMap = stringToFunction(field.choicesMap);
             if (field.choicesMap) {
+              const choicesMap = stringToFunction(field.choicesMap);
               field.choices = choicesMap(field.choices);
             }
 
             if (field.type === 'dropdown' && (field.choices.length === 0 || field.choices[0].value !== '')) {
-              field.choices.unshift({ text: `- Select -`, value: '' });
+              field.choices.unshift({ text: '- Select -', value: '' });
             }
 
             let value;

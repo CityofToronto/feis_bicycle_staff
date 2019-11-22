@@ -29,7 +29,7 @@ function renderLocationsPage($pageContainer, query, auth) {
       },
       {
         title: 'Description',
-        className: 'minWidthLarge',
+        className: 'minWidth',
         data: 'description',
         type: 'string'
       },
@@ -56,10 +56,14 @@ function renderLocationsPage($pageContainer, query, auth) {
       },
       {
         title: 'Status',
-        className: 'minWidth',
+        className: 'statusWidth',
         data: '__Status',
         type: 'string',
-        choices: [{ text: 'Active' }, { text: 'Inactive' }]
+        searchType: 'equals',
+        choices: [{ text: 'Active' }, { text: 'Inactive' }],
+        render(data) {
+          return `<span class="label label-${data === 'Active' ? 'success' : data === 'Inactive' ? 'danger' : 'default'}" style="font-size: 90%;">${data}</span>`;
+        }
       }
     ],
 

@@ -80,11 +80,16 @@ function renderDatatable($container, definition, options = {}) {
                 return `(${stringToFunction(definition.columns[index].filter)(column, definition.columns[index])})`;
 
               default:
-                return `(${column.search.value
-                  .split(' ')
-                  .filter((value, index, array) => value && array.indexOf(value) === index)
-                  .map((value) => `contains(tolower(${column.data}),'${oData_escapeValue(value.toLowerCase())}')`)
-                  .join(' and ')})`;
+                if (definition.columns[index].searchType === 'equals') {
+                  return `(tolower(${column.data}) eq '${oData_escapeValue(column.search.value.toLowerCase())}')`;
+                } else {
+                  return `(${column.search.value
+                    .split(' ')
+                    .filter((value, index, array) => value && array.indexOf(value) === index)
+                    .map((value) => `contains(tolower(${column.data}),'${oData_escapeValue(value.toLowerCase())}')`)
+                    .join(' and ')})`;
+                }
+
             }
           } else {
             return false;
@@ -248,16 +253,58 @@ function renderDatatable($container, definition, options = {}) {
     </div>
   `);
 
+  // Promise.resolve().then(() => {
+
+  // }).then(() => {
+
+  // });
+
   function buildFilter(column, index) {
     if (column.searchable !== false) {
       if (column.choices) {
-        return `
+        const $returnValue = $(`
           <th>
             <select class="form-control" aria-label="Filter by ${column.title || ''}" data-column-index="${index}">
-              ${column.choices.map((choice) => `<option value="${choice.value != null ? choice.value : choice.text}">${choice.text != null ? choice.text : choice.value}</option>`)}
             </select>
           </th>
-        `;
+        `);
+
+        Promise.resolve().then(() => {
+          if (!Array.isArray(column.choices)) {
+            let choices = column.choices;
+            if (typeof choices === 'string') {
+              choices = {
+                url: choices,
+                method: 'GET'
+              };
+            }
+            if (typeof choices === 'object' && choices !== null) {
+              return new Promise((resolve, reject) => {
+                $.ajax(choices).then((data) => {
+                  column.choices = data;
+                  resolve(data);
+                }, () => {
+                  reject();
+                });
+              });
+            }
+          }
+        }).then(() => {
+          if (column.choicesMap) {
+            const choicesMap = stringToFunction(column.choicesMap);
+            column.choices = choicesMap(column.choices);
+          }
+
+          if (column.choices.length === 0 || column.choices[0].value !== '') {
+            column.choices.unshift({ text: '- Select -', value: '' });
+          }
+
+          $returnValue.find('select').append(column.choices.map((choice) => {
+            return `<option value="${choice.value != null ? choice.value : choice.text}">${choice.text != null ? choice.text : choice.value}</option>`;
+          }));
+        });
+
+        return $returnValue;
       } else {
         return `
           <th>
@@ -276,12 +323,16 @@ function renderDatatable($container, definition, options = {}) {
         <tr>
           ${definition.columns.map((column) => `<th>${column.orderable === false ? '<button style="display:none;"></button>' : ''}${column.title || ''}</th>`).join('')}
         </tr>
-        <tr>
-          ${definition.columns.map(buildFilter).join('')}
-        </tr>
       </thead>
     </table>
   `);
+
+  const $filterRow = $('<tr></tr>');
+  definition.columns.forEach((column, index) => {
+    $filterRow.append(buildFilter(column, index));
+  });
+
+  $table.find('thead').append($filterRow);
 
   $table.appendTo($container);
 
