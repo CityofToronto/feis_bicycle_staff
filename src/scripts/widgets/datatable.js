@@ -243,6 +243,7 @@ function renderDatatable($container, definition, options = {}) {
             <li><a href="#">PDF</a></li>
             ${related && related.length > 0 ? `
               <li role="separator" class="divider"></li>
+              <li class="dropdown-header">Views</li>
               ${related.map(({ title, fragment, isCurrent }) => `
                 <li>
                   <a ${fragment ? `href="#${fragment}"` : ''}>
@@ -371,6 +372,15 @@ function renderDatatable($container, definition, options = {}) {
   };
 
   const datatable = window.datatable = $table.DataTable(definition);
+
+  $container.on('keyup click', '.btn-reset', () => {
+    datatable.search('');
+    datatable.columns()[0].forEach((index) => {
+      $table.find(`[data-column-index="${index}"]`).val('');
+      datatable.column(index).search('');
+    });
+    datatable.draw();
+  });
 
   $table.on('keyup change', 'thead th input, thead th select', (event) => {
     const $target = $(event.target);
