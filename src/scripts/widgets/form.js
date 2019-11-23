@@ -54,8 +54,13 @@ function renderForm($container, definition, {
         contentType: 'application/json; charset=utf-8',
         data: JSON.stringify(data),
         dataType: 'json',
-        headers: auth && auth.sId ? { Authorization: `AuthSession ${auth.sId}` } : {},
-        method: data.id ? 'PUT' : 'POST'
+        // headers: auth && auth.sId ? { Authorization: `AuthSession ${auth.sId}` } : {},
+        method: data.id ? 'PUT' : 'POST',
+        beforeSend(jqXHR) {
+          if (auth && auth.sId) {
+            jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+          }
+        }
       }).then((data, textStatus, jqXHR) => {
         resolve({ data, textStatus, jqXHR });
       }, (jqXHR, textStatus, errorThrown) => {
@@ -397,8 +402,13 @@ function renderForm($container, definition, {
         const doDownload = () => {
           $.ajax(`${url}('${model.id}')`, {
             dataType: 'json',
-            headers: auth && auth.sId ? { Authorization: `AuthSession ${auth.sId}` } : {},
-            methd: 'GET'
+            // headers: auth && auth.sId ? { Authorization: `AuthSession ${auth.sId}` } : {},
+            methd: 'GET',
+            beforeSend(jqXHR) {
+              if (auth && auth.sId) {
+                jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+              }
+            }
           }).then((data) => {
             model.set(data);
             dataSnapShot = JSON.stringify(model.toJSON());
@@ -478,8 +488,13 @@ function renderForm($container, definition, {
           }).then((confirm) => {
             if (confirm) {
               $.ajax(`${url}${model.id ? `('${model.id}')` : ''}`, {
-                headers: auth && auth.sId ? { Authorization: `AuthSession ${auth.sId}` } : {},
-                method: 'DELETE'
+                // headers: auth && auth.sId ? { Authorization: `AuthSession ${auth.sId}` } : {},
+                method: 'DELETE',
+                beforeSend(jqXHR) {
+                  if (auth && auth.sId) {
+                    jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+                  }
+                }
               }).then(() => {
                 showAlert(removeSuccessMessage);
                 Backbone.history.navigate(finalRemoveButtonFragment, { trigger: true });
