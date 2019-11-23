@@ -108,7 +108,7 @@ $(function () {
           return;
         }
         updatePageHeader();
-        return renderHomePage($pageContainer, query);
+        return renderHomePage($pageContainer, query, auth);
       });
     },
 
