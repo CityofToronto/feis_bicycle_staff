@@ -14,11 +14,12 @@ function renderHomePage($container, query, auth) {
   const $registrationsColumn = $(`
     <div class="col-sm-3">
       <div class="panel panel-default">
-        <div class="panel-heading">Registrations</div>
+        <div class="panel-heading"><i class="fas fa-pen"></i> Registrations</div>
         <div class="panel-body">
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
         </div>
         <div class="list-group">
+          <a href="#registrations" class="list-group-item"><span class="badge">?</span> New</a>
           <a href="#registrations?${query_objectToString({ option: 'today' })}" class="list-group-item"><span class="badge">?</span> Today</a>
           <a href="#registrations?${query_objectToString({ option: 'thisyear' })}" class="list-group-item"><span class="badge">?</span> This Year</a>
           <a href="#registrations" class="list-group-item"><span class="badge">?</span> All</a>
@@ -31,7 +32,7 @@ function renderHomePage($container, query, auth) {
   const $customersColumn = $(`
     <div class="col-sm-3">
       <div class="panel panel-default">
-        <div class="panel-heading">Customers</div>
+        <div class="panel-heading"><i class="fas fa-user"></i> Customers</div>
         <div class="panel-body">
           <p>Morbi in nulla et ante ullamcorper elementum suscipit vel nibh.</p>
         </div>
@@ -48,11 +49,12 @@ function renderHomePage($container, query, auth) {
   const $subscriptionsColumn = $(`
     <div class="col-sm-3">
       <div class="panel panel-default">
-        <div class="panel-heading">Subscriptions</div>
+        <div class="panel-heading"><i class="fas fa-calendar"></i> Subscriptions</div>
         <div class="panel-body">
           <p>Duis accumsan nibh nec consequat vestibulum.</p>
         </div>
         <div class="list-group">
+          <a href="#subscriptions" class="list-group-item"><span class="badge">?</span> About to Expire</a>
           <a href="#subscriptions?${query_objectToString({ option: 'today' })}" class="list-group-item"><span class="badge">?</span> Today</a>
           <a href="#subscriptions?${query_objectToString({ option: 'thisyear' })}" class="list-group-item"><span class="badge">?</span> This Year</a>
           <a href="#subscriptions" class="list-group-item"><span class="badge">?</span> All</a>
@@ -65,7 +67,7 @@ function renderHomePage($container, query, auth) {
   const $paymentsColumn = $(`
     <div class="col-sm-3">
       <div class="panel panel-default">
-        <div class="panel-heading">Payments</div>
+        <div class="panel-heading"><i class="fas fa-credit-card"></i> Payments</div>
         <div class="panel-body">
           <p>Etiam in lacus sit amet odio tempus auctor eget sit amet metus.</p>
         </div>
@@ -85,7 +87,7 @@ function renderHomePage($container, query, auth) {
   const $locationsColumn = $(`
     <div class="col-sm-3">
       <div class="panel panel-default">
-        <div class="panel-heading">Locker Locations</div>
+        <div class="panel-heading"><i class="fas fa-map-marker"></i> Locker Locations</div>
         <div class="panel-body">
           <p>Phasellus dapibus, quam et pulvinar congue, turpis dui dictum quam, vitae iaculis magna dolor ut metus.</p>
         </div>
@@ -127,7 +129,7 @@ function renderHomePage($container, query, auth) {
   const $lockersColumn = $(`
     <div class="col-sm-3">
       <div class="panel panel-default">
-        <div class="panel-heading">Lockers</div>
+        <div class="panel-heading"><i class="fas fa-lock"></i> Lockers</div>
         <div class="panel-body">
           <p>Vestibulum finibus rhoncus vulputate.</p>
         </div>
@@ -168,7 +170,7 @@ function renderHomePage($container, query, auth) {
   const $stationsColumn = $(`
     <div class="col-sm-3">
       <div class="panel panel-default">
-        <div class="panel-heading"><i class="fas fa-home"></i> Stations</div>
+        <div class="panel-heading"><i class="fas fa-parking"></i> Stations</div>
         <div class="panel-body">
           <p>Praesent venenatis nulla augue, vel sagittis libero lacinia sit amet.</p>
         </div>
@@ -209,19 +211,35 @@ function renderHomePage($container, query, auth) {
   const $keyfobsColumn = $(`
     <div class="col-sm-3">
       <div class="panel panel-default">
-        <div class="panel-heading">Station Key Fobs</div>
+        <div class="panel-heading"><i class="fas fa-key"></i> Station Key Fobs</div>
         <div class="panel-body">
           <p>Aliquam vitae arcu in nisl laoreet blandit.</p>
         </div>
         <div class="list-group">
-          <a href="#keyfobs?${query_objectToString({ option: 'today' })}" class="list-group-item"><span class="badge">?</span> Today</a>
-          <a href="#keyfobs?${query_objectToString({ option: 'thisyear' })}" class="list-group-item"><span class="badge">?</span> This Year</a>
+          <a href="#keyfobs?${query_objectToString({ option: 'today' })}" class="list-group-item"><span class="badge badge-keyfobs-today">?</span> Today</a>
+          <a href="#keyfobs?${query_objectToString({ option: 'thisyear' })}" class="list-group-item"><span class="badge badge-keyfobs-thisyear">?</span> This Year</a>
           <a href="#keyfobs" class="list-group-item"><span class="badge badge-keyfobs">?</span> All</a>
         </div>
       </div>
     </div>
   `);
   $row2.append($keyfobsColumn);
+
+  ajaxes({
+    url: '/* @echo C3DATA_KEYFOBS */?$count=true&$select=id&$top=1',
+    method: 'GET',
+    beforeSend(jqXHR) { if (auth && auth.sId) { jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`); } }
+  }).then(({ data }) => {
+    $keyfobsColumn.find('.badge-keyfobs-today').html(data['@odata.count']);
+  });
+
+  ajaxes({
+    url: '/* @echo C3DATA_KEYFOBS */?$count=true&$select=id&$top=1',
+    method: 'GET',
+    beforeSend(jqXHR) { if (auth && auth.sId) { jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`); } }
+  }).then(({ data }) => {
+    $keyfobsColumn.find('.badge-keyfobs-thisyear').html(data['@odata.count']);
+  });
 
   ajaxes({
     url: '/* @echo C3DATA_KEYFOBS */?$count=true&$select=id&$top=1',
@@ -237,7 +255,7 @@ function renderHomePage($container, query, auth) {
   const $activityLogsColumn = $(`
     <div class="col-sm-3">
       <div class="panel panel-default">
-        <div class="panel-heading">Activity Logs</div>
+        <div class="panel-heading"><i class="fas fa-heartbeat"></i> Activity Logs</div>
         <div class="panel-body">
           <p>Mauris placerat, dui eu aliquam tincidunt, nisl nunc consectetur mi, in sollicitudin dui libero id dolor.</p>
         </div>
@@ -254,7 +272,7 @@ function renderHomePage($container, query, auth) {
   const $emailLogsColumn = $(`
     <div class="col-sm-3">
       <div class="panel panel-default">
-        <div class="panel-heading">Email Logs</div>
+        <div class="panel-heading"><i class="fas fa-envelope"></i> Email Logs</div>
         <div class="panel-body">
           <p>Fusce in justo vel purus consectetur posuere.</p>
         </div>
@@ -271,7 +289,7 @@ function renderHomePage($container, query, auth) {
   const $errorLogsColumn = $(`
     <div class="col-sm-3">
       <div class="panel panel-default">
-        <div class="panel-heading">Error Logs</div>
+        <div class="panel-heading"><i class="fas fa-exclamation-circle"></i> Error Logs</div>
         <div class="panel-body">
           <p>Phasellus in massa mauris.</p>
         </div>

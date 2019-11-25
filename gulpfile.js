@@ -51,6 +51,12 @@ core.embeddedApp.createTasks(gulp, {
   }
 });
 
+gulp.task('_extras', () => {
+  // console.log(SRC_PATH);
+  let public = '/webapps/feis_bicycle_staff/webfonts/';
+  return gulp.src(['src/fontawesome/webfonts/*']).pipe(gulp.dest('dist' + public));
+});
+
 ////////////////////////////////////////////////////////////////////////////////
 
 const c3api = require('./gulp_helper_c3api.js');
