@@ -14,7 +14,6 @@
   }
 }
 #maincontent #feis_bicycle_staff_container {
-
   // FORM
 
   .cot-form {
@@ -80,158 +79,192 @@
 
   // DATATABLE
 
-  .btn-action {
-    display: inline-block;
-    position: relative;
-  }
-
-  .dataTables_wrapper {
-    margin-bottom: 5px;
-    margin-top: 5px;
-
+  .datatableWidget {
     .alert {
       margin-bottom: 5px;
     }
 
-    .dataTables_length {
-      &:after {
-        content: "";
-        display: table;
-        clear: both;
-      }
-
-      label {
-        float: right;
-
-        @media (min-width: 768px) {
-          padding-top: 22px;
-        }
-
-        select {
-          height: 34px;
-          width: auto;
-        }
-      }
+    .btn-action {
+      display: inline-block;
+      position: relative;
     }
 
-    .dataTables_filter {
-      &:after {
-        content: "";
-        display: table;
-        clear: both;
-      }
-
-      label {
-        // float: right;
-        display: block;
-
-        input {
-          display: block;
-          height: 34px;
-          margin-left: 0;
-          width: 100%;
-        }
-      }
-    }
-
-    .table-responsive {
-      margin: 0;
-
-      table {
-        margin: 0 0 5px 0 !important;
-
-        button {
-          margin: 0;
-        }
-
-        thead {
-          tr {
-            th {
-              border-bottom-width: 0;
-
-              .form-control {
-                width: 100%;
-              }
-            }
-
-            &:last-child {
-              th {
-                border-bottom-width: 2px;
-              }
-            }
-          }
-
-          tr + tr {
-            th {
-              color: #000000;
-              font-weight: normal;
-            }
-          }
-        }
-      }
-    }
-
-    .dataTables_info {
-      padding: 7px 0 5px 0;
-    }
-
-    .dataTables_paginate {
-      &:after {
-        content: "";
-        display: table;
-        clear: both;
-      }
-
-      ul.pagination {
-        float: right;
-        margin-bottom: 5px;
-        padding: 0;
-      }
-    }
-  }
-
-  table.dataTable thead > tr > th.sorting_asc,
-  table.dataTable thead > tr > th.sorting_desc,
-  table.dataTable thead > tr > th.sorting,
-  table.dataTable thead > tr > td.sorting_asc,
-  table.dataTable thead > tr > td.sorting_desc,
-  table.dataTable thead > tr > td.sorting {
-    padding-right: 30px;
-  }
-
-  ul.dropdown-menu {
-    margin: 2px 0 0 0;
-    max-height: unset;
-    overflow-y: unset;
-    padding: 5px 0;
-    width: 200px;
-
-    li + li {
-      border-top: 0;
-    }
-
-    li {
-      a {
-        position: relative;
-        padding-right: 54px;
-
-        span.glyphicon {
-          margin-right: 0;
-          position: absolute;
-          right: 20px;
-          top: 5px;
-        }
-      }
-
-      &.divider {
-        margin: 5px 0;
-      }
-    }
-  }
-
-  .row-btn {
-    & > * {
+    .dataTables_wrapper {
       margin-bottom: 5px;
+      margin-top: 5px;
+
+      .dataTables_length {
+        &:after {
+          content: "";
+          display: table;
+          clear: both;
+        }
+
+        label {
+          float: right;
+          font-weight: normal;
+
+          // @media (min-width: 768px) {
+          //   padding-top: 22px;
+          // }
+
+          select {
+            height: 34px;
+            width: auto;
+          }
+        }
+      }
+
+      .dataTables_filter {
+        &:after {
+          content: "";
+          display: table;
+          clear: both;
+        }
+
+        label {
+          font-weight: normal;
+          display: block;
+
+          input {
+            display: block;
+            height: 34px;
+            margin-left: 0;
+            width: 100%;
+
+            @media (min-width: 768px) {
+              display: inline-block;
+              margin-left: 0.5em;
+            }
+          }
+        }
+      }
+
+      .table-responsive {
+        margin: 0;
+
+        table {
+          margin: 0 0 5px 0 !important;
+
+          button {
+            margin: 0;
+          }
+
+          td,
+          th {
+            &.openButtonWidth {
+              min-width: 57px;
+              width: 57px;
+            }
+
+            &.minWidth {
+              min-width: 200px;
+            }
+
+            &.minWidthSmall {
+              min-width: 100px;
+            }
+
+            &.minWidthLarge {
+              min-width: 600px;
+            }
+
+            &.statusWidth {
+              min-width: 100px;
+              width: 100px;
+            }
+          }
+
+          thead {
+            tr {
+              th {
+                border-bottom-width: 0;
+                font-size: 1.15rem;
+
+                .form-control {
+                  width: 100%;
+                }
+              }
+
+              &:last-child {
+                th {
+                  border-bottom-width: 2px;
+                }
+              }
+            }
+
+            tr + tr {
+              th {
+                color: #000000;
+                font-weight: normal;
+              }
+            }
+          }
+        }
+      }
+
+      .dataTables_info {
+        padding: 7px 0 5px 0;
+      }
+
+      .dataTables_paginate {
+        &:after {
+          content: "";
+          display: table;
+          clear: both;
+        }
+
+        ul.pagination {
+          float: right;
+          margin-bottom: 5px;
+          padding: 0;
+        }
+      }
+    }
+
+    table.dataTable thead > tr > th.sorting_asc,
+    table.dataTable thead > tr > th.sorting_desc,
+    table.dataTable thead > tr > th.sorting,
+    table.dataTable thead > tr > td.sorting_asc,
+    table.dataTable thead > tr > td.sorting_desc,
+    table.dataTable thead > tr > td.sorting {
+      padding-right: 30px;
+    }
+
+    ul.dropdown-menu {
+      margin: 2px 0 0 0;
+      max-height: unset;
+      overflow-y: unset;
+      padding: 5px 0;
+      width: 200px;
+
+      li + li {
+        border-top: 0;
+      }
+
+      li {
+        a {
+          position: relative;
+          padding-right: 54px;
+
+          span.glyphicon {
+            margin-right: 0;
+            position: absolute;
+            right: 20px;
+            top: 5px;
+          }
+        }
+
+        &.divider {
+          margin: 5px 0;
+        }
+      }
+    }
+
+    .row-btn-top {
+      & > * {
+        margin-bottom: 5px;
+      }
     }
   }
 
@@ -261,8 +294,7 @@
           font-weight: 500;
           margin-right: 5px;
           margin-top: 5px;
-x
-          &:focus {
+          x &:focus {
             border-top: 4px solid #ec9f09;
             padding-top: 7px;
             text-decoration: underline;

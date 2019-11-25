@@ -1,3 +1,5 @@
+/* global $ */
+
 /* exported deepCloneObject */
 function deepCloneObject(obj) {
   if (Array.isArray(obj)) {
@@ -68,3 +70,42 @@ function stringToFunction(str) {
 
   return null;
 }
+
+/* exported ajaxes */
+function ajaxes(options) {
+  if (Array.isArray(options)) {
+    return Promise.all(options.map((option) => ajaxes(option)));
+  }
+
+  let promise;
+
+  if (options) {
+    promise = new Promise((resolve, reject) => {
+      ajaxes.requests.push(() => {
+        ajaxes.active++;
+        setTimeout(() => {
+          $.ajax(options).then((data, textStatus, jqXHR) => {
+            ajaxes.active--;
+            resolve({ data, textStatus, jqXHR });
+            ajaxes();
+          }, (jqXHR, textStatus, errorThrown) => {
+            ajaxes.active--;
+            ajaxes();
+            reject({ jqXHR, textStatus, errorThrown });
+          });
+        }, ajaxes.DELAY);
+      });
+    });
+  }
+
+  if (ajaxes.active !== ajaxes.MAX && ajaxes.requests.length > 0) {
+    (ajaxes.requests.shift())();
+  }
+
+  return promise;
+}
+
+ajaxes.requests = [];
+ajaxes.active = 0;
+ajaxes.MAX = 3;
+ajaxes.DELAY = 0;
