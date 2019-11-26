@@ -77,9 +77,9 @@ function renderHomePage($container, query, auth) {
       <div class="panel panel-default">
         <div class="panel-heading">Locker Locations</div>
         <div class="list-group">
-          <a href="#locations?${query_objectToString({ option: 'today', resetState: 'yes' })}" class="list-group-item"><span class="badge badge-locations-today">?</span> Today</a>
-          <a href="#locations?${query_objectToString({ option: 'thisyear', resetState: 'yes' })}" class="list-group-item"><span class="badge badge-locations-thisyear">?</span> This Year</a>
-          <a href="#locations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item"><span class="badge badge-locations">?</span> All</a>
+          <a href="#locations?${query_objectToString({ option: 'today', resetState: 'yes' })}" class="list-group-item"><span class="badge badge-locations-today">?</span> Today's Entries</a>
+          <a href="#locations?${query_objectToString({ option: 'thisyear', resetState: 'yes' })}" class="list-group-item"><span class="badge badge-locations-thisyear">?</span> This Year's Entries</a>
+          <a href="#locations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item"><span class="badge badge-locations">?</span> All Entries</a>
         </div>
       </div>
     </div>
