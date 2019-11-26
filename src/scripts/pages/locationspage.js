@@ -78,8 +78,7 @@ function renderLocationsPage($pageContainer, query, auth) {
         } else {
           return '-';
         }
-      },
-      width: '200px'
+      }
     },
     'Modified By': {
       title: 'Modified By',

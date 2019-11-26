@@ -87,8 +87,7 @@ function renderLockersPage($pageContainer, query, auth) {
         } else {
           return '-';
         }
-      },
-      width: '200px'
+      }
     },
     'Modified By': {
       title: 'Modified By',
@@ -136,8 +135,6 @@ function renderLockersPage($pageContainer, query, auth) {
   definition.order.push([1, 'asc']);
 
   definition.initComplete = function (settings, json) {
-    console.log(json);
-
     if (json && json.data && json.data.length > 0) {
       const filter = json.data
         .map((value) => value.location)

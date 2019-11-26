@@ -40,9 +40,25 @@ Bicycle Parking
 |   +-- Lockers
 |
 +-- Lockers
-|   +-- Location
-|   +-- Number
-|   +-- Description
+|   +-- Locker Details
+|   |   +-- Location
+|   |   +-- Number
+|   |   +-- Description
+|   +-- Staffs
+|   |   +-- First Name
+|   |   +-- Last Name
+|   |   +-- Email Address
+|   |   +-- Primary Phone
+|   |   +-- Alternate Phone
+|   +-- Inspections
+|       +-- Date
+|       +-- Staff
+|       |   +-- First Name
+|       |   +-- Last Name
+|       |   +-- Email Address
+|       |   +-- Primary Phone
+|       |   +-- Alternate Phone
+|       +-- Result
 |
 +-- Stations
 |

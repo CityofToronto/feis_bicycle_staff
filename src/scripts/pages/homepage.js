@@ -175,9 +175,9 @@ function renderHomePage($container, query, auth) {
           <p>Praesent venenatis nulla augue, vel sagittis libero lacinia sit amet.</p>
         </div>
         <div class="list-group">
-          <a href="#stations?${query_objectToString({ option: 'today' })}" class="list-group-item"><span class="badge badge-stations-today">?</span> Today</a>
-          <a href="#stations?${query_objectToString({ option: 'thisyear' })}" class="list-group-item"><span class="badge badge-stations-thisyear">?</span> This Year</a>
-          <a href="#stations" class="list-group-item"><span class="badge badge-stations">?</span> All</a>
+          <a href="#stations?${query_objectToString({ option: 'today', resetState: 'yes' })}" class="list-group-item"><span class="badge badge-stations-today">?</span> Today</a>
+          <a href="#stations?${query_objectToString({ option: 'thisyear', resetState: 'yes' })}" class="list-group-item"><span class="badge badge-stations-thisyear">?</span> This Year</a>
+          <a href="#stations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item"><span class="badge badge-stations">?</span> All</a>
         </div>
       </div>
     </div>

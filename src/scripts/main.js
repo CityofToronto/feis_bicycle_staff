@@ -64,7 +64,7 @@ $(function () {
     }
   }
 
-  function handleResetStateQuery(router, query, cbk) {
+  function handleResetStateQuery(router, query, cbk = (() => {})) {
     const queryObject = query_stringToObject(query);
     if (queryObject.resetState) {
       cbk();
@@ -188,6 +188,8 @@ $(function () {
           return;
         }
 
+        query = handleResetStateQuery(this, query);
+
         const breadcrumb = [{ name: 'Locker Locations', link: '#locations' }];
 
         if (id === 'new') {
@@ -246,14 +248,18 @@ $(function () {
       });
     },
 
-    /* global renderStationsPage */
+    /* global renderStationsPage clearStationsState */
     routeStations(query) {
       return auth_checkLogin(auth).then((isLoggedIn) => {
         if (!isLoggedIn) {
           this.navigate(`login?${query_objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
           return;
         }
+
+        query = handleResetStateQuery(this, query, () => { clearStationsState(); });
+
         updatePageHeader('Stations');
+
         return renderStationsPage($pageContainer, query, auth);
       });
     },
