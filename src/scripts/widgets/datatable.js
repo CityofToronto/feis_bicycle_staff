@@ -40,10 +40,11 @@ function renderDatatable($container, definition, options = {}) {
           .join(',');
 
         const dateFilter = (column, filterString) => {
-          if (filterString.indexOf('to') !== -1) {
+          filterString = filterString.toLowerCase();
+          if (filterString.indexOf(' to ') !== -1) {
             const [startDate, endDate] = filterString.split('to');
-            const momentStartDate = moment(startDate);
-            const momentEndDate = moment(endDate);
+            const momentStartDate = moment(startDate.trim());
+            const momentEndDate = moment(endDate.trim());
             if (momentStartDate.isValid() || momentEndDate.isValid()) {
               let returnValues = [];
               if (momentStartDate.isValid()) {
@@ -267,7 +268,7 @@ function renderDatatable($container, definition, options = {}) {
                     ${isCurrent ? '<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>' : ''}
                   </a>
                 </li>
-              `)}
+              `).join('')}
             ` : ''}
           </ul>
         </div>
@@ -380,8 +381,11 @@ function renderDatatable($container, definition, options = {}) {
   $innerContainer.on('keyup click', '.btn-reset', () => {
     datatable.search('');
     datatable.columns()[0].forEach((index) => {
-      $table.find(`[data-column-index="${index}"]`).val('');
-      datatable.column(index).search('');
+      const $input = $table.find(`[data-column-index="${index}"]`);
+      if ($input.is(':visible')) {
+        $input.val('');
+        datatable.column(index).search('');
+      }
     });
     datatable.draw();
   });

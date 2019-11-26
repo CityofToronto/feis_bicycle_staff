@@ -3,11 +3,17 @@
 /* exported renderStationDetailsPage */
 function renderStationDetailsPage($container, id, query, auth, routeCbk) {
   if (id === 'new') {
-    id =  null;
+    id = null;
+  }
+
+  if (query) {
+    query = `?${query}`;
+  } else {
+    query = '';
   }
 
   $container.html(`
-    <p><a href="#stations">Back to Stations</a></p>
+    <p><a href="#stations${query}">Back to Stations</a></p>
 
     ${id ? `
       <div class="navbar">
@@ -54,18 +60,9 @@ function renderStationDetailsPage($container, id, query, auth, routeCbk) {
               {
                 title: 'Description',
                 bindTo: 'description',
-                className: 'col-xs-12 col-sm-8'
-              }
-            ]
-          },
-          {
-            fields: [
-              {
-                title: 'Capacity',
-                bindTo: 'capacity',
-                type: 'number',
-                required: true,
-                className: 'col-xs-12 col-sm-4'
+                className: 'col-xs-12 col-sm-8',
+                type: 'textarea',
+                row: 3
               }
             ]
           },
@@ -95,6 +92,17 @@ function renderStationDetailsPage($container, id, query, auth, routeCbk) {
                 validationtype: 'PostalCode'
               }
             ]
+          },
+          {
+            fields: [
+              {
+                title: 'Capacity',
+                bindTo: 'capacity',
+                type: 'number',
+                required: true,
+                className: 'col-xs-12 col-sm-4'
+              }
+            ]
           }
         ]
       }
@@ -112,7 +120,7 @@ function renderStationDetailsPage($container, id, query, auth, routeCbk) {
 
     saveButtonLabel: (model) => model.isNew() ? 'Create Station' : 'Update Station',
     cancelButtonLabel: 'Cancel',
-    cancelButtonFragment: 'stations',
+    cancelButtonFragment: `stations${query}`,
     removeButtonLabel: 'Remove Station',
     removePromptValue: 'DELETE'
   });

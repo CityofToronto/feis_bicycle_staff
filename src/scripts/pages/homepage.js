@@ -55,9 +55,9 @@ function renderHomePage($container, query, auth) {
         </div>
         <div class="list-group">
           <a href="#subscriptions" class="list-group-item"><span class="badge">?</span> About to Expire</a>
-          <a href="#subscriptions?${query_objectToString({ option: 'today' })}" class="list-group-item"><span class="badge">?</span> Today</a>
-          <a href="#subscriptions?${query_objectToString({ option: 'thisyear' })}" class="list-group-item"><span class="badge">?</span> This Year</a>
-          <a href="#subscriptions" class="list-group-item"><span class="badge">?</span> All</a>
+          <a href="#subscriptions?${query_objectToString({ option: 'today', resetState: 'yes' })}" class="list-group-item"><span class="badge">?</span> Today</a>
+          <a href="#subscriptions?${query_objectToString({ option: 'thisyear', resetState: 'yes' })}" class="list-group-item"><span class="badge">?</span> This Year</a>
+          <a href="#subscriptions?${query_objectToString({ resetState: 'yes' })}" class="list-group-item"><span class="badge">?</span> All</a>
         </div>
       </div>
     </div>
@@ -92,9 +92,9 @@ function renderHomePage($container, query, auth) {
           <p>Phasellus dapibus, quam et pulvinar congue, turpis dui dictum quam, vitae iaculis magna dolor ut metus.</p>
         </div>
         <div class="list-group">
-          <a href="#locations?${query_objectToString({ option: 'today' })}" class="list-group-item"><span class="badge badge-locations-today">?</span> Today</a>
-          <a href="#locations?${query_objectToString({ option: 'thisyear' })}" class="list-group-item"><span class="badge badge-locations-thisyear">?</span> This Year</a>
-          <a href="#locations" class="list-group-item"><span class="badge badge-locations">?</span> All</a>
+          <a href="#locations?${query_objectToString({ option: 'today', resetState: 'yes' })}" class="list-group-item"><span class="badge badge-locations-today">?</span> Today</a>
+          <a href="#locations?${query_objectToString({ option: 'thisyear', resetState: 'yes' })}" class="list-group-item"><span class="badge badge-locations-thisyear">?</span> This Year</a>
+          <a href="#locations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item"><span class="badge badge-locations">?</span> All</a>
         </div>
       </div>
     </div>
@@ -134,9 +134,9 @@ function renderHomePage($container, query, auth) {
           <p>Vestibulum finibus rhoncus vulputate.</p>
         </div>
         <div class="list-group">
-          <a href="#lockers?${query_objectToString({ option: 'today' })}" class="list-group-item"><span class="badge badge-lockers-today">?</span> Today</a>
-          <a href="#lockers?${query_objectToString({ option: 'thisyear' })}" class="list-group-item"><span class="badge badge-lockers-thisyear">?</span> This Year</a>
-          <a href="#lockers" class="list-group-item"><span class="badge badge-lockers">?</span> All</a>
+          <a href="#lockers?${query_objectToString({ option: 'today', resetState: 'yes' })}" class="list-group-item"><span class="badge badge-lockers-today">?</span> Today</a>
+          <a href="#lockers?${query_objectToString({ option: 'thisyear', resetState: 'yes' })}" class="list-group-item"><span class="badge badge-lockers-thisyear">?</span> This Year</a>
+          <a href="#lockers?${query_objectToString({ resetState: 'yes' })}" class="list-group-item"><span class="badge badge-lockers">?</span> All</a>
         </div>
       </div>
     </div>
@@ -175,9 +175,9 @@ function renderHomePage($container, query, auth) {
           <p>Praesent venenatis nulla augue, vel sagittis libero lacinia sit amet.</p>
         </div>
         <div class="list-group">
-          <a href="#stations?${query_objectToString({ option: 'today' })}" class="list-group-item"><span class="badge badge-stations-today">?</span> Today</a>
-          <a href="#stations?${query_objectToString({ option: 'thisyear' })}" class="list-group-item"><span class="badge badge-stations-thisyear">?</span> This Year</a>
-          <a href="#stations" class="list-group-item"><span class="badge badge-stations">?</span> All</a>
+          <a href="#stations?${query_objectToString({ option: 'today', resetState: 'yes' })}" class="list-group-item"><span class="badge badge-stations-today">?</span> Today</a>
+          <a href="#stations?${query_objectToString({ option: 'thisyear', resetState: 'yes' })}" class="list-group-item"><span class="badge badge-stations-thisyear">?</span> This Year</a>
+          <a href="#stations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item"><span class="badge badge-stations">?</span> All</a>
         </div>
       </div>
     </div>
@@ -226,7 +226,7 @@ function renderHomePage($container, query, auth) {
   $row2.append($keyfobsColumn);
 
   ajaxes({
-    url: '/* @echo C3DATA_KEYFOBS */?$count=true&$select=id&$top=1',
+    url: `/* @echo C3DATA_KEYFOBS */?$count=true&$select=id&$top=1&$filter=__Status eq 'Active' and __ModifiedOn ge ${oData_escapeValue(moment().startOf('day').format())} and __ModifiedOn le ${oData_escapeValue(moment().endOf('day').format())}`,
     method: 'GET',
     beforeSend(jqXHR) { if (auth && auth.sId) { jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`); } }
   }).then(({ data }) => {
@@ -234,7 +234,7 @@ function renderHomePage($container, query, auth) {
   });
 
   ajaxes({
-    url: '/* @echo C3DATA_KEYFOBS */?$count=true&$select=id&$top=1',
+    url: `/* @echo C3DATA_KEYFOBS */?$count=true&$select=id&$top=1&$filter=__Status eq 'Active' and __ModifiedOn ge ${oData_escapeValue(moment().startOf('year').format())} and __ModifiedOn le ${oData_escapeValue(moment().endOf('year').format())}`,
     method: 'GET',
     beforeSend(jqXHR) { if (auth && auth.sId) { jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`); } }
   }).then(({ data }) => {
@@ -302,50 +302,6 @@ function renderHomePage($container, query, auth) {
     </div>
   `);
   $row3.append($errorLogsColumn);
-
-
-  // ajaxes([
-  //   {
-  //     url: '/* @echo C3DATA_LOCKERS */?$count=true&$select=id&$top=1',
-  //     method: 'GET',
-  //     success(data) {
-  //       $container.find('.badge-lockers').html(data['@odata.count']);
-  //     },
-  //     beforeSend(jqXHR) {
-  //       if (auth && auth.sId) {
-  //         jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
-  //       }
-  //     }
-  //   },
-  //   {
-  //     url: '/* @echo C3DATA_STATIONS */?$count=true&$select=id&$top=1',
-  //     method: 'GET',
-  //     success(data) {
-  //       $container.find('.badge-stations').html(data['@odata.count']);
-  //     },
-  //     beforeSend(jqXHR) {
-  //       if (auth && auth.sId) {
-  //         jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
-  //       }
-  //     }
-  //   },
-  //   {
-  //     url: '/* @echo C3DATA_KEYFOBS */?$count=true&$select=id&$top=1',
-  //     method: 'GET',
-  //     success(data) {
-  //       $container.find('.badge-keyfobs').html(data['@odata.count']);
-  //     },
-  //     beforeSend(jqXHR) {
-  //       if (auth && auth.sId) {
-  //         jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
-  //       }
-  //     }
-  //   }
-  // ], {
-  //   max: 2
-  // }).then(() => {
-  //   console.log('finish');
-  // });
 
   fixButtonLinks($container);
 }

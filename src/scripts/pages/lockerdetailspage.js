@@ -3,11 +3,17 @@
 /* exported renderLockerDetailsPage */
 function renderLockerDetailsPage($container, id, query, auth, routeCbk) {
   if (id === 'new') {
-    id =  null;
+    id = null;
+  }
+
+  if (query) {
+    query = `?${query}`;
+  } else {
+    query = '';
   }
 
   $container.html(`
-    <p><a href="#lockers">Back to Lockers</a></p>
+    <p><a href="#lockers${query}">Back to Lockers</a></p>
 
     ${id ? `
       <div class="navbar">
@@ -73,7 +79,7 @@ function renderLockerDetailsPage($container, id, query, auth, routeCbk) {
                 title: 'Description',
                 bindTo: 'description',
                 type: 'textarea',
-                rows: 5,
+                rows: 3,
                 className: 'col-xs-12 col-sm-8'
               }
             ]
@@ -94,7 +100,7 @@ function renderLockerDetailsPage($container, id, query, auth, routeCbk) {
 
     saveButtonLabel: (model) => model.isNew() ? 'Create Locker' : 'Update Locker',
     cancelButtonLabel: 'Cancel',
-    cancelButtonFragment: 'lockers',
+    cancelButtonFragment: `lockers${query}`,
     removeButtonLabel: 'Remove Locker',
     removePromptValue: 'DELETE'
   });

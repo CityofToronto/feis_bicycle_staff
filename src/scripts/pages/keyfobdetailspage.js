@@ -6,8 +6,14 @@ function renderKeyfobDetailsPage($container, id, query, auth, routeCbk) {
     id = null;
   }
 
+  if (query) {
+    query = `?${query}`;
+  } else {
+    query = '';
+  }
+
   $container.html(`
-    <p><a href="#keyfobs">Back to Station Key Fobs</a></p>
+    <p><a href="#keyfobs${query}">Back to Station Key Fobs</a></p>
 
     ${id ? `
       <div class="navbar">
@@ -48,7 +54,7 @@ function renderKeyfobDetailsPage($container, id, query, auth, routeCbk) {
           {
             fields: [
               {
-                title: 'number',
+                title: 'Number',
                 bindTo: 'number',
                 required: true,
                 className: 'col-xs-12 col-sm-4'
@@ -57,7 +63,7 @@ function renderKeyfobDetailsPage($container, id, query, auth, routeCbk) {
                 title: 'Description',
                 bindTo: 'description',
                 type: 'textarea',
-                rows: 5,
+                rows: 3,
                 className: 'col-xs-12 col-sm-8'
               }
             ]
@@ -82,7 +88,15 @@ function renderKeyfobDetailsPage($container, id, query, auth, routeCbk) {
                   return result.value.map((value) => ({
                     value: value.id,
                     text: value.name
-                  }));
+                  })).sort((a, b) => {
+                    if (a.text.toLowerCase() < b.text.toLowerCase()) {
+                      return -1;
+                    }
+                    if (a.text.toLowerCase() > b.text.toLowerCase()) {
+                      return 1;
+                    }
+                    return 0;
+                  });
                 }
               }
             ]
@@ -103,7 +117,7 @@ function renderKeyfobDetailsPage($container, id, query, auth, routeCbk) {
 
     saveButtonLabel: (model) => model.isNew() ? 'Create Station Key Fob' : 'Update Station Key Fob',
     cancelButtonLabel: 'Cancel',
-    cancelButtonFragment: 'keyfobs',
+    cancelButtonFragment: `keyfobs${query}`,
     removeButtonLabel: 'Remove Station Key Fob',
     removePromptValue: 'DELETE'
   });
