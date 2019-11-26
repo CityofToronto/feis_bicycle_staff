@@ -6,7 +6,7 @@
 function renderHomePage($container, query, auth) {
   $container.empty();
 
-  $container.append('<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi in nulla et ante ullamcorper elementum suscipit vel nibh. Duis accumsan nibh nec consequat vestibulum.</p>');
+  // $container.append('<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi in nulla et ante ullamcorper elementum suscipit vel nibh. Duis accumsan nibh nec consequat vestibulum.</p>');
 
   const $row1 = $('<div class="row"></div>');
   $container.append($row1);
