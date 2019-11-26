@@ -12,6 +12,12 @@ Bicycle Parking
 |
 +-- Locker Locations
 |   +-- Locker Location Details
+|   |   +-- Name
+|   |   +-- Description
+|   |   +-- Civic Address
+|   |   +-- Municipality
+|   |   +-- Province
+|   |   +-- Postal Code
 |   +-- Notes
 |   |   +-- Date
 |   |   +-- Note
@@ -34,6 +40,9 @@ Bicycle Parking
 |   +-- Lockers
 |
 +-- Lockers
+|   +-- Location
+|   +-- Number
+|   +-- Description
 |
 +-- Stations
 |

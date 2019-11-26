@@ -3,11 +3,17 @@
 /* exported renderLocationDetailsPage */
 function renderLocationDetailsPage($container, id, query, auth, routeCbk) {
   if (id === 'new') {
-    id =  null;
+    id = null;
+  }
+
+  if (query) {
+    query = `?${query}`;
+  } else {
+    query = '';
   }
 
   $container.html(`
-    <p><a href="#locations">Back to Locker Locations</a></p>
+    <p><a href="#locations${query}">Back to Locker Locations</a></p>
 
     ${id ? `
       <div class="navbar">
@@ -118,7 +124,7 @@ function renderLocationDetailsPage($container, id, query, auth, routeCbk) {
 
     saveButtonLabel: (model) => model.isNew() ? 'Create Locker Location' : 'Update Locker Location',
     cancelButtonLabel: 'Cancel',
-    cancelButtonFragment: 'locations',
+    cancelButtonFragment: `locations${query}`,
     removeButtonLabel: 'Remove Locker Location',
     removePromptValue: 'DELETE'
   });

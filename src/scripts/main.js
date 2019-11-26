@@ -45,9 +45,7 @@ $(function () {
       document.title = app.name;
 
       app.setTitle(app.name);
-      app.setBreadcrumb([
-        { 'name': app.name, 'link': `#${DEFAULT_ROUTE_FRAGMENT}` }
-      ], true);
+      app.setBreadcrumb([{ 'name': app.name, 'link': `#${DEFAULT_ROUTE_FRAGMENT}` }], true);
     } else {
       document.title = `${documentTitle} - ${app.name}`;
 
@@ -64,6 +62,24 @@ $(function () {
     } else {
       setPageHeaderFocus = true;
     }
+  }
+
+  function handleResetStateQuery(router, query, cbk) {
+    const queryObject = query_stringToObject(query);
+    if (queryObject.resetState) {
+      cbk();
+
+      delete queryObject.resetState;
+      query = query_objectToString(queryObject);
+
+      let queryString = query;
+      if (queryString) {
+        queryString = `?${queryString}`;
+      }
+      router.navigate(`locations${queryString}`, { trigger: false, replace: true });
+    }
+
+    return query;
   }
 
   //////////////////////////////////////////////////
@@ -107,7 +123,9 @@ $(function () {
           this.navigate(`login?${query_objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
           return;
         }
+
         updatePageHeader();
+
         return renderHomePage($pageContainer, query, auth);
       });
     },
@@ -119,7 +137,9 @@ $(function () {
           this.navigate(query_stringToObject(query).redirect || this.defaultFragment, { trigger: true });
           return;
         }
+
         updatePageHeader('Bicycle Parking', [], { breadcrumbTitle: 'Login', documentTitle: 'Login' });
+
         return renderLoginPage($pageContainer, query, auth, () => {
           auth_checkLogin(auth).then((isLoggedIn) => {
             if (isLoggedIn) {
@@ -134,20 +154,28 @@ $(function () {
     /* global renderLogoutPage */
     routeLogout(query) {
       auth_logout(auth);
+
       updatePageHeader('Bicycle Parking', [], { breadcrumbTitle: 'Logout', documentTitle: 'Logout' });
+
       return renderLogoutPage($pageContainer, query);
     },
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /* global renderLocationsPage */
+    /* global renderLocationsPage clearLocationsState */
     routeLocations(query) {
       return auth_checkLogin(auth).then((isLoggedIn) => {
         if (!isLoggedIn) {
           this.navigate(`login?${query_objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
           return;
         }
+
+        query = handleResetStateQuery(this, query, () => {
+          clearLocationsState();
+        });
+
         updatePageHeader('Locker Locations');
+
         return renderLocationsPage($pageContainer, query, auth);
       });
     },
@@ -163,28 +191,32 @@ $(function () {
         const breadcrumb = [{ name: 'Locker Locations', link: '#locations' }];
 
         if (id === 'new') {
-          updatePageHeader('New Locker Location', breadcrumb,  { breadcrumbTitle: 'New' });
+          updatePageHeader('New Locker Location', breadcrumb, { breadcrumbTitle: 'New' });
         } else {
           updatePageHeader('', breadcrumb);
         }
 
         return renderLocationDetailsPage($pageContainer, id, query, auth, (model) => {
           if (model.id) {
-            this.navigate(`locations/${model.id}`, { trigger: false, replace: true });
+            this.navigate(`locations/${model.id}${query ? `?${query}` : ''}`, { trigger: false, replace: true });
             updatePageHeader(model.escape('name'), breadcrumb, { ignoreFocus: true });
           }
         });
       });
     },
 
-    /* global renderLockersPage */
+    /* global renderLockersPage clearLockersState */
     routeLockers(query) {
       return auth_checkLogin(auth).then((isLoggedIn) => {
         if (!isLoggedIn) {
           this.navigate(`login?${query_objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
           return;
         }
+
+        query = handleResetStateQuery(this, query, () => { clearLockersState(); });
+
         updatePageHeader('Lockers');
+
         return renderLockersPage($pageContainer, query, auth);
       });
     },
@@ -200,7 +232,7 @@ $(function () {
         const breadcrumb = [{ name: 'Lockers', link: '#lockers' }];
 
         if (id === 'new') {
-          updatePageHeader('New Locker', breadcrumb,  { breadcrumbTitle: 'New' });
+          updatePageHeader('New Locker', breadcrumb, { breadcrumbTitle: 'New' });
         } else {
           updatePageHeader('', breadcrumb);
         }
@@ -237,7 +269,7 @@ $(function () {
         const breadcrumb = [{ name: 'Stations', link: '#stations' }];
 
         if (id === 'new') {
-          updatePageHeader('New Station', breadcrumb,  { breadcrumbTitle: 'New' });
+          updatePageHeader('New Station', breadcrumb, { breadcrumbTitle: 'New' });
         } else {
           updatePageHeader('', breadcrumb);
         }
@@ -274,7 +306,7 @@ $(function () {
         const breadcrumb = [{ name: 'Stations Key Fobs', link: '#keyfobs' }];
 
         if (id === 'new') {
-          updatePageHeader('New Station Key Fobs', breadcrumb,  { breadcrumbTitle: 'New' });
+          updatePageHeader('New Station Key Fobs', breadcrumb, { breadcrumbTitle: 'New' });
         } else {
           updatePageHeader('', breadcrumb);
         }
