@@ -289,14 +289,18 @@ $(function () {
       });
     },
 
-    /* global renderKeyfobsPage */
+    /* global renderKeyfobsPage clearKeyfobsState */
     routeKeyfobs(query) {
       return auth_checkLogin(auth).then((isLoggedIn) => {
         if (!isLoggedIn) {
           this.navigate(`login?${query_objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
           return;
         }
+
+        query = handleResetStateQuery(this, query, () => { clearKeyfobsState(); });
+
         updatePageHeader('Station Key Fobs');
+
         return renderKeyfobsPage($pageContainer, query, auth);
       });
     },

@@ -44,6 +44,7 @@ function renderLockersPage($pageContainer, query, auth) {
       className: 'minWidth',
       data: 'location',
       type: 'string',
+      searchType: 'equals',
       choices: {
         url: '/* @echo C3DATA_LOCATIONS */?$select=id,name&$filter=__Status eq \'Active\'&$top=5000',
         beforeSend(jqXHR) {
@@ -53,14 +54,13 @@ function renderLockersPage($pageContainer, query, auth) {
         }
       },
       choicesMap(data) {
-        console.log(data);
         if (data && data.value) {
           return data.value.map((value) => ({ text: value.name, value: value.id }));
         }
         return [];
       },
       render(data) {
-        return locationMap[data] || '-';
+        return locationMap[data] || '...';
       }
     },
     'Number': {
@@ -91,7 +91,7 @@ function renderLockersPage($pageContainer, query, auth) {
     },
     'Modified By': {
       title: 'Modified By',
-      className: 'minWidthSmall',
+      className: 'minWidth',
       data: '__Owner',
       type: 'string'
     },
@@ -142,8 +142,6 @@ function renderLockersPage($pageContainer, query, auth) {
         .map((value) => `id eq '${value}'`)
         .join(' or ');
 
-      console.log(filter);
-
       $.ajax(`/* @echo C3DATA_LOCATIONS */?$select=id,name&$filter=${filter}`, {
         beforeSend(jqXHR) {
           if (auth && auth.sId) {
@@ -178,8 +176,10 @@ function renderLockersPage($pageContainer, query, auth) {
   switch (queryObject.option) {
     case 'today':
       definition.columns[6] = columns['Hidden Modified On'];
+      definition.columns[7] = columns['Hidden Status'];
 
       definition.searchCols[6] = { search: moment().format() };
+      definition.searchCols[7] = { search: 'Active' };
 
       related[0].isCurrent = true;
       break;

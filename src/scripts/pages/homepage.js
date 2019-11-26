@@ -226,7 +226,7 @@ function renderHomePage($container, query, auth) {
   $row2.append($keyfobsColumn);
 
   ajaxes({
-    url: '/* @echo C3DATA_KEYFOBS */?$count=true&$select=id&$top=1',
+    url: `/* @echo C3DATA_KEYFOBS */?$count=true&$select=id&$top=1&$filter=__Status eq 'Active' and __ModifiedOn ge ${oData_escapeValue(moment().startOf('day').format())} and __ModifiedOn le ${oData_escapeValue(moment().endOf('day').format())}`,
     method: 'GET',
     beforeSend(jqXHR) { if (auth && auth.sId) { jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`); } }
   }).then(({ data }) => {
@@ -234,7 +234,7 @@ function renderHomePage($container, query, auth) {
   });
 
   ajaxes({
-    url: '/* @echo C3DATA_KEYFOBS */?$count=true&$select=id&$top=1',
+    url: `/* @echo C3DATA_KEYFOBS */?$count=true&$select=id&$top=1&$filter=__Status eq 'Active' and __ModifiedOn ge ${oData_escapeValue(moment().startOf('year').format())} and __ModifiedOn le ${oData_escapeValue(moment().endOf('year').format())}`,
     method: 'GET',
     beforeSend(jqXHR) { if (auth && auth.sId) { jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`); } }
   }).then(({ data }) => {

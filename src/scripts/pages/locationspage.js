@@ -82,7 +82,7 @@ function renderLocationsPage($pageContainer, query, auth) {
     },
     'Modified By': {
       title: 'Modified By',
-      className: 'minWidthSmall',
+      className: 'minWidth',
       data: '__Owner',
       type: 'string'
     },
@@ -143,8 +143,10 @@ function renderLocationsPage($pageContainer, query, auth) {
   switch (queryObject.option) {
     case 'today':
       definition.columns[6] = columns['Hidden Modified On'];
+      definition.columns[7] = columns['Hidden Status'];
 
       definition.searchCols[6] = { search: moment().format() };
+      definition.searchCols[7] = { search: 'Active' };
 
       related[0].isCurrent = true;
       break;

@@ -65,7 +65,7 @@ function renderStationsPage($pageContainer, query, auth) {
     },
     'Modified By': {
       title: 'Modified By',
-      className: 'minWidthSmall',
+      className: 'minWidth',
       data: '__Owner',
       type: 'string'
     },
@@ -125,8 +125,10 @@ function renderStationsPage($pageContainer, query, auth) {
   switch (queryObject.option) {
     case 'today':
       definition.columns[5] = columns['Hidden Modified On'];
+      definition.columns[6] = columns['Hidden Status'];
 
       definition.searchCols[5] = { search: moment().format() };
+      definition.searchCols[6] = { search: 'Active' };
 
       related[0].isCurrent = true;
       break;
@@ -143,12 +145,9 @@ function renderStationsPage($pageContainer, query, auth) {
 
     default:
       definition.columns[5] = columns['Status'];
-      console.log('DEFAULT', definition.columns[5]);
 
       related[2].isCurrent = true;
   }
-
-  console.log('DEFINITION', definition);
 
   renderDatatable($pageContainer.find('.datatable'), definition, {
     auth,
