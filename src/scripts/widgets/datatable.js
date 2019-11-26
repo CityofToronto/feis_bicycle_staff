@@ -338,7 +338,9 @@ function renderDatatable($container, definition, options = {}) {
     <table class="table table-bordered table-striped" width="100%">
       <thead>
         <tr>
-          ${definition.columns.map((column) => `<th>${column.orderable === false ? '<button style="display:none;"></button>' : ''}${column.title || ''}</th>`).join('')}
+          ${definition.columns.map((column) => {
+            return `<th>${column.orderable === false ? '<button style="display:none;"></button>' : ''}${column.title || ''}</th>`;
+          }).join('')}
         </tr>
       </thead>
     </table>
