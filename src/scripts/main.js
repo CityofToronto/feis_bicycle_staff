@@ -64,7 +64,7 @@ $(function () {
     }
   }
 
-  function handleResetStateQuery(router, query, cbk = (() => {})) {
+  function handleResetStateQuery(router, fragment, query, cbk = (() => { })) {
     const queryObject = query_stringToObject(query);
     if (queryObject.resetState) {
       cbk();
@@ -76,7 +76,7 @@ $(function () {
       if (queryString) {
         queryString = `?${queryString}`;
       }
-      router.navigate(`locations${queryString}`, { trigger: false, replace: true });
+      router.navigate(`${fragment}${queryString}`, { trigger: false, replace: true });
     }
 
     return query;
@@ -92,6 +92,11 @@ $(function () {
     defaultFragment: DEFAULT_ROUTE_FRAGMENT,
 
     routes: {
+      'registrations/:id(/)': 'routeRegistrationDetails',
+      'registrations(/)': 'routeRegistrations',
+
+      // ---
+
       'locations/:id(/)': 'routeLocationDetails',
       'locations(/)': 'routeLocations',
 
@@ -162,6 +167,58 @@ $(function () {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /* global renderRegistrationsPage clearRegistrationsState */
+    routeRegistrations(query) {
+      return auth_checkLogin(auth).then((isLoggedIn) => {
+        if (!isLoggedIn) {
+          this.navigate(`login?${query_objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
+          return;
+        }
+
+        query = handleResetStateQuery(this, 'registrations', query, () => {
+          clearRegistrationsState();
+        });
+
+        updatePageHeader('Registrations');
+
+        return renderRegistrationsPage($pageContainer, query, auth);
+      });
+    },
+
+    /* global renderRegistrationDetailsPage */
+    routeRegistrationDetails(id, query) {
+      return auth_checkLogin(auth).then((isLoggedIn) => {
+        if (!isLoggedIn) {
+          this.navigate(`login?${query_objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
+          return;
+        }
+
+        query = handleResetStateQuery(this, `registrations/${id}`, query);
+
+        const breadcrumb = [{ name: 'Locker Locations', link: '#locations' }];
+
+        if (id === 'new') {
+          updatePageHeader('New Registration', breadcrumb, { breadcrumbTitle: 'New' });
+        } else {
+          updatePageHeader('', breadcrumb);
+        }
+
+        return renderRegistrationDetailsPage($pageContainer, id, query, auth, (model) => {
+          if (model.id) {
+            let finalQuery = '';
+            if (query) {
+              finalQuery = `?${query}`;
+            }
+
+            this.navigate(`registrations/${model.id}${finalQuery}`, { trigger: false, replace: true });
+            updatePageHeader(model.escape('name'), breadcrumb, { ignoreFocus: true });
+          }
+        });
+      });
+    },
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     /* global renderLocationsPage clearLocationsState */
     routeLocations(query) {
       return auth_checkLogin(auth).then((isLoggedIn) => {
@@ -170,7 +227,7 @@ $(function () {
           return;
         }
 
-        query = handleResetStateQuery(this, query, () => {
+        query = handleResetStateQuery(this, 'locations', query, () => {
           clearLocationsState();
         });
 
@@ -188,7 +245,7 @@ $(function () {
           return;
         }
 
-        query = handleResetStateQuery(this, query);
+        query = handleResetStateQuery(this, `locations/${id}`, query);
 
         const breadcrumb = [{ name: 'Locker Locations', link: '#locations' }];
 
@@ -200,7 +257,12 @@ $(function () {
 
         return renderLocationDetailsPage($pageContainer, id, query, auth, (model) => {
           if (model.id) {
-            this.navigate(`locations/${model.id}${query ? `?${query}` : ''}`, { trigger: false, replace: true });
+            let finalQuery = '';
+            if (query) {
+              finalQuery = `?${query}`;
+            }
+
+            this.navigate(`locations/${model.id}${finalQuery}`, { trigger: false, replace: true });
             updatePageHeader(model.escape('name'), breadcrumb, { ignoreFocus: true });
           }
         });
@@ -215,7 +277,7 @@ $(function () {
           return;
         }
 
-        query = handleResetStateQuery(this, query, () => { clearLockersState(); });
+        query = handleResetStateQuery(this, 'lockers', query, () => { clearLockersState(); });
 
         updatePageHeader('Lockers');
 
@@ -231,6 +293,8 @@ $(function () {
           return;
         }
 
+        query = handleResetStateQuery(this, `lockers/${id}`, query);
+
         const breadcrumb = [{ name: 'Lockers', link: '#lockers' }];
 
         if (id === 'new') {
@@ -241,7 +305,12 @@ $(function () {
 
         return renderLockerDetailsPage($pageContainer, id, query, auth, (model) => {
           if (model.id) {
-            this.navigate(`lockers/${model.id}`, { trigger: false, replace: true });
+            let finalQuery = '';
+            if (query) {
+              finalQuery = `?${query}`;
+            }
+
+            this.navigate(`lockers/${model.id}${finalQuery}`, { trigger: false, replace: true });
             updatePageHeader(model.escape('number'), breadcrumb, { ignoreFocus: true });
           }
         });
@@ -256,7 +325,7 @@ $(function () {
           return;
         }
 
-        query = handleResetStateQuery(this, query, () => { clearStationsState(); });
+        query = handleResetStateQuery(this, 'stations', query, () => { clearStationsState(); });
 
         updatePageHeader('Stations');
 
@@ -272,6 +341,8 @@ $(function () {
           return;
         }
 
+        query = handleResetStateQuery(this, `stations/${id}`, query, () => { clearStationsState(); });
+
         const breadcrumb = [{ name: 'Stations', link: '#stations' }];
 
         if (id === 'new') {
@@ -282,7 +353,12 @@ $(function () {
 
         return renderStationDetailsPage($pageContainer, id, query, auth, (model) => {
           if (model.id) {
-            this.navigate(`stations/${model.id}`, { trigger: false, replace: true });
+            let finalQuery = '';
+            if (query) {
+              finalQuery = `?${query}`;
+            }
+
+            this.navigate(`stations/${model.id}${finalQuery}`, { trigger: false, replace: true });
             updatePageHeader(model.escape('name'), breadcrumb, { ignoreFocus: true });
           }
         });
@@ -297,7 +373,7 @@ $(function () {
           return;
         }
 
-        query = handleResetStateQuery(this, query, () => { clearKeyfobsState(); });
+        query = handleResetStateQuery(this, 'keyfobs', query, () => { clearKeyfobsState(); });
 
         updatePageHeader('Station Key Fobs');
 
@@ -313,6 +389,8 @@ $(function () {
           return;
         }
 
+        query = handleResetStateQuery(this, `keyfobs/${id}`, query, () => { clearKeyfobsState(); });
+
         const breadcrumb = [{ name: 'Stations Key Fobs', link: '#keyfobs' }];
 
         if (id === 'new') {
@@ -323,8 +401,13 @@ $(function () {
 
         return renderKeyfobDetailsPage($pageContainer, id, query, auth, (model) => {
           if (model.id) {
-            this.navigate(`keyfobs/${model.id}`, { trigger: false, replace: true });
-            updatePageHeader(model.escape('name'), breadcrumb, { ignoreFocus: true });
+            let finalQuery = '';
+            if (query) {
+              finalQuery = `?${query}`;
+            }
+
+            this.navigate(`keyfobs/${model.id}${finalQuery}`, { trigger: false, replace: true });
+            updatePageHeader(model.escape('number'), breadcrumb, { ignoreFocus: true });
           }
         });
       });

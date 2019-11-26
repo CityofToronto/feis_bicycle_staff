@@ -6,7 +6,9 @@
 function renderHomePage($container, query, auth) {
   $container.empty();
 
-  // $container.append('<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi in nulla et ante ullamcorper elementum suscipit vel nibh. Duis accumsan nibh nec consequat vestibulum.</p>');
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // ROW 1
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   const $row1 = $('<div class="row"></div>');
   $container.append($row1);
@@ -16,10 +18,22 @@ function renderHomePage($container, query, auth) {
       <h2>Registrations</h2>
 
       <div class="list-group">
-        <a href="#registrations" class="list-group-item"><span class="badge">?</span> New</a>
-        <a href="#registrations?${query_objectToString({ option: 'today' })}" class="list-group-item"><span class="badge">?</span> Today</a>
-        <a href="#registrations?${query_objectToString({ option: 'thisyear' })}" class="list-group-item"><span class="badge">?</span> This Year</a>
-        <a href="#registrations" class="list-group-item"><span class="badge">?</span> All</a>
+        <a href="#registrations?${query_objectToString({ option: 'new', resetState: 'yes' })}" class="list-group-item">
+          <span class="badge">?</span>
+          New Entries
+        </a>
+        <a href="#registrations?${query_objectToString({ option: 'today', resetState: 'yes' })}" class="list-group-item">
+          <span class="badge">?</span>
+          Today's Entries
+        </a>
+        <a href="#registrations?${query_objectToString({ option: 'thisyear', resetState: 'yes' })}" class="list-group-item">
+          <span class="badge">?</span>
+          This Year's Entries
+        </a>
+        <a href="#registrations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
+          <span class="badge">?</span>
+          All Entries
+        </a>
       </div>
     </div>
   `);
@@ -64,6 +78,10 @@ function renderHomePage($container, query, auth) {
     </div>
   `);
   $row1.append($paymentsColumn);
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // ROW 2
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   const $row2 = $('<div class="row"></div>');
   $container.append($row2);
@@ -185,7 +203,11 @@ function renderHomePage($container, query, auth) {
   ajaxes({
     url: `/* @echo C3DATA_STATIONS */?$select=id&$top=1000&$filter=__Status eq 'Active' and __ModifiedOn ge ${oData_escapeValue(moment().startOf('day').format())} and __ModifiedOn le ${oData_escapeValue(moment().endOf('day').format())}`,
     method: 'GET',
-    beforeSend(jqXHR) { if (auth && auth.sId) { jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`); } }
+    beforeSend(jqXHR) {
+      if (auth && auth.sId) {
+        jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+      }
+    }
   }).then(({ data }) => {
     $stationsColumn.find('.badge-stations-today').html(data.value.length !== 1000 ? data.value.length : '999+');
   });
@@ -193,7 +215,11 @@ function renderHomePage($container, query, auth) {
   ajaxes({
     url: `/* @echo C3DATA_STATIONS */?$select=id&$top=1000&$filter=__Status eq 'Active' and __ModifiedOn ge ${oData_escapeValue(moment().startOf('year').format())} and __ModifiedOn le ${oData_escapeValue(moment().endOf('year').format())}`,
     method: 'GET',
-    beforeSend(jqXHR) { if (auth && auth.sId) { jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`); } }
+    beforeSend(jqXHR) {
+      if (auth && auth.sId) {
+        jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+      }
+    }
   }).then(({ data }) => {
     $stationsColumn.find('.badge-stations-thisyear').html(data.value.length !== 1000 ? data.value.length : '999+');
   });
@@ -201,7 +227,11 @@ function renderHomePage($container, query, auth) {
   ajaxes({
     url: '/* @echo C3DATA_STATIONS */?$select=id&$top=1000',
     method: 'GET',
-    beforeSend(jqXHR) { if (auth && auth.sId) { jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`); } }
+    beforeSend(jqXHR) {
+      if (auth && auth.sId) {
+        jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+      }
+    }
   }).then(({ data }) => {
     $stationsColumn.find('.badge-stations').html(data.value.length !== 1000 ? data.value.length : '999+');
   });
@@ -231,7 +261,11 @@ function renderHomePage($container, query, auth) {
   ajaxes({
     url: `/* @echo C3DATA_KEYFOBS */?$select=id&$top=1000&$filter=__Status eq 'Active' and __ModifiedOn ge ${oData_escapeValue(moment().startOf('day').format())} and __ModifiedOn le ${oData_escapeValue(moment().endOf('day').format())}`,
     method: 'GET',
-    beforeSend(jqXHR) { if (auth && auth.sId) { jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`); } }
+    beforeSend(jqXHR) {
+      if (auth && auth.sId) {
+        jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+      }
+    }
   }).then(({ data }) => {
     $keyfobsColumn.find('.badge-keyfobs-today').html(data.value.length !== 1000 ? data.value.length : '999+');
   });
@@ -239,7 +273,11 @@ function renderHomePage($container, query, auth) {
   ajaxes({
     url: `/* @echo C3DATA_KEYFOBS */?$select=id&$top=1000&$filter=__Status eq 'Active' and __ModifiedOn ge ${oData_escapeValue(moment().startOf('year').format())} and __ModifiedOn le ${oData_escapeValue(moment().endOf('year').format())}`,
     method: 'GET',
-    beforeSend(jqXHR) { if (auth && auth.sId) { jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`); } }
+    beforeSend(jqXHR) {
+      if (auth && auth.sId) {
+        jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+      }
+    }
   }).then(({ data }) => {
     $keyfobsColumn.find('.badge-keyfobs-thisyear').html(data.value.length !== 1000 ? data.value.length : '999+');
   });
@@ -247,10 +285,18 @@ function renderHomePage($container, query, auth) {
   ajaxes({
     url: '/* @echo C3DATA_KEYFOBS */?$select=id&$top=1000',
     method: 'GET',
-    beforeSend(jqXHR) { if (auth && auth.sId) { jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`); } }
+    beforeSend(jqXHR) {
+      if (auth && auth.sId) {
+        jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+      }
+    }
   }).then(({ data }) => {
     $keyfobsColumn.find('.badge-keyfobs').html(data.value.length !== 1000 ? data.value.length : '999+');
   });
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // ROW 3
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   const $row3 = $('<div class="row"></div>');
   $container.append($row3);
@@ -260,11 +306,11 @@ function renderHomePage($container, query, auth) {
       <h2>Activity Logs</h2>
 
       <div class="list-group">
-        <a href="#?${query_objectToString({ option: 'today' })}" class="list-group-item">
+        <a href="#" class="list-group-item">
           <span class="badge">?</span>
           Today's Entries
         </a>
-        <a href="#?${query_objectToString({ option: 'thisyear' })}" class="list-group-item">
+        <a href="#" class="list-group-item">
           <span class="badge">?</span>
           This Year's Entries
         </a>
@@ -282,11 +328,11 @@ function renderHomePage($container, query, auth) {
       <h2>Email Logs</h2>
 
       <div class="list-group">
-        <a href="#?${query_objectToString({ option: 'today' })}" class="list-group-item">
+        <a href="#" class="list-group-item">
           <span class="badge">?</span>
           Today's Entries
         </a>
-        <a href="#?${query_objectToString({ option: 'thisyear' })}" class="list-group-item">
+        <a href="#" class="list-group-item">
           <span class="badge">?</span>
           This Year's Entries
         </a>
@@ -304,11 +350,11 @@ function renderHomePage($container, query, auth) {
       <h2>Error Logs</h2>
 
       <div class="list-group">
-        <a href="#?${query_objectToString({ option: 'today' })}" class="list-group-item">
+        <a href="#" class="list-group-item">
           <span class="badge">?</span>
           Today's Entries
         </a>
-        <a href="#?${query_objectToString({ option: 'thisyear' })}" class="list-group-item">
+        <a href="#" class="list-group-item">
           <span class="badge">?</span>
           This Year's Entries
         </a>
