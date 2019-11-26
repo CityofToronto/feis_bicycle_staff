@@ -120,8 +120,6 @@ function renderLocationDetailsPage($container, id, query, auth, routeCbk) {
 
     routeCbk,
 
-    statusChoices: '/* @echo C3DATAMEDIA_LOCATIONS_STATUS_CHOICES */',
-
     saveButtonLabel: (model) => model.isNew() ? 'Create Locker Location' : 'Update Locker Location',
     cancelButtonLabel: 'Cancel',
     cancelButtonFragment: `locations${query}`,

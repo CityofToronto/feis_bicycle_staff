@@ -21,5 +21,6 @@
   "bicycle_1_colour": "string",
   "bicycle_2_make": "string",
   "bicycle_2_model": "string",
-  "bicycle_2_colour": "string"
+  "bicycle_2_colour": "string",
+  "subscription": "string"
 }
