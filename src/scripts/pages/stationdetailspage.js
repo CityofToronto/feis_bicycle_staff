@@ -116,8 +116,6 @@ function renderStationDetailsPage($container, id, query, auth, routeCbk) {
 
     routeCbk,
 
-    statusChoices: '/* @echo C3DATAMEDIA_STATIONS_STATUS_CHOICES */',
-
     saveButtonLabel: (model) => model.isNew() ? 'Create Station' : 'Update Station',
     cancelButtonLabel: 'Cancel',
     cancelButtonFragment: `stations${query}`,
