@@ -1,6 +1,6 @@
 /* global $ */
 /* global moment */
-/* global fixButtonLinks query_objectToString ajaxes oData_escapeValue */
+/* global ajaxes auth_checkAccess fixButtonLinks oData_escapeValue query_objectToString */
 
 /* exported renderHomePage */
 function renderHomePage($container, query, auth) {
@@ -18,10 +18,6 @@ function renderHomePage($container, query, auth) {
       <h2>Registrations</h2>
 
       <div class="list-group">
-        <a href="#registrations?${query_objectToString({ option: 'new', resetState: 'yes' })}" class="list-group-item">
-          <span class="badge badge-registrations-new">?</span>
-          New Entries
-        </a>
         <a href="#registrations?${query_objectToString({ option: 'today', resetState: 'yes' })}" class="list-group-item">
           <span class="badge badge-registrations-today">?</span>
           Today's Entries
@@ -102,6 +98,8 @@ function renderHomePage($container, query, auth) {
     </div>
   `);
   $row1.append($paymentsColumn);
+
+  fixButtonLinks($row1);
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // ROW 2
@@ -318,78 +316,84 @@ function renderHomePage($container, query, auth) {
     $keyfobsColumn.find('.badge-keyfobs').html(data.value.length !== 1000 ? data.value.length : '999+');
   });
 
+  fixButtonLinks($container);
+
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // ROW 3
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  const $row3 = $('<div class="row"></div>');
-  $container.append($row3);
+  auth_checkAccess(auth, '/* @echo C3CONFIG_ADMIN_RESOURCE */', 'GET').then((hasAccess) => {
+    if (hasAccess) {
+      const $row3 = $('<div class="row"></div>');
+      $container.append($row3);
 
-  const $activityLogsColumn = $(`
-    <div class="col-sm-3">
-      <h2>Activity Logs</h2>
+      const $activityLogsColumn = $(`
+        <div class="col-sm-3">
+          <h2>Activity Logs</h2>
 
-      <div class="list-group">
-        <a href="#" class="list-group-item">
-          <span class="badge">?</span>
-          Today's Entries
-        </a>
-        <a href="#" class="list-group-item">
-          <span class="badge">?</span>
-          This Year's Entries
-        </a>
-        <a href="#" class="list-group-item">
-          <span class="badge">?</span>
-          All Entries
-        </a>
-      </div>
-    </div>
-  `);
-  $row3.append($activityLogsColumn);
+          <div class="list-group">
+            <a href="#" class="list-group-item">
+              <span class="badge">?</span>
+              Today's Entries
+            </a>
+            <a href="#" class="list-group-item">
+              <span class="badge">?</span>
+              This Year's Entries
+            </a>
+            <a href="#" class="list-group-item">
+              <span class="badge">?</span>
+              All Entries
+            </a>
+          </div>
+        </div>
+      `);
+      $row3.append($activityLogsColumn);
 
-  const $emailLogsColumn = $(`
-    <div class="col-sm-3">
-      <h2>Email Logs</h2>
+      const $emailLogsColumn = $(`
+        <div class="col-sm-3">
+          <h2>Email Logs</h2>
 
-      <div class="list-group">
-        <a href="#" class="list-group-item">
-          <span class="badge">?</span>
-          Today's Entries
-        </a>
-        <a href="#" class="list-group-item">
-          <span class="badge">?</span>
-          This Year's Entries
-        </a>
-        <a href="#" class="list-group-item">
-          <span class="badge">?</span>
-          All Entries
-        </a>
-      </div>
-    </div>
-  `);
-  $row3.append($emailLogsColumn);
+          <div class="list-group">
+            <a href="#" class="list-group-item">
+              <span class="badge">?</span>
+              Today's Entries
+            </a>
+            <a href="#" class="list-group-item">
+              <span class="badge">?</span>
+              This Year's Entries
+            </a>
+            <a href="#" class="list-group-item">
+              <span class="badge">?</span>
+              All Entries
+            </a>
+          </div>
+        </div>
+      `);
+      $row3.append($emailLogsColumn);
 
-  const $errorLogsColumn = $(`
-    <div class="col-sm-3">
-      <h2>Error Logs</h2>
+      const $errorLogsColumn = $(`
+        <div class="col-sm-3">
+          <h2>Error Logs</h2>
 
-      <div class="list-group">
-        <a href="#" class="list-group-item">
-          <span class="badge">?</span>
-          Today's Entries
-        </a>
-        <a href="#" class="list-group-item">
-          <span class="badge">?</span>
-          This Year's Entries
-        </a>
-        <a href="#" class="list-group-item">
-          <span class="badge">?</span>
-          All Entries
-        </a>
-      </div>
-    </div>
-  `);
-  $row3.append($errorLogsColumn);
+          <div class="list-group">
+            <a href="#" class="list-group-item">
+              <span class="badge">?</span>
+              Today's Entries
+            </a>
+            <a href="#" class="list-group-item">
+              <span class="badge">?</span>
+              This Year's Entries
+            </a>
+            <a href="#" class="list-group-item">
+              <span class="badge">?</span>
+              All Entries
+            </a>
+          </div>
+        </div>
+      `);
+      $row3.append($errorLogsColumn);
 
-  fixButtonLinks($container);
+      fixButtonLinks($row3);
+    }
+  });
 }

@@ -714,8 +714,6 @@ function renderRegistrationDetailsPage($container, auth, id, dataChangeCbk) {
       url: '/* @echo C3DATA_REGISTRATIONS */',
       loadModelData: false,
 
-      statusChoices: '/* @echo C3DATAMEDIA_REGISTRATION_STATUS_CHOICES */',
-
       saveButtonLabel: (model) =>  model.isNew() ? 'Create Registration' : 'Update Registration',
       cancelButtonLabel: 'Cancel',
       cancelButtonFragment: 'registrations',

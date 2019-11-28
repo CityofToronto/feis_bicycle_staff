@@ -113,8 +113,6 @@ function renderKeyfobDetailsPage($container, id, query, auth, routeCbk) {
 
     routeCbk,
 
-    statusChoices: '/* @echo C3DATAMEDIA_KEYFOBS_STATUS_CHOICES */',
-
     saveButtonLabel: (model) => model.isNew() ? 'Create Station Key Fob' : 'Update Station Key Fob',
     cancelButtonLabel: 'Cancel',
     cancelButtonFragment: `keyfobs${query}`,

@@ -83,7 +83,6 @@ function renderSettingDetailsPage($container, authConfig, id, dataChangeCbk) {
       authConfig,
 
       includeMetaSection: true,
-      metaSectionStatusChoices: '/* @echo C3DATAMEDIA_REGISTRATION_STATUS_CHOICES */',
 
       createButtonLabel: 'Create New Locker Location',
       updateButtonLabel: 'Save Locker Location',
