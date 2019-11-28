@@ -7,6 +7,8 @@ const AUTH_WEBSTORAGE_KEY = 'bicycle_auth';
 const AUTH_URL = '/* @echo C3AUTH_URL */';
 const AUTH_APPNAME = 'Bicycle Parking';
 
+const AUTH_CHECKACCESS_URL = '/* @echo C3CONFIG_ISAUTH */';
+
 /* exported auth_init */
 function auth_init(auth = {}) {
   try {
@@ -95,4 +97,33 @@ function auth_checkLogin(auth = {}, force = false) {
   } else {
     return Promise.resolve(false);
   }
+}
+
+/* exported auth_checkAccess */
+function auth_checkAccess(auth = {}, resource, action) {
+  return auth_checkLogin(auth).then((isLoggedIn) => {
+    return new Promise((resolve, reject) => {
+      $.ajax({
+        beforeSend: (jqXHR) => {
+          if (isLoggedIn) {
+            const { sId } = auth;
+            jqXHR.setRequestHeader('Authorization', `AuthSession ${sId}`);
+          }
+        },
+        contentType: 'application/json',
+        data: JSON.stringify({
+          ApplicationName: 'bicycle_parking',
+          Resource: resource,
+          Action: action
+        }),
+        method: 'POST',
+        url: AUTH_CHECKACCESS_URL
+      }).then((data) => {
+        const dataObject = JSON.parse(data);
+        resolve(dataObject.Authorized === true);
+      }, (jqXHR, textStatus, errorThrown) => {
+        reject(oData_getErrorMessage(jqXHR, errorThrown));
+      });
+    });
+  });
 }
