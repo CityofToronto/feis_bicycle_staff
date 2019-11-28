@@ -21,6 +21,10 @@ function renderLockerDetailsPage($container, id, query, auth, routeCbk) {
           <li class="nav-item active" role="presentation">
             <a class="nav-link">Locker</a>
           </li>
+
+          <li class="nav-item" role="presentation">
+            <a class="nav-link">Subscription</a>
+          </li>
         </ul>
       </div>
     ` : ''}
@@ -95,8 +99,6 @@ function renderLockerDetailsPage($container, id, query, auth, routeCbk) {
     url: '/* @echo C3DATA_LOCKERS */',
 
     routeCbk,
-
-    statusChoices: '/* @echo C3DATAMEDIA_LOCKERS_STATUS_CHOICES */',
 
     saveButtonLabel: (model) => model.isNew() ? 'Create Locker' : 'Update Locker',
     cancelButtonLabel: 'Cancel',

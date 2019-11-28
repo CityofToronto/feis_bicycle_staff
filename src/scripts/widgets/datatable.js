@@ -426,7 +426,7 @@ function renderDatatable($container, definition, options = {}) {
     $innerContainer.append(`
       <div class="row">
         <div class="col-sm-12">
-          <a class="btn btn-default" href="#${newButtonFragment}">${newButtonLabel}</a>
+          <p><a class="btn btn-default" href="#${newButtonFragment}">${newButtonLabel}</a></p>
         </div>
       </div>
     `);
