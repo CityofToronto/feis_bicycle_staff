@@ -3,7 +3,7 @@
 // Any resources from this project should be referenced using SRC_PATH preprocessor var
 // Ex: let myImage = '/*@echo SRC_PATH*//img/sample.jpg';
 
-/* global $ Backbone */
+/* global $ Backbone moment */
 /* global cot_app */
 /* global auth_init auth_checkLogin auth_logout query_objectToString query_stringToObject Router */
 /* global renderLoginButton */
@@ -198,7 +198,7 @@ $(function () {
 
         query = handleResetStateQuery(this, `registrations/${id}`, query);
 
-        const breadcrumb = [{ name: 'Locker Locations', link: '#locations' }];
+        const breadcrumb = [{ name: 'Registrations', link: '#locations' }];
 
         if (id === 'new') {
           updatePageHeader('New Registration', breadcrumb, { breadcrumbTitle: 'New' });
@@ -214,7 +214,12 @@ $(function () {
             }
 
             this.navigate(`registrations/${model.id}${finalQuery}`, { trigger: false, replace: true });
-            updatePageHeader(model.escape('name'), breadcrumb, { ignoreFocus: true });
+
+            const momentCreatedOn = moment(model.escape('__CreatedOn'));
+            updatePageHeader(`${momentCreatedOn.format('MMMM Do YYYY, hh:mma')} Registration`, breadcrumb, {
+              breadcrumbTitle: `${momentCreatedOn.format('YYYY/MM/DD hh:mmA')} Registration`,
+              ignoreFocus: true
+            });
           }
         });
       });

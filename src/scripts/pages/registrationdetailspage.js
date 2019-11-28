@@ -27,6 +27,14 @@ function renderRegistrationDetailsPage($container, id, query, auth, routeCbk) {
           <li class="nav-item" role="presentation">
             <a class="nav-link">Notes</a>
           </li>
+
+          <li class="nav-item" role="presentation">
+            <a class="nav-link">Customer</a>
+          </li>
+
+          <li class="nav-item" role="presentation">
+            <a class="nav-link">Subscription</a>
+          </li>
         </ul>
       </div>
     ` : ''}
