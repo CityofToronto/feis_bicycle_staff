@@ -169,10 +169,10 @@ function renderCustomersPage($pageContainer, query, auth) {
 
   renderDatatable($pageContainer.find('.datatable'), definition, {
     auth,
-    url: '/* @echo C3DATA_LOCATIONS */',
+    url: '/* @echo C3DATA_CUSTOMERS */',
 
-    newButtonLabel: 'New Locker Location',
-    newButtonFragment: `locations/new${query}`,
+    newButtonLabel: 'New Customer',
+    newButtonFragment: `customers/new${query}`,
 
     stateSaveWebStorageKey: `customers`,
 

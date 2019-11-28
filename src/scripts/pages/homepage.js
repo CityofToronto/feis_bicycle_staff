@@ -64,13 +64,46 @@ function renderHomePage($container, query, auth) {
       <h2>Customers</h2>
 
       <div class="list-group">
-        <a href="#customers?${query_objectToString({ option: 'today' })}" class="list-group-item"><span class="badge">?</span> Today</a>
-        <a href="#customers?${query_objectToString({ option: 'thisyear' })}" class="list-group-item"><span class="badge">?</span> This Year</a>
-        <a href="#customers" class="list-group-item"><span class="badge">?</span> All</a>
+        <a href="#customers?${query_objectToString({ option: 'today', resetState: 'yes' })}" class="list-group-item">
+          <span class="badge badge-customers-today">?</span>
+          Today's Entries
+        </a>
+        <a href="#customers?${query_objectToString({ option: 'thisyear', resetState: 'yes' })}" class="list-group-item">
+          <span class="badge badge-customers-thisyear">?</span>
+          This Year's Entries
+        </a>
+        <a href="#customers?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
+          <span class="badge badge-customers">?</span>
+          All Entries
+        </a>
       </div>
     </div>
   `);
   $row1.append($customersColumn);
+
+  ajaxes({
+    url: `/* @echo C3DATA_CUSTOMERS */?$select=id&$top=1000&$filter=__Status eq 'Active' and __ModifiedOn ge ${oData_escapeValue(moment().startOf('day').format())} and __ModifiedOn le ${oData_escapeValue(moment().endOf('day').format())}`,
+    method: 'GET',
+    beforeSend(jqXHR) { if (auth && auth.sId) { jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`); } }
+  }).then(({ data }) => {
+    $customersColumn.find('.badge-customers-today').html(data.value.length !== 1000 ? data.value.length : '999+');
+  });
+
+  ajaxes({
+    url: `/* @echo C3DATA_CUSTOMERS */?$select=id&$top=1000&$filter=__Status eq 'Active' and __ModifiedOn ge ${oData_escapeValue(moment().startOf('year').format())} and __ModifiedOn le ${oData_escapeValue(moment().endOf('year').format())}`,
+    method: 'GET',
+    beforeSend(jqXHR) { if (auth && auth.sId) { jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`); } }
+  }).then(({ data }) => {
+    $customersColumn.find('.badge-customers-thisyear').html(data.value.length !== 1000 ? data.value.length : '999+');
+  });
+
+  ajaxes({
+    url: '/* @echo C3DATA_CUSTOMERS */?$select=id&$top=1000',
+    method: 'GET',
+    beforeSend(jqXHR) { if (auth && auth.sId) { jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`); } }
+  }).then(({ data }) => {
+    $customersColumn.find('.badge-customers').html(data.value.length !== 1000 ? data.value.length : '999+');
+  });
 
   const $subscriptionsColumn = $(`
     <div class="col-sm-3">
