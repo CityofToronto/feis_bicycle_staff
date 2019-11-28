@@ -70,6 +70,7 @@
   },
   "scripts": {
     "run": "gulp run",
+    "upload_config": "gulp c3api_config",
     "upload_dataaccess": "gulp c3api_dataaccess",
     "upload_media": "gulp c3api_dataaccess_media"
   }
