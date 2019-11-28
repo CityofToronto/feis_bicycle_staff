@@ -46,7 +46,7 @@ function renderRegistrationsPage($pageContainer, query, auth) {
       render(data) {
         const dataMoment = moment(data);
         if (dataMoment.isValid()) {
-          return dataMoment.format('YYYY/MM/DD');
+          return dataMoment.format('YYYY/MM/DD hh:mmA');
         } else {
           return '-';
         }
