@@ -95,6 +95,9 @@ $(function () {
       'registrations/:id(/)': 'routeRegistrationDetails',
       'registrations(/)': 'routeRegistrations',
 
+      'customers/:id(/)': 'routeCustomerDetails',
+      'customers(/)': 'routeCustomers',
+
       // ---
 
       'locations/:id(/)': 'routeLocationDetails',
@@ -217,6 +220,56 @@ $(function () {
               breadcrumbTitle: `${momentCreatedOn.format('YYYY/MM/DD hh:mmA')} Registration`,
               ignoreFocus: true
             });
+          }
+        });
+      });
+    },
+
+    /* global renderCustomersPage clearCustomersState */
+    routeCustomers(query) {
+      return auth_checkLogin(auth).then((isLoggedIn) => {
+        if (!isLoggedIn) {
+          this.navigate(`login?${query_objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
+          return;
+        }
+
+        query = handleResetStateQuery(this, 'customers', query, () => {
+          clearCustomersState();
+        });
+
+        updatePageHeader('Customers');
+
+        return renderCustomersPage($pageContainer, query, auth);
+      });
+    },
+
+    /* global renderCustomerDetailsPage */
+    routeCustomerDetails(id, query) {
+      return auth_checkLogin(auth).then((isLoggedIn) => {
+        if (!isLoggedIn) {
+          this.navigate(`login?${query_objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
+          return;
+        }
+
+        query = handleResetStateQuery(this, `customers/${id}`, query);
+
+        const breadcrumb = [{ name: 'Customers', link: '#customers' }];
+
+        if (id === 'new') {
+          updatePageHeader('New Customer', breadcrumb, { breadcrumbTitle: 'New' });
+        } else {
+          updatePageHeader('', breadcrumb);
+        }
+
+        return renderCustomerDetailsPage($pageContainer, id, query, auth, (model) => {
+          if (model.id) {
+            let finalQuery = '';
+            if (query) {
+              finalQuery = `?${query}`;
+            }
+
+            this.navigate(`customers/${model.id}${finalQuery}`, { trigger: false, replace: true });
+            updatePageHeader([model.escape('first_name'), model.escape('last_name')].filter((val) => val).join(' '), breadcrumb, { ignoreFocus: true });
           }
         });
       });

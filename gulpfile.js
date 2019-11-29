@@ -8,18 +8,19 @@ core.embeddedApp.createTasks(gulp, {
   environmentOverride: null,
   deploymentPath: '',
   preprocessorContext: {
-    C3CONFIG_ADMIN_RESOURCE: '/c3api_data/v2/DataAccess.svc/bicycle_parking/admin',
-
-    C3CONFIG_CUSTOMERS_RESOURCE: '/c3api_data/v2/DataAccess.svc/bicycle_parking/customers',
-    C3CONFIG_SUBSCRIPTIONS_RESOURCE: '/c3api_data/v2/DataAccess.svc/bicycle_parking/subscriptions',
-    C3CONFIG_PAYMENTS_RESOURCE: '/c3api_data/v2/DataAccess.svc/bicycle_parking/payments',
-
-    C3CONFIG_LOCATIONS_RESOURCE: '/c3api_data/v2/DataAccess.svc/bicycle_parking/locations',
-    C3CONFIG_LOCKERS_RESOURCE: '/c3api_data/v2/DataAccess.svc/bicycle_parking/lockers',
-    C3CONFIG_STATIONS_RESOURCE: '/c3api_data/v2/DataAccess.svc/bicycle_parking/stations',
-    C3CONFIG_KEYFOBS_RESOURCE: '/c3api_data/v2/DataAccess.svc/bicycle_parking/keyfobs',
-
     local: {
+      C3CONFIG_ADMIN_RESOURCE: '/c3api_data/v2/DataAccess.svc/bicycle_parking/admin',
+
+      C3CONFIG_CUSTOMERS_RESOURCE: '/c3api_data/v2/DataAccess.svc/bicycle_parking/customers',
+      C3CONFIG_SUBSCRIPTIONS_RESOURCE: '/c3api_data/v2/DataAccess.svc/bicycle_parking/subscriptions',
+      C3CONFIG_PAYMENTS_RESOURCE: '/c3api_data/v2/DataAccess.svc/bicycle_parking/payments',
+
+      C3CONFIG_LOCATIONS_RESOURCE: '/c3api_data/v2/DataAccess.svc/bicycle_parking/locations',
+      C3CONFIG_LOCKERS_RESOURCE: '/c3api_data/v2/DataAccess.svc/bicycle_parking/lockers',
+      C3CONFIG_STATIONS_RESOURCE: '/c3api_data/v2/DataAccess.svc/bicycle_parking/stations',
+      C3CONFIG_KEYFOBS_RESOURCE: '/c3api_data/v2/DataAccess.svc/bicycle_parking/keyfobs',
+
+
       C3AUTH_URL: 'https://config.cc.toronto.ca:49090/c3api_auth/v2/AuthService.svc/AuthSet',
 
       C3CONFIG_ISAUTH: 'https://config.cc.toronto.ca:49092/c3api_config/v2/ConfigService.svc/IsAuth',
