@@ -225,55 +225,55 @@ $(function () {
       });
     },
 
-        /* global renderCustomersPage clearCustomersState */
-        routeCustomers(query) {
-          return auth_checkLogin(auth).then((isLoggedIn) => {
-            if (!isLoggedIn) {
-              this.navigate(`login?${query_objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
-              return;
+    /* global renderCustomersPage clearCustomersState */
+    routeCustomers(query) {
+      return auth_checkLogin(auth).then((isLoggedIn) => {
+        if (!isLoggedIn) {
+          this.navigate(`login?${query_objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
+          return;
+        }
+
+        query = handleResetStateQuery(this, 'customers', query, () => {
+          clearCustomersState();
+        });
+
+        updatePageHeader('Customers');
+
+        return renderCustomersPage($pageContainer, query, auth);
+      });
+    },
+
+    /* global renderCustomerDetailsPage */
+    routeCustomerDetails(id, query) {
+      return auth_checkLogin(auth).then((isLoggedIn) => {
+        if (!isLoggedIn) {
+          this.navigate(`login?${query_objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
+          return;
+        }
+
+        query = handleResetStateQuery(this, `customers/${id}`, query);
+
+        const breadcrumb = [{ name: 'Customers', link: '#customers' }];
+
+        if (id === 'new') {
+          updatePageHeader('New Customer', breadcrumb, { breadcrumbTitle: 'New' });
+        } else {
+          updatePageHeader('', breadcrumb);
+        }
+
+        return renderCustomerDetailsPage($pageContainer, id, query, auth, (model) => {
+          if (model.id) {
+            let finalQuery = '';
+            if (query) {
+              finalQuery = `?${query}`;
             }
 
-            query = handleResetStateQuery(this, 'customers', query, () => {
-              clearCustomersState();
-            });
-
-            updatePageHeader('Customers');
-
-            return renderCustomersPage($pageContainer, query, auth);
-          });
-        },
-
-        /* global renderCustomersDetailsPage */
-        routeCustomerDetails(id, query) {
-          return auth_checkLogin(auth).then((isLoggedIn) => {
-            if (!isLoggedIn) {
-              this.navigate(`login?${query_objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
-              return;
-            }
-
-            query = handleResetStateQuery(this, `customers/${id}`, query);
-
-            const breadcrumb = [{ name: 'Customers', link: '#locations' }];
-
-            if (id === 'new') {
-              updatePageHeader('New Registration', breadcrumb, { breadcrumbTitle: 'New' });
-            } else {
-              updatePageHeader('', breadcrumb);
-            }
-
-            return renderCustomersDetailsPage($pageContainer, id, query, auth, (model) => {
-              if (model.id) {
-                let finalQuery = '';
-                if (query) {
-                  finalQuery = `?${query}`;
-                }
-
-                this.navigate(`customers/${model.id}${finalQuery}`, { trigger: false, replace: true });
-                updatePageHeader(model.escape('name'), breadcrumb, { ignoreFocus: true });
-              }
-            });
-          });
-        },
+            this.navigate(`customers/${model.id}${finalQuery}`, { trigger: false, replace: true });
+            updatePageHeader([model.escape('first_name'), model.escape('last_name')].filter((val) => val).join(' '), breadcrumb, { ignoreFocus: true });
+          }
+        });
+      });
+    },
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

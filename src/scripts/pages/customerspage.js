@@ -34,37 +34,21 @@ function renderCustomersPage($pageContainer, query, auth) {
       data: 'id',
       orderable: false,
       render(data) {
-        return `<a href="#locations/${data}${query}" class="btn btn-default">Open</a>`;
+        return `<a href="#customers/${data}${query}" class="btn btn-default">Open</a>`;
       },
       searchable: false
     },
-    'Name': {
-      title: 'Name',
+    'First Name': {
+      title: 'First Name',
       className: 'minWidth',
-      data: 'name',
+      data: 'first_name',
       type: 'string'
     },
-    'Description': {
-      title: 'Description',
-      className: 'minWidthLarge',
-      data: 'description',
-      type: 'string'
-    },
-    'Address': {
-      title: 'Address',
+    'Last Name': {
+      title: 'Last Name',
       className: 'minWidth',
-      data: 'civic_address',
+      data: 'last_name',
       type: 'string'
-    },
-    'Lockers': {
-      title: 'Lockers',
-      className: 'minWidthSmall',
-      data: 'id',
-      type: 'string',
-      render() {
-        return '...';
-      },
-      searchable: false
     },
     'Modified On': {
       title: 'Modified On',
@@ -116,56 +100,62 @@ function renderCustomersPage($pageContainer, query, auth) {
     searchCols: []
   };
 
-  definition.columns[0] = columns['Action'];
-  definition.columns[1] = columns['Name'];
-  definition.columns[2] = columns['Description'];
-  definition.columns[3] = columns['Lockers'];
-  definition.columns[4] = columns['Modified On'];
-  definition.columns[5] = columns['Modified By'];
+  let colIndex = 0;
 
-  definition.order.push([1, 'asc']);
+  definition.columns[colIndex] = columns['Action'];
+
+  definition.columns[++colIndex] = columns['First Name'];
+  definition.order.push([colIndex, 'asc']);
+
+  definition.columns[++colIndex] = columns['Last Name'];
+
+  definition.columns[++colIndex] = columns['Modified On'];
+
+  definition.columns[++colIndex] = columns['Modified By'];
 
   const related = [
     {
-      title: 'Today',
-      fragment: `locations?${query_objectToString({ option: 'today', resetState: 'yes' })}`
+      title: 'Today\'s Entries',
+      fragment: `customers?${query_objectToString({ option: 'today', resetState: 'yes' })}`
     },
     {
-      title: 'This Year',
-      fragment: `locations?${query_objectToString({ option: 'thisyear', resetState: 'yes' })}`
+      title: 'This Year\'s Entries',
+      fragment: `customers?${query_objectToString({ option: 'thisyear', resetState: 'yes' })}`
     },
     {
-      title: 'All',
-      fragment: `locations?${query_objectToString({ resetState: 'yes' })}`
+      title: 'All Entries',
+      fragment: `customers?${query_objectToString({ resetState: 'yes' })}`
     }
   ];
 
   switch (queryObject.option) {
     case 'today':
-      definition.columns[6] = columns['Hidden Modified On'];
-      definition.columns[7] = columns['Hidden Status'];
+      definition.columns[++colIndex] = columns['Hidden Modified On'];
+      definition.searchCols[colIndex] = { search: moment().format() };
 
-      definition.searchCols[6] = { search: moment().format() };
-      definition.searchCols[7] = { search: 'Active' };
+      definition.columns[++colIndex] = columns['Hidden Status'];
+      definition.searchCols[colIndex] = { search: 'Active' };
 
       related[0].isCurrent = true;
       break;
 
     case 'thisyear':
-      definition.columns[6] = columns['Hidden Modified On'];
-      definition.columns[7] = columns['Hidden Status'];
+      definition.columns[++colIndex] = columns['Hidden Modified On'];
+      definition.searchCols[colIndex] = { search: `${moment().startOf('year').format()} to ${moment().endOf('year').format()}` };
 
-      definition.searchCols[6] = { search: `${moment().startOf('year').format()} to ${moment().endOf('year').format()}` };
-      definition.searchCols[7] = { search: 'Active' };
+      definition.columns[++colIndex] = columns['Hidden Status'];
+      definition.searchCols[colIndex] = { search: 'Active' };
 
       related[1].isCurrent = true;
       break;
 
     default:
-      definition.columns[6] = columns['Status'];
+      definition.columns[++colIndex] = columns['Status'];
 
       related[2].isCurrent = true;
   }
+
+  console.log(definition);
 
   renderDatatable($pageContainer.find('.datatable'), definition, {
     auth,
