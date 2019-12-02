@@ -24,7 +24,7 @@ function renderHomePage($container, query, auth) {
       <h3 aria-labelledby="lockersHeader">Locations</h3>
 
       <div class="list-group">
-        <a href="#locations?${query_objectToString({ options: 'active', resetState: 'yes' })}" class="list-group-item">
+        <a href="#locations?${query_objectToString({ option: 'active', resetState: 'yes' })}" class="list-group-item">
           <span class="badge badge-locations-active">~</span>
           All Active
         </a>
@@ -68,7 +68,7 @@ function renderHomePage($container, query, auth) {
       <h3 aria-labelledby="lockersHeader">Lockers</h3>
 
       <div class="list-group">
-        <a href="#lockers?${query_objectToString({ options: 'active', resetState: 'yes' })}" class="list-group-item">
+        <a href="#lockers?${query_objectToString({ option: 'active', resetState: 'yes' })}" class="list-group-item">
           <span class="badge badge-lockers-active">~</span>
           All Active
         </a>

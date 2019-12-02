@@ -305,7 +305,11 @@ $(function () {
 
         query = handleResetStateQuery(this, `locations/${id}`, query);
 
-        const breadcrumb = [{ name: 'Locker Locations', link: '#locations' }];
+        let linkQuery = '';
+        if (query) {
+          linkQuery = `?${query}`;
+        }
+        const breadcrumb = [{ name: 'Locker Locations', link: `#locations${linkQuery}` }];
 
         if (id === 'new') {
           updatePageHeader('New Locker Location', breadcrumb, { breadcrumbTitle: 'New' });
@@ -315,13 +319,8 @@ $(function () {
 
         return renderLocationDetailsPage($pageContainer, id, query, auth, (model) => {
           if (model.id) {
-            let finalQuery = '';
-            if (query) {
-              finalQuery = `?${query}`;
-            }
-
-            this.navigate(`locations/${model.id}${finalQuery}`, { trigger: false, replace: true });
-            updatePageHeader(model.escape('name'), breadcrumb, { ignoreFocus: true });
+            this.navigate(`locations/${model.id}${linkQuery}`, { trigger: false, replace: true });
+            updatePageHeader(model.escape('site_name'), breadcrumb, { ignoreFocus: true });
           }
         });
       });

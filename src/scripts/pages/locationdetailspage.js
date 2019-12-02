@@ -1,4 +1,5 @@
-/* global Backbone renderForm */
+/* global Backbone */
+/* global renderForm */
 
 /* exported renderLocationDetailsPage */
 function renderLocationDetailsPage($container, id, query, auth, routeCbk) {
@@ -27,10 +28,6 @@ function renderLocationDetailsPage($container, id, query, auth, routeCbk) {
           </li>
 
           <li class="nav-item" role="presentation">
-            <a class="nav-link">Staffs</a>
-          </li>
-
-          <li class="nav-item" role="presentation">
             <a class="nav-link">Inspections</a>
           </li>
 
@@ -46,12 +43,29 @@ function renderLocationDetailsPage($container, id, query, auth, routeCbk) {
 
   let Model = Backbone.Model.extend({
     defaults: {
-      name: 'string',
-      description: 'string',
-      civic_address: 'string',
-      municipality: 'Toronto',
-      province: 'Ontario',
-      postal_code: 'string',
+      "site_name": "string",
+      "civic_address": "55 John Street",
+      "municipality": "Toronto",
+      "province": "Ontario",
+      "postal_code": "M5V 3C6",
+      "locker_count": 0,
+      "primary_contact_first_name": "string",
+      "primary_contact_last_name": "string",
+      "primary_contact_email": "email@toronto.ca",
+      "primary_contact_primary_phone": "416-555-5555",
+      "primary_contact_alternate_phone": "416-555-5555",
+      "alternate_contact_first_name": "string",
+      "alternate_contact_last_name": "string",
+      "alternate_contact_email": "email@toronto.ca",
+      "alternate_contact_primary_phone": "416-555-5555",
+      "alternate_contact_alternate_phone": "416-555-5555",
+      "latest_inspection": "string",
+      "latest_inspection_date": "2019-01-01T00:00:00.000-05:00",
+      "latest_inspection_status": "Ok",
+      "latest_inspection_report": "string",
+      "latest_note": "string",
+      "latest_note_note": "string",
+
       __Status: 'Active'
     }
   });
@@ -67,17 +81,9 @@ function renderLocationDetailsPage($container, id, query, auth, routeCbk) {
           {
             fields: [
               {
-                title: 'Name',
-                bindTo: 'name',
-                required: true,
-                className: 'col-xs-12 col-sm-4'
-              },
-              {
-                title: 'Description',
-                bindTo: 'description',
-                type: 'textarea',
-                rows: 3,
-                className: 'col-xs-12 col-sm-8'
+                title: 'Site Name',
+                bindTo: 'site_name',
+                required: true
               }
             ]
           },
@@ -105,6 +111,87 @@ function renderLocationDetailsPage($container, id, query, auth, routeCbk) {
                 title: 'Postal Code',
                 bindTo: 'postal_code',
                 validationtype: 'PostalCode'
+              }
+            ]
+          }
+        ]
+      }, {
+        title: 'Contacts',
+
+        rows: [
+          {
+            fields: [
+              {
+                type: 'html',
+                html: '<h4>Primary Contact</h4>'
+              }
+            ]
+          },
+          {
+            fields: [
+              {
+                title: 'First Name',
+                bindTo: 'primary_contact_first_name',
+                className: 'col-sm-4'
+              },
+              {
+                title: 'Last Name',
+                bindTo: 'primary_contact_last_name',
+                className: 'col-sm-4'
+              }
+            ]
+          },
+          {
+            fields: [
+              {
+                title: 'Email',
+                bindTo: 'primary_contact_email'
+              },
+              {
+                title: 'Primary Phone',
+                bindTo: 'primary_contact_primary_phone'
+              },
+              {
+                title: 'Alternate Phone',
+                bindTo: 'primary_contact_alternate_phone'
+              }
+            ]
+          },
+          {
+            fields: [
+              {
+                type: 'html',
+                html: '<h4>Alternate Contact</h4>'
+              }
+            ]
+          },
+          {
+            fields: [
+              {
+                title: 'First Name',
+                bindTo: 'alternate_contact_first_name',
+                className: 'col-sm-4'
+              },
+              {
+                title: 'Last Name',
+                bindTo: 'alternate_contact_last_name',
+                className: 'col-sm-4'
+              }
+            ]
+          },
+          {
+            fields: [
+              {
+                title: 'Email',
+                bindTo: 'alternate_contact_email'
+              },
+              {
+                title: 'Primary Phone',
+                bindTo: 'alternate_contact_primary_phone'
+              },
+              {
+                title: 'Alternate Phone',
+                bindTo: 'alternate_contact_alternate_phone'
               }
             ]
           }
