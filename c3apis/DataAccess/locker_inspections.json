@@ -1,6 +1,6 @@
 {
   "lockers": "string",
   "date": "2019-01-01T00:00:00.000-05:00",
-  "status": "Ok",
-  "report": "string"
+  "result": "Ok",
+  "notes": "string"
 }

@@ -23,7 +23,11 @@ function renderLockerDetailsPage($container, id, query, auth, routeCbk) {
           </li>
 
           <li class="nav-item" role="presentation">
-            <a class="nav-link">Subscription</a>
+            <a class="nav-link">Notes</a>
+          </li>
+
+          <li class="nav-item" role="presentation">
+            <a class="nav-link">Inspections</a>
           </li>
         </ul>
       </div>
@@ -34,8 +38,10 @@ function renderLockerDetailsPage($container, id, query, auth, routeCbk) {
 
   let Model = Backbone.Model.extend({
     defaults: {
-      number: 'string',
-      description: 'string',
+      "location": "string",
+      "location_site_name": "string",
+      "number": "001",
+
       __Status: 'Active'
     }
   });
@@ -69,22 +75,11 @@ function renderLockerDetailsPage($container, id, query, auth, routeCbk) {
                     text: value.name
                   }));
                 }
-              }
-            ]
-          }, {
-            fields: [
+              },
               {
                 title: 'Number',
                 bindTo: 'number',
-                required: true,
-                className: 'col-xs-12 col-sm-4'
-              },
-              {
-                title: 'Description',
-                bindTo: 'description',
-                type: 'textarea',
-                rows: 3,
-                className: 'col-xs-12 col-sm-8'
+                required: true
               }
             ]
           }

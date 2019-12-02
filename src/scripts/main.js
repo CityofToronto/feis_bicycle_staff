@@ -352,7 +352,11 @@ $(function () {
 
         query = handleResetStateQuery(this, `lockers/${id}`, query);
 
-        const breadcrumb = [{ name: 'Lockers', link: '#lockers' }];
+        let linkQuery = '';
+        if (query) {
+          linkQuery = `?${query}`;
+        }
+        const breadcrumb = [{ name: 'Lockers', link: `#lockers${linkQuery}` }];
 
         if (id === 'new') {
           updatePageHeader('New Locker', breadcrumb, { breadcrumbTitle: 'New' });
@@ -362,12 +366,7 @@ $(function () {
 
         return renderLockerDetailsPage($pageContainer, id, query, auth, (model) => {
           if (model.id) {
-            let finalQuery = '';
-            if (query) {
-              finalQuery = `?${query}`;
-            }
-
-            this.navigate(`lockers/${model.id}${finalQuery}`, { trigger: false, replace: true });
+            this.navigate(`lockers/${model.id}${linkQuery}`, { trigger: false, replace: true });
             updatePageHeader(model.escape('number'), breadcrumb, { ignoreFocus: true });
           }
         });

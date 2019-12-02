@@ -59,12 +59,6 @@ function renderLocationDetailsPage($container, id, query, auth, routeCbk) {
       "alternate_contact_email": "email@toronto.ca",
       "alternate_contact_primary_phone": "416-555-5555",
       "alternate_contact_alternate_phone": "416-555-5555",
-      "latest_inspection": "string",
-      "latest_inspection_date": "2019-01-01T00:00:00.000-05:00",
-      "latest_inspection_status": "Ok",
-      "latest_inspection_report": "string",
-      "latest_note": "string",
-      "latest_note_note": "string",
 
       __Status: 'Active'
     }

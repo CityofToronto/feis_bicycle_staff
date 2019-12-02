@@ -75,7 +75,6 @@ function renderLocationsPage($pageContainer, query, auth) {
     data: 'primary_contact_last_name',
     type: 'string'
   };
-
   columns['Contact Name'] = {
     title: 'Contact Name',
     className: 'minWidth',
