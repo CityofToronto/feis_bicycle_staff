@@ -1,6 +1,5 @@
 /* global $ */
-/* global moment */
-/* global ajaxes auth_checkAccess fixButtonLinks oData_escapeValue query_objectToString */
+/* global ajaxes fixButtonLinks query_objectToString */
 
 /* exported renderHomePage */
 function renderHomePage($container, query, auth) {

@@ -1,5 +1,10 @@
 {
   "number": "string",
   "description": "string",
-  "stations": ["string"]
+  "stations": ["string"],
+  "customer": "string",
+  "customer_first_name": "string",
+  "customer_last_name": "string",
+  "latest_note": "string",
+  "latest_note_note": "string"
 }

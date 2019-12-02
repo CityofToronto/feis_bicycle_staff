@@ -5,7 +5,7 @@
 
 /* global $ Backbone moment */
 /* global cot_app */
-/* global auth_init auth_checkLogin auth_logout query_objectToString query_stringToObject Router */
+/* global auth_checkLogin auth_init auth_logout query_objectToString query_stringToObject Router */
 /* global renderLoginButton */
 /* global renderLoadingPage */
 
