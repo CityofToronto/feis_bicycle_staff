@@ -63,7 +63,12 @@ function renderLockerDetailsPage($container, id, query, auth, routeCbk) {
                 type: 'dropdown',
                 choices: {
                   url: '/* @echo C3DATA_LOCATIONS */',
-                  headers: auth && auth.sId ? { Authorization: `AuthSession ${auth.sId}` } : {},
+                  // headers: auth && auth.sId ? { Authorization: `AuthSession ${auth.sId}` } : {},
+                  beforeSend(jqXHR) {
+                    if (auth && auth.sId) {
+                      jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+                    }
+                  }
                 },
                 choicesMap(result) {
                   if (!result || !Array.isArray(result.value)) {

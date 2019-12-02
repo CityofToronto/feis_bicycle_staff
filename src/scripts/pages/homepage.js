@@ -116,39 +116,42 @@ function renderHomePage($container, query, auth) {
       <h3 aria-labelledby="lockersHeader">Customers</h3>
 
       <div class="list-group">
-        <a href="#registrations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
-          <span class="badge badge-registrations">~</span>
+        <a href="#customers?${query_objectToString({ option: 'active', resetState: 'yes' })}" class="list-group-item">
+          <span class="badge badge-customers-active">~</span>
           All Active
         </a>
-        <!--
-        <a href="#registrations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
-          <span class="badge badge-registrations">~</span>
-          New
-        </a>
-        <a href="#registrations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
-          <span class="badge badge-registrations">~</span>
-          Waiting
-        </a>
-        <a href="#registrations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
-          <span class="badge badge-registrations">~</span>
-          Assigned
-        </a>
-        <a href="#registrations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
-          <span class="badge badge-registrations">~</span>
-          Expired
-        </a>
-        <a href="#registrations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
-          <span class="badge badge-registrations">~</span>
-          Email Addresses
-        </a>
-        -->
-        <a href="#registrations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
-          <span class="badge badge-registrations">~</span>
+
+        <a href="#customers?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
+          <span class="badge badge-customers">~</span>
           All
         </a>
       </div>
     </div>
   `);
+
+  ajaxes({
+    url: `/* @echo C3DATA_CUSTOMERS */?$select=id&$top=1000&$filter=__Status eq 'Active'`,
+    method: 'GET',
+    beforeSend(jqXHR) {
+      if (auth && auth.sId) {
+        jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+      }
+    }
+  }).then(({ data }) => {
+    $lockers.find('.badge-customers-active').html(data.value.length !== 1000 ? data.value.length : '999+');
+  });
+
+  ajaxes({
+    url: `/* @echo C3DATA_CUSTOMERS */?$select=id&$top=1000`,
+    method: 'GET',
+    beforeSend(jqXHR) {
+      if (auth && auth.sId) {
+        jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+      }
+    }
+  }).then(({ data }) => {
+    $lockers.find('.badge-customers').html(data.value.length !== 1000 ? data.value.length : '999+');
+  });
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
