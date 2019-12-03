@@ -40,24 +40,11 @@ function renderCustomersPage($pageContainer, query, auth) {
     searchable: false
   };
 
-  columns['First Name'] = {
-    title: 'First Name',
-    className: 'minWidth',
-    data: 'first_name',
-    type: 'string'
-  };
-
-  columns['Last Name'] = {
-    title: 'Last Name',
-    className: 'minWidth',
-    data: 'last_name',
-    type: 'string'
-  };
-
   columns['Name'] = {
     title: 'Name',
     className: 'minWidth',
     type: 'function',
+    select: ['first_name', 'last_name'],
     render(data, settings, row) {
       return [row['first_name'], row['last_name']].filter((value) => value).join(' ');
     },
@@ -120,8 +107,6 @@ function renderCustomersPage($pageContainer, query, auth) {
 
   definition.columns[columnCounter++] = columns['Name'];
   definition.order.push([columnCounter - 1, 'asc']);
-
-  // definition.columns[columnCounter++] = columns['Last Name'];
 
   const related = [
     {

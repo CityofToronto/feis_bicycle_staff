@@ -59,25 +59,12 @@ function renderLocationsPage($pageContainer, query, auth) {
     type: 'number',
   };
 
-  columns['Contact First Name'] = {
-    visible: false,
-    title: 'Contact First Name',
-    className: 'minWidth',
-    data: 'primary_contact_first_name',
-    type: 'string'
-  };
-  columns['Contact Last Name'] = {
-    visible: false,
-    title: 'Contact Last Name',
-    className: 'minWidth',
-    data: 'primary_contact_last_name',
-    type: 'string'
-  };
   columns['Contact Name'] = {
     title: 'Contact Name',
     className: 'minWidth',
     data: 'primary_contact_first_name',
     type: 'function',
+    select: 'primary_contact_last_name',
     render(data, settings, row) {
       return [row['primary_contact_first_name'], row['primary_contact_last_name']].filter((value) => value).join(' ');
     },
@@ -85,11 +72,11 @@ function renderLocationsPage($pageContainer, query, auth) {
       return column.search.value
         .split(' ')
         .filter((value, index, array) => value && array.indexOf(value) === index)
-        .map((value) => `(contains(tolower(primary_contact_first_name),'${oData_escapeValue(value.toLowerCase())}') or contains(tolower(primary_contact_last_name),'${oData_escapeValue(value.toLowerCase())}'))`)
+        .map((value) => `contains(tolower(concat(concat(primary_contact_first_name,' '),primary_contact_last_name)),'${oData_escapeValue(value.toLowerCase())}')`)
         .join(' and ');
     },
     orderBy(order) {
-      return `tolower(primary_contact_first_name) ${order.dir},tolower(primary_contact_last_name) ${order.dir}`;
+      return `tolower(concat(concat(primary_contact_first_name,' '),primary_contact_last_name)) ${order.dir}`;
     }
   };
 
@@ -156,12 +143,6 @@ function renderLocationsPage($pageContainer, query, auth) {
   colIndex++;
 
   definition.columns[colIndex] = columns['Available Lockers'];
-  colIndex++;
-
-  definition.columns[colIndex] = columns['Contact First Name'];
-  colIndex++;
-
-  definition.columns[colIndex] = columns['Contact Last Name'];
   colIndex++;
 
   definition.columns[colIndex] = columns['Contact Name'];
