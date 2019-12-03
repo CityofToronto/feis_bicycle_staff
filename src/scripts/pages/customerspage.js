@@ -1,4 +1,5 @@
-/* global moment query_stringToObject query_objectToString */
+/* global moment */
+/* global oData_escapeValue query_stringToObject query_objectToString */
 /* global renderDatatable */
 
 let lastLocationsPageOption;
@@ -53,6 +54,25 @@ function renderCustomersPage($pageContainer, query, auth) {
     type: 'string'
   };
 
+  columns['Name'] = {
+    title: 'Name',
+    className: 'minWidth',
+    type: 'function',
+    render(data, settings, row) {
+      return [row['first_name'], row['last_name']].filter((value) => value).join(' ');
+    },
+    filter(column) {
+      return column.search.value
+        .split(' ')
+        .filter((value, index, array) => value && array.indexOf(value) === index)
+        .map((value) => `(contains(tolower(first_name),'${oData_escapeValue(value.toLowerCase())}') or contains(tolower(last_name),'${oData_escapeValue(value.toLowerCase())}'))`)
+        .join(' and ');
+    },
+    orderBy(order) {
+      return `tolower(first_name) ${order.dir},tolower(last_name) ${order.dir}`;
+    }
+  };
+
   columns['Modified On'] = {
     title: 'Modified On',
     className: 'minWidth',
@@ -98,10 +118,10 @@ function renderCustomersPage($pageContainer, query, auth) {
 
   definition.columns[columnCounter++] = columns['Action'];
 
-  definition.columns[columnCounter++] = columns['First Name'];
+  definition.columns[columnCounter++] = columns['Name'];
   definition.order.push([columnCounter - 1, 'asc']);
 
-  definition.columns[columnCounter++] = columns['Last Name'];
+  // definition.columns[columnCounter++] = columns['Last Name'];
 
   const related = [
     {
