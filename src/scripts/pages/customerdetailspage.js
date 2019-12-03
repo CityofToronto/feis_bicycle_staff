@@ -650,7 +650,6 @@ function renderCustomerDetailsPage($container, id, query, auth, routeCbk) {
                     value: value.id,
                     text: value.site_name || ''
                   })).sort((a, b) => {
-                    console.log(a, b);
                     if (a.text.toLowerCase() < b.text.toLowerCase()) {
                       return -1;
                     }
@@ -827,7 +826,24 @@ function renderCustomerDetailsPage($container, id, query, auth, routeCbk) {
           {
             fields: [
               {
-
+                title: 'Status'
+              },
+            ]
+          },
+          {
+            fields: [
+              {
+                title: 'Location'
+              },
+              {
+                title: 'Locker'
+              },
+            ]
+          },
+          {
+            fields: [
+              {
+                title: 'Expiry Date'
               }
             ]
           }

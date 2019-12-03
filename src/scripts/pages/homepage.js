@@ -24,30 +24,13 @@ function renderHomePage($container, query, auth) {
       <h3 aria-labelledby="lockersHeader">Locations</h3>
 
       <div class="list-group">
-        <a href="#locations?${query_objectToString({ option: 'active', resetState: 'yes' })}" class="list-group-item">
-          <span class="badge badge-locations-active">~</span>
-          All Active
-        </a>
-
-        <a href="#locations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
+        <a href="#locations?${query_objectToString({ option: 'all', resetState: 'yes' })}" class="list-group-item">
           <span class="badge badge-locations">~</span>
           All
         </a>
       </div>
     </div>
   `);
-
-  ajaxes({
-    url: `/* @echo C3DATA_LOCATIONS */?$select=id&$top=1000&$filter=__Status eq 'Active'`,
-    method: 'GET',
-    beforeSend(jqXHR) {
-      if (auth && auth.sId) {
-        jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
-      }
-    }
-  }).then(({ data }) => {
-    $lockers.find('.badge-locations-active').html(data.value.length !== 1000 ? data.value.length : '999+');
-  });
 
   ajaxes({
     url: `/* @echo C3DATA_LOCATIONS */?$select=id&$top=1000`,
@@ -113,33 +96,16 @@ function renderHomePage($container, query, auth) {
 
   $lockers.append(`
     <div class="col-sm-6 col-md-3">
-      <h3 aria-labelledby="lockersHeader">Customers</h3>
+      <h3 aria-labelledby="lockersHeader">Customer Requests</h3>
 
       <div class="list-group">
-        <a href="#customers?${query_objectToString({ option: 'active', resetState: 'yes' })}" class="list-group-item">
-          <span class="badge badge-customers-active">~</span>
-          All Active
-        </a>
-
-        <a href="#customers?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
+        <a href="#customers?${query_objectToString({ option: 'all', resetState: 'yes' })}" class="list-group-item">
           <span class="badge badge-customers">~</span>
           All
         </a>
       </div>
     </div>
   `);
-
-  ajaxes({
-    url: `/* @echo C3DATA_CUSTOMERS */?$select=id&$top=1000&$filter=__Status eq 'Active'`,
-    method: 'GET',
-    beforeSend(jqXHR) {
-      if (auth && auth.sId) {
-        jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
-      }
-    }
-  }).then(({ data }) => {
-    $lockers.find('.badge-customers-active').html(data.value.length !== 1000 ? data.value.length : '999+');
-  });
 
   ajaxes({
     url: `/* @echo C3DATA_CUSTOMERS */?$select=id&$top=1000`,
@@ -267,7 +233,7 @@ function renderHomePage($container, query, auth) {
 
   $stations.append(`
     <div class="col-sm-6 col-md-3">
-      <h3 aria-labelledby="stationsHeader">Customers</h3>
+      <h3 aria-labelledby="stationsHeader">Customer Requests</h3>
 
       <div class="list-group">
         <a href="#registrations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">

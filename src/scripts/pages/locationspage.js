@@ -2,28 +2,19 @@
 /* global query_objectToString query_stringToObject */
 /* global renderDatatable */
 
-let lastLocationsPageOption;
-
 /* exported renderLocationsPage */
 function renderLocationsPage($pageContainer, query, auth) {
-  const queryObject = query_stringToObject(query);
+  const { option } = query_stringToObject(query);
 
-  if (lastLocationsPageOption != queryObject.option) {
+  if (renderLocationsPage.lastOption != option) {
     clearLocationsState();
-    lastLocationsPageOption = queryObject.option;
+    renderLocationsPage.lastOption = option;
   }
 
-  if (query) {
-    query = `?${query}`;
-  } else {
-    query = '';
-  }
+  const nextQuery = query_objectToString({ option, resetState: 'yes' });
 
   $pageContainer.html(`
     <p><a href="#home">Back to Home</a></p>
-
-    ${queryObject.option === 'active' ? '<h2>All Active</h2>' : ''}
-
     <div class="datatable"></div>
   `);
 
@@ -35,7 +26,7 @@ function renderLocationsPage($pageContainer, query, auth) {
     data: 'id',
     orderable: false,
     render(data) {
-      return `<a href="#locations/${data}${query}" class="btn btn-default">Open</a>`;
+      return `<a href="#locations/${data}?${nextQuery}" class="btn btn-default">Open</a>`;
     },
     searchable: false
   };
@@ -81,7 +72,6 @@ function renderLocationsPage($pageContainer, query, auth) {
     data: 'primary_contact_first_name',
     type: 'string',
     render(data, settings, row) {
-      console.log(data, row);
       return [row['primary_contact_first_name'], row['primary_contact_last_name']].filter((value) => value).join(' ');
     }
   };
@@ -133,49 +123,53 @@ function renderLocationsPage($pageContainer, query, auth) {
     searchCols: []
   };
 
-  let columnCounter = 0;
+  let colIndex = 0;
 
-  definition.columns[columnCounter++] = columns['Action'];
+  definition.columns[colIndex] = columns['Action'];
+  colIndex++;
 
-  definition.columns[columnCounter++] = columns['Site Name'];
-  definition.order.push([columnCounter - 1, 'asc']);
+  definition.columns[colIndex] = columns['Site Name'];
+  definition.order.push([colIndex, 'asc']);
+  colIndex++;
 
-  definition.columns[columnCounter++] = columns['Address'];
+  definition.columns[colIndex] = columns['Address'];
+  colIndex++;
 
-  definition.columns[columnCounter++] = columns['Lockers'];
+  definition.columns[colIndex] = columns['Lockers'];
+  colIndex++;
 
-  definition.columns[columnCounter++] = columns['Contact First Name'];
-  definition.columns[columnCounter++] = columns['Contact Last Name'];
-  definition.columns[columnCounter++] = columns['Contact Name'];
+  definition.columns[colIndex] = columns['Contact First Name'];
+  colIndex++;
 
-  definition.columns[columnCounter++] = columns['Contact Phone'];
+  definition.columns[colIndex] = columns['Contact Last Name'];
+  colIndex++;
+
+  definition.columns[colIndex] = columns['Contact Name'];
+  colIndex++;
+
+  definition.columns[colIndex] = columns['Contact Phone'];
+  colIndex++;
 
   const related = [
     {
-      title: 'All Active',
-      fragment: `locations?${query_objectToString({ option: 'active', resetState: 'yes' })}`
-    },
-    {
       title: 'All',
-      fragment: `locations?${query_objectToString({ resetState: 'yes' })}`
+      fragment: `locations?${query_objectToString({ option: 'all', resetState: 'yes' })}`
     }
   ];
 
-  switch (queryObject.option) {
-    case 'active':
-      definition.columns[columnCounter++] = columns['Status'];
-      definition.columns[columnCounter - 1].visible = false;
-      definition.searchCols[columnCounter - 1] = { search: 'Active' };
+  switch (option) {
+    default:
+      definition.columns[colIndex] = columns['Modified On'];
+      colIndex++;
+
+      definition.columns[colIndex] = columns['Modified By'];
+      colIndex++;
+
+      definition.columns[colIndex] = columns['Status'];
+      definition.searchCols[colIndex] = { search: 'Active' };
+      colIndex++;
 
       related[0].isCurrent = true;
-      break;
-
-    default:
-      definition.columns[columnCounter++] = columns['Modified On'];
-      definition.columns[columnCounter++] = columns['Modified By'];
-      definition.columns[columnCounter++] = columns['Status'];
-
-      related[1].isCurrent = true;
   }
 
   renderDatatable($pageContainer.find('.datatable'), definition, {
@@ -183,7 +177,7 @@ function renderLocationsPage($pageContainer, query, auth) {
     url: '/* @echo C3DATA_LOCATIONS */',
 
     newButtonLabel: 'New Locker Location',
-    newButtonFragment: `locations/new${query}`,
+    newButtonFragment: `locations/new?${nextQuery}`,
 
     stateSaveWebStorageKey: `locations`,
 

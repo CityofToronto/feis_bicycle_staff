@@ -309,7 +309,7 @@ $(function () {
         if (query) {
           linkQuery = `?${query}`;
         }
-        const breadcrumb = [{ name: 'Locker Locations', link: `#locations${linkQuery}` }];
+        const breadcrumb = [{ name: 'Locations', link: `#locations${linkQuery}` }];
 
         if (id === 'new') {
           updatePageHeader('New Locker Location', breadcrumb, { breadcrumbTitle: 'New' });

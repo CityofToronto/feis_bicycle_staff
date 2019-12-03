@@ -40,31 +40,62 @@ function renderDatatable($container, definition, options = {}) {
           .join(',');
 
         const dateFilter = (column, filterString) => {
-          filterString = filterString.toLowerCase();
+          filterString = filterString.trim().toLowerCase();
           if (filterString.indexOf(' to ') !== -1) {
-            const [startDate, endDate] = filterString.split('to');
-            const momentStartDate = moment(startDate.trim());
-            const momentEndDate = moment(endDate.trim());
+            let [startDate, endDate] = filterString.split('to');
+            startDate = startDate.trim();
+            endDate = endDate.trim();
+            const momentStartDate = moment(startDate, 'YYYY/MM/DD');
+            const momentEndDate = moment(endDate, 'YYYY/MM/DD');
             if (momentStartDate.isValid() || momentEndDate.isValid()) {
               let returnValues = [];
               if (momentStartDate.isValid()) {
-                returnValues.push(`${column} ge ${oData_escapeValue(momentStartDate.startOf('day').format())}`);
+                if (/^[^/]+$/.test(startDate)) {
+                  returnValues.push(`${column} ge ${oData_escapeValue(momentStartDate.startOf('year').format())}`);
+                } else if (/^[^/]+\/[^/]+$/.test(startDate)) {
+                  returnValues.push(`${column} ge ${oData_escapeValue(momentStartDate.startOf('month').format())}`);
+                } else {
+                  returnValues.push(`${column} ge ${oData_escapeValue(momentStartDate.startOf('day').format())}`);
+                }
               }
               if (momentEndDate.isValid()) {
-                returnValues.push(`${column} le ${oData_escapeValue(momentEndDate.endOf('day').format())}`);
+                if (/^[^/]+$/.test(endDate)) {
+                  // returnValues.push(`${column} le ${oData_escapeValue(momentEndDate.endOf('year').format())}`);
+                  returnValues.push(`${column} le ${oData_escapeValue(momentEndDate.startOf('year').format())}`);
+                } else if (/^[^/]+\/[^/]+$/.test(endDate)) {
+                  // returnValues.push(`${column} le ${oData_escapeValue(momentEndDate.endOf('month').format())}`);
+                  returnValues.push(`${column} le ${oData_escapeValue(momentEndDate.startOf('month').format())}`);
+                } else {
+                  // returnValues.push(`${column} le ${oData_escapeValue(momentEndDate.endOf('day').format())}`);
+                  returnValues.push(`${column} le ${oData_escapeValue(momentEndDate.startOf('day').format())}`);
+                }
               }
               return `(${returnValues.join(' and ')})`;
             } else {
               return false;
             }
           } else {
-            const momentDate = moment(filterString);
+            const momentDate = moment(filterString, 'YYYY/MM/DD');
             if (momentDate.isValid()) {
-              const returnValues = [
-                `${column} ge ${oData_escapeValue(momentDate.startOf('day').format())}`,
-                `${column} le ${oData_escapeValue(momentDate.endOf('day').format())}`
-              ];
-              return `(${returnValues.join(' and ')})`;
+              let returnValues = false;
+              if (/^[^/]+$/.test(filterString)) {
+                returnValues = `(${[
+                  `${column} ge ${oData_escapeValue(momentDate.startOf('year').format())}`,
+                  `${column} le ${oData_escapeValue(momentDate.endOf('year').format())}`
+                ].join(' and ')})`;
+              } else if (/^[^/]+\/[^/]+$/.test(filterString)) {
+                returnValues = `(${[
+                  `${column} ge ${oData_escapeValue(momentDate.startOf('month').format())}`,
+                  `${column} le ${oData_escapeValue(momentDate.endOf('month').format())}`
+                ].join(' and ')})`;
+              } else {
+                returnValues = `(${[
+                  `${column} ge ${oData_escapeValue(momentDate.startOf('day').format())}`,
+                  `${column} le ${oData_escapeValue(momentDate.endOf('day').format())}`
+                ].join(' and ')})`;
+              }
+
+              return returnValues;
             } else {
               return false;
             }
@@ -339,8 +370,8 @@ function renderDatatable($container, definition, options = {}) {
       <thead>
         <tr>
           ${definition.columns.map((column) => {
-            return `<th>${column.orderable === false ? '<button style="display:none;"></button>' : ''}${column.title || ''}</th>`;
-          }).join('')}
+    return `<th>${column.orderable === false ? '<button style="display:none;"></button>' : ''}${column.title || ''}</th>`;
+  }).join('')}
         </tr>
       </thead>
     </table>

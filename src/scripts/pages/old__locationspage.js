@@ -1,14 +1,16 @@
-/* global renderDatatable query_objectToString query_stringToObject moment */
+/* global moment */
+/* global query_objectToString query_stringToObject */
+/* global renderDatatable */
 
-let lastLockersPageOption;
+let lastLocationsPageOption;
 
-/* exported renderLockersPage */
-function renderLockersPage($pageContainer, query, auth) {
+/* exported renderLocationsPage */
+function renderLocationsPage($pageContainer, query, auth) {
   const queryObject = query_stringToObject(query);
 
-  if (lastLockersPageOption != queryObject.option) {
-    clearLockersState();
-    lastLockersPageOption = queryObject.option;
+  if (lastLocationsPageOption != queryObject.option) {
+    clearLocationsState();
+    lastLocationsPageOption = queryObject.option;
   }
 
   if (query) {
@@ -33,70 +35,61 @@ function renderLockersPage($pageContainer, query, auth) {
     data: 'id',
     orderable: false,
     render(data) {
-      return `<a href="#lockers/${data}${query}" class="btn btn-default">Open</a>`;
+      return `<a href="#locations/${data}${query}" class="btn btn-default">Open</a>`;
     },
     searchable: false
   };
 
-  columns['Location'] = {
-    title: 'Location',
+  columns['Site Name'] = {
+    title: 'Site Name',
     className: 'minWidth',
-    data: 'location_site_name',
+    data: 'site_name',
     type: 'string'
   };
 
-  columns['Number'] = {
-    title: 'Number',
+  columns['Address'] = {
+    title: 'Address',
+    className: 'minWidth',
+    data: 'civic_address',
+    type: 'string'
+  };
+
+  columns['Lockers'] = {
+    title: 'Lockers',
     className: 'minWidthSmall',
-    data: 'number',
-    type: 'string'
+    data: 'locker_count',
+    type: 'number',
   };
 
-  columns['Customer First Name'] = {
+  columns['Contact First Name'] = {
     visible: false,
-    title: 'Customer First Name',
+    title: 'Contact First Name',
     className: 'minWidth',
-    data: 'customer_first_name',
+    data: 'primary_contact_first_name',
     type: 'string'
   };
-  columns['Customer Last Name'] = {
+  columns['Contact Last Name'] = {
     visible: false,
-    title: 'Customer Last Name',
+    title: 'Contact Last Name',
     className: 'minWidth',
-    data: 'customer_last_name',
+    data: 'primary_contact_last_name',
     type: 'string'
   };
-  columns['Customer'] = {
-    title: 'Customer',
+  columns['Contact Name'] = {
+    title: 'Contact Name',
     className: 'minWidth',
-    data: 'customer_first_name',
+    data: 'primary_contact_first_name',
     type: 'string',
     render(data, settings, row) {
-      return [row['customer_first_name'], row['customer_last_name']].filter((value) => value).join(' ');
+      return [row['primary_contact_first_name'], row['primary_contact_last_name']].filter((value) => value).join(' ');
     }
   };
 
-  columns['Inspected On'] = {
-    title: 'Inspected On',
+  columns['Contact Phone'] = {
+    title: 'Contact Phone',
     className: 'minWidth',
-    data: 'latest_inspection_date',
-    type: 'date',
-    render(data) {
-      const dataMoment = moment(data);
-      if (dataMoment.isValid()) {
-        return dataMoment.format('YYYY/MM/DD');
-      } else {
-        return '-';
-      }
-    }
-  };
-
-  columns['Inspection Result'] = {
-    title: 'Inspection Result',
-    className: 'minWidth',
-    data: 'latest_inspection_result',
-    type: 'string',
-    choices: [{ text: 'Unknown' }, { text: 'Ok' }, { text: 'Problem' }]
+    data: 'primary_contact_primary_phone',
+    type: 'string'
   };
 
   columns['Modified On'] = {
@@ -143,27 +136,27 @@ function renderLockersPage($pageContainer, query, auth) {
 
   definition.columns[columnCounter++] = columns['Action'];
 
-  definition.columns[columnCounter++] = columns['Location'];
+  definition.columns[columnCounter++] = columns['Site Name'];
   definition.order.push([columnCounter - 1, 'asc']);
 
-  definition.columns[columnCounter++] = columns['Number'];
+  definition.columns[columnCounter++] = columns['Address'];
 
-  definition.columns[columnCounter++] = columns['Customer First Name'];
-  definition.columns[columnCounter++] = columns['Customer Last Name'];
-  definition.columns[columnCounter++] = columns['Customer'];
+  definition.columns[columnCounter++] = columns['Lockers'];
 
-  definition.columns[columnCounter++] = columns['Inspected On'];
+  definition.columns[columnCounter++] = columns['Contact First Name'];
+  definition.columns[columnCounter++] = columns['Contact Last Name'];
+  definition.columns[columnCounter++] = columns['Contact Name'];
 
-  definition.columns[columnCounter++] = columns['Inspection Result'];
+  definition.columns[columnCounter++] = columns['Contact Phone'];
 
   const related = [
     {
       title: 'All Active',
-      fragment: `lockers?${query_objectToString({ option: 'active', resetState: 'yes' })}`
+      fragment: `locations?${query_objectToString({ option: 'active', resetState: 'yes' })}`
     },
     {
       title: 'All',
-      fragment: `lockers?${query_objectToString({ resetState: 'yes' })}`
+      fragment: `locations?${query_objectToString({ resetState: 'yes' })}`
     }
   ];
 
@@ -186,18 +179,18 @@ function renderLockersPage($pageContainer, query, auth) {
 
   renderDatatable($pageContainer.find('.datatable'), definition, {
     auth,
-    url: '/* @echo C3DATA_LOCKERS */',
+    url: '/* @echo C3DATA_LOCATIONS */',
 
-    newButtonLabel: 'New Locker',
-    newButtonFragment: `lockers/new${query}`,
+    newButtonLabel: 'New Locker Location',
+    newButtonFragment: `locations/new${query}`,
 
-    stateSaveWebStorageKey: `lockers`,
+    stateSaveWebStorageKey: `locations`,
 
     related
   });
 }
 
-/* exported clearLockersState */
-function clearLockersState() {
-  sessionStorage.removeItem('lockers');
+/* exported clearLocationsState */
+function clearLocationsState() {
+  sessionStorage.removeItem('locations');
 }
