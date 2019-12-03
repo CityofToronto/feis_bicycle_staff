@@ -36,6 +36,17 @@ function renderDatatable($container, definition, options = {}) {
         queryObject['$select'] = data.columns
           .filter((column) => typeof column.data === 'string')
           .map((column) => column.data)
+          .concat(definition.columns
+            // .filter((column) => Array.isArray(column.select)||  typeof column.select === 'string')
+            .map((column) => column.select))
+            .reduce((acc, cur) => {
+              if (typeof cur === 'string') {
+                acc.push(cur);
+              } else if (Array.isArray(cur)) {
+                acc.push(...cur);
+              }
+              return acc;
+            }, [])
           .filter((select, index, array) => array.indexOf(select) === index)
           .join(',');
 
