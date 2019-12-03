@@ -6,11 +6,6 @@
   },
   {
     "group": "anonymous",
-    "resource": "/c3api_config/v2/ConfigService.svc/ConfigSet/bicycle_parking/nifi.json",
-    "action": "GET"
-  },
-  {
-    "group": "anonymous",
     "resource": "/c3api_config/v2/ConfigService.svc/ConfigSet/bicycle_parking/config.json",
     "action": "GET"
   },
