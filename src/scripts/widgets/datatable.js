@@ -115,7 +115,12 @@ function renderDatatable($container, definition, options = {}) {
                   return dateFilter(column.data, column.search.value);
 
                 case 'function':
-                  return `(${stringToFunction(definition.columns[index].filter)(column, definition.columns[index])})`;
+                  var returnValue = stringToFunction(definition.columns[index].filter)(column, definition.columns[index]);
+                  if (returnValue) {
+                    return `(${returnValue})`;
+                  } else {
+                    return false;
+                  }
 
                 default:
                   if (definition.columns[index].searchType === 'equals') {
@@ -412,12 +417,16 @@ function renderDatatable($container, definition, options = {}) {
   const datatable = window.datatable = $table.DataTable(definition);
 
   $innerContainer.on('keyup click', '.btn-reset', () => {
-    datatable.search('');
+    datatable.search(definition.search && definition.search.search ? definition.search.search : '');
+
     datatable.columns()[0].forEach((index) => {
       const $input = $table.find(`[data-column-index="${index}"]`);
       if ($input.is(':visible')) {
-        $input.val('');
-        datatable.column(index).search('');
+        const value = definition.searchCols && definition.searchCols[index] && definition.searchCols[index].search
+          ? definition.searchCols[index].search
+          : '';
+        $input.val(value);
+        datatable.column(index).search(value);
       }
     });
     datatable.draw();

@@ -1,5 +1,5 @@
 /* global moment */
-/* global query_objectToString query_stringToObject */
+/* global oData_escapeValue query_objectToString query_stringToObject */
 /* global renderDatatable */
 
 /* exported renderLocationsPage */
@@ -70,9 +70,16 @@ function renderLocationsPage($pageContainer, query, auth) {
     title: 'Contact Name',
     className: 'minWidth',
     data: 'primary_contact_first_name',
-    type: 'string',
+    type: 'function',
     render(data, settings, row) {
       return [row['primary_contact_first_name'], row['primary_contact_last_name']].filter((value) => value).join(' ');
+    },
+    filter(column) {
+      return column.search.value
+        .split(' ')
+        .filter((value, index, array) => value && array.indexOf(value) === index)
+        .map((value) => `(contains(tolower(primary_contact_first_name),'${oData_escapeValue(value.toLowerCase())}') or contains(tolower(primary_contact_last_name),'${oData_escapeValue(value.toLowerCase())}'))`)
+        .join(' and ');
     }
   };
 
