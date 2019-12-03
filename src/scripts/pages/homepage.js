@@ -33,7 +33,7 @@ function renderHomePage($container, query, auth) {
   `);
 
   ajaxes({
-    url: `/* @echo C3DATA_LOCATIONS */?$select=id&$top=1000`,
+    url: '/* @echo C3DATA_LOCATIONS */?$select=id&$top=1000&$filter= __Status eq \'Active\'',
     method: 'GET',
     beforeSend(jqXHR) {
       if (auth && auth.sId) {
