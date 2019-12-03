@@ -70,9 +70,14 @@
   },
   "scripts": {
     "run": "gulp run",
+
     "upload_config": "gulp c3api_config",
     "upload_dataaccess": "gulp c3api_dataaccess",
     "upload_media": "gulp c3api_dataaccess_media",
-    "upload_config_locations": "gulp c3api_config --suffix dataaccess.locations.extension.js"
+
+    "upload_config_common": "gulp c3api_config --suffix common.js",
+    "upload_config_locations": "gulp c3api_config --suffix dataaccess.locations.extension.js",
+
+    "upload_dataaccess_locations": "gulp c3api_dataaccess --localPath ./c3apis/DataAccess/locations.json --deleteEntity --truncateEntityAfter"
   }
 }

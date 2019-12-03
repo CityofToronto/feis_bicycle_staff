@@ -1,21 +1,57 @@
-var common = require('tw_backflowprevention/common.js');
+var common = require('bicycle_parking/common.js');
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // function afterQuery(content, request, uriInfo, response) { }
 
 function beforeContentParse(content, request, uriInfo, response) {
-  var body = [
-    'BEFORE CONTENT PARSE<br><br>',
-    'METHOD<br>', request.getMethod(),'<br><br>',
-    'CONTENT<br>', content.toString()
-  ].join('');
+  var jsonContent = JSON.parse(content.toString());
 
-  mailClient.createMail()
-  .setSubject('BEFORE CONTENT PARSE')
-  .setBody(body)
-  .setTo(['James.Ngo@toronto.ca'])
-  .send();
+  if (content.has('latest_inspection')) {
+    content.remove('latest_inspection')
+  }
+  if (content.has('latest_inspection_date')) {
+    content.remove('latest_inspection_date');
+  }
+  if (content.has('latest_inspection_result')) {
+    content.remove('latest_inspection_result');
+  }
+  if (content.has('latest_inspection_notes')) {
+    content.remove('latest_inspection_notes');
+  }
+
+  if (content.has('latest_note')) {
+    content.remove('latest_note')
+  }
+  if (content.has('latest_note_date')) {
+    content.remove('latest_note_date');
+  }
+  if (content.has('latest_note_note')) {
+    content.remove('latest_note_note');
+  }
+
+  if (content.has('lockers_total')) {
+    content.remove('lockers_total')
+  }
+  if (content.has('lockers_assigned')) {
+    content.remove('lockers_assigned');
+  }
+  if (content.has('lockers_unassigned')) {
+    content.remove('lockers_unassigned');
+  }
+
+  var lockersTotals = getLocationLockersTotals(jsonContent.id, {
+    Authorization: request.getHeader('Authorization')
+  });
+
+  content.addProperty('lockers_total', lockersTotals.lockersTotal);
+  content.addProperty('lockers_assigned', lockersTotals.lockersAssigned);
+  content.addProperty('lockers_unassigned', lockersTotals.lockersUnassigned);
+
+  if (jsonContent['__Status'] === '') {
+    content.remove('__Status');
+    content.addProperty('__Status', 'Active');
+  }
 }
 
 // function afterCreate(content, request, uriInfo, response) { }
@@ -26,19 +62,37 @@ function beforeContentParse(content, request, uriInfo, response) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function getLockersCount() {
-  var lockersCount = 0;
+function getLocationLockersTotals(locationId, options) {
+  options = options || {};
+  var Authorization = options.Authorization;
 
+  var returnValue = {};
+
+  var headers = {
+    'Content-Type': 'application/json'
+  };
+  if (Authorization) {
+    headers.Authorization = Authorization;
+  }
+
+  var uri = [common.DA_APP_BASE_URL, '/lockers?$select=id,customer&$filter=location eq \'', locationId, '\'&$skip=0&$top=1000'].join('');
   ajax.request({
-    uri: encodeURI(errorLogUrl),
-    method: 'POST',
-    data: payload,
-    headers: {
-      'Content-Type': 'application/json'
-    }
+    uri: encodeURI(uri),
+    method: 'GET',
+    headers: headers
   }, function (ajaxSuccessResponse) {
+    var body = JSON.parse(ajaxSuccessResponse.body);
+
+    returnValue.lockersTotal = body.value.length;
+
+    returnValue.lockersAssigned = returnValue.lockersTotal === 1000 ? null
+      : body.value.filter(function (value) { return value.customer != null; }).length;
+
+    returnValue.lockersUnassigned = returnValue.lockersTotal === 1000 ? null
+      : returnValue.lockersTotal - returnValue.lockersAssigned;
   }, function (ajaxErrorResponse) {
+    throw 'An Error Occured.';
   });
 
-  return lockersCount;
+  return returnValue;
 }

@@ -44,23 +44,23 @@ function renderLocationDetailsPage($container, id, query, auth, routeCbk) {
   let Model = Backbone.Model.extend({
     defaults: {
       "site_name": "string",
+
       "civic_address": "55 John Street",
       "municipality": "Toronto",
       "province": "Ontario",
       "postal_code": "M5V 3C6",
-      "locker_count": 0,
+
       "primary_contact_first_name": "string",
       "primary_contact_last_name": "string",
       "primary_contact_email": "email@toronto.ca",
       "primary_contact_primary_phone": "416-555-5555",
       "primary_contact_alternate_phone": "416-555-5555",
+
       "alternate_contact_first_name": "string",
       "alternate_contact_last_name": "string",
       "alternate_contact_email": "email@toronto.ca",
       "alternate_contact_primary_phone": "416-555-5555",
-      "alternate_contact_alternate_phone": "416-555-5555",
-
-      __Status: 'Active'
+      "alternate_contact_alternate_phone": "416-555-5555"
     }
   });
 
@@ -77,7 +77,8 @@ function renderLocationDetailsPage($container, id, query, auth, routeCbk) {
               {
                 title: 'Site Name',
                 bindTo: 'site_name',
-                required: true
+                required: true,
+                className: 'col-sm-8'
               }
             ]
           },
@@ -85,7 +86,8 @@ function renderLocationDetailsPage($container, id, query, auth, routeCbk) {
             fields: [
               {
                 title: 'Street Address',
-                bindTo: 'civic_address'
+                bindTo: 'civic_address',
+                className: 'col-sm-8'
               }
             ]
           },

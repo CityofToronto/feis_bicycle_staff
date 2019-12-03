@@ -24,8 +24,10 @@
   "latest_inspection_notes": "string",
 
   "latest_note": "string",
+  "latest_note_date": "string",
   "latest_note_note": "string",
 
-  "total_lockers": 0,
-  "availabe_lockers": 0
+  "lockers_total": 0,
+  "lockers_assigned": 0,
+  "lockers_unassigned": 0
 }

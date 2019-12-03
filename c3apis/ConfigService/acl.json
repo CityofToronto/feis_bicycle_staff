@@ -10,7 +10,7 @@
     "action": "GET"
   },
   {
-    "group": "anonymous",
+    "group": "staff",
     "resource": "/c3api_data/v2/DataAccess.svc/bicycle_parking/**",
     "action": "**"
   },
