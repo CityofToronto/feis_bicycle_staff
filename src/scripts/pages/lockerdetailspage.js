@@ -23,7 +23,11 @@ function renderLockerDetailsPage($container, id, query, auth, routeCbk) {
           </li>
 
           <li class="nav-item" role="presentation">
-            <a class="nav-link">Subscription</a>
+            <a class="nav-link">Notes</a>
+          </li>
+
+          <li class="nav-item" role="presentation">
+            <a class="nav-link">Inspections</a>
           </li>
         </ul>
       </div>
@@ -34,8 +38,10 @@ function renderLockerDetailsPage($container, id, query, auth, routeCbk) {
 
   let Model = Backbone.Model.extend({
     defaults: {
-      number: 'string',
-      description: 'string',
+      "location": "string",
+      "location_site_name": "string",
+      "number": "001",
+
       __Status: 'Active'
     }
   });
@@ -57,7 +63,12 @@ function renderLockerDetailsPage($container, id, query, auth, routeCbk) {
                 type: 'dropdown',
                 choices: {
                   url: '/* @echo C3DATA_LOCATIONS */',
-                  headers: auth && auth.sId ? { Authorization: `AuthSession ${auth.sId}` } : {},
+                  // headers: auth && auth.sId ? { Authorization: `AuthSession ${auth.sId}` } : {},
+                  beforeSend(jqXHR) {
+                    if (auth && auth.sId) {
+                      jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+                    }
+                  }
                 },
                 choicesMap(result) {
                   if (!result || !Array.isArray(result.value)) {
@@ -66,25 +77,14 @@ function renderLockerDetailsPage($container, id, query, auth, routeCbk) {
 
                   return result.value.map((value) => ({
                     value: value.id,
-                    text: value.name
+                    text: value.site_name
                   }));
                 }
-              }
-            ]
-          }, {
-            fields: [
+              },
               {
                 title: 'Number',
                 bindTo: 'number',
-                required: true,
-                className: 'col-xs-12 col-sm-4'
-              },
-              {
-                title: 'Description',
-                bindTo: 'description',
-                type: 'textarea',
-                rows: 3,
-                className: 'col-xs-12 col-sm-8'
+                required: true
               }
             ]
           }

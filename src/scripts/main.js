@@ -5,7 +5,7 @@
 
 /* global $ Backbone moment */
 /* global cot_app */
-/* global auth_init auth_checkLogin auth_logout query_objectToString query_stringToObject Router */
+/* global auth_checkLogin auth_init auth_logout query_objectToString query_stringToObject Router */
 /* global renderLoginButton */
 /* global renderLoadingPage */
 
@@ -305,7 +305,11 @@ $(function () {
 
         query = handleResetStateQuery(this, `locations/${id}`, query);
 
-        const breadcrumb = [{ name: 'Locker Locations', link: '#locations' }];
+        let linkQuery = '';
+        if (query) {
+          linkQuery = `?${query}`;
+        }
+        const breadcrumb = [{ name: 'Locations', link: `#locations${linkQuery}` }];
 
         if (id === 'new') {
           updatePageHeader('New Locker Location', breadcrumb, { breadcrumbTitle: 'New' });
@@ -315,13 +319,8 @@ $(function () {
 
         return renderLocationDetailsPage($pageContainer, id, query, auth, (model) => {
           if (model.id) {
-            let finalQuery = '';
-            if (query) {
-              finalQuery = `?${query}`;
-            }
-
-            this.navigate(`locations/${model.id}${finalQuery}`, { trigger: false, replace: true });
-            updatePageHeader(model.escape('name'), breadcrumb, { ignoreFocus: true });
+            this.navigate(`locations/${model.id}${linkQuery}`, { trigger: false, replace: true });
+            updatePageHeader(model.escape('site_name'), breadcrumb, { ignoreFocus: true });
           }
         });
       });
@@ -353,7 +352,11 @@ $(function () {
 
         query = handleResetStateQuery(this, `lockers/${id}`, query);
 
-        const breadcrumb = [{ name: 'Lockers', link: '#lockers' }];
+        let linkQuery = '';
+        if (query) {
+          linkQuery = `?${query}`;
+        }
+        const breadcrumb = [{ name: 'Lockers', link: `#lockers${linkQuery}` }];
 
         if (id === 'new') {
           updatePageHeader('New Locker', breadcrumb, { breadcrumbTitle: 'New' });
@@ -363,12 +366,7 @@ $(function () {
 
         return renderLockerDetailsPage($pageContainer, id, query, auth, (model) => {
           if (model.id) {
-            let finalQuery = '';
-            if (query) {
-              finalQuery = `?${query}`;
-            }
-
-            this.navigate(`lockers/${model.id}${finalQuery}`, { trigger: false, replace: true });
+            this.navigate(`lockers/${model.id}${linkQuery}`, { trigger: false, replace: true });
             updatePageHeader(model.escape('number'), breadcrumb, { ignoreFocus: true });
           }
         });

@@ -78,7 +78,12 @@ function renderKeyfobDetailsPage($container, id, query, auth, routeCbk) {
                 multiple: true,
                 choices: {
                   url: '/* @echo C3DATA_STATIONS */',
-                  headers: auth && auth.sId ? { Authorization: `AuthSession ${auth.sId}` } : {},
+                  // headers: auth && auth.sId ? { Authorization: `AuthSession ${auth.sId}` } : {},
+                  beforeSend(jqXHR) {
+                    if (auth && auth.sId) {
+                      jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+                    }
+                  }
                 },
                 choicesMap(result) {
                   if (!result || !Array.isArray(result.value)) {
