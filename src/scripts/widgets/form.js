@@ -145,7 +145,7 @@ function renderForm($container, definition, {
 
               postRender({ field }) {
                 model.on(`change:${field.bindTo}`, () => {
-                  $(`#${field.id}`).val(model.get(field.bindTo));
+                  $(`#${field.id}Element input[type="radio"][value="${model.get(field.bindTo)}"]`).prop('checked', true);
                 });
               }
             }
