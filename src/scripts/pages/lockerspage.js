@@ -1,121 +1,128 @@
-/* global $ renderDatatable query_objectToString query_stringToObject moment */
-
-let lastLockersPageOption;
+/* global moment */
+/* global query_objectToString query_stringToObject  */
+/* global renderDatatable */
 
 /* exported renderLockersPage */
 function renderLockersPage($pageContainer, query, auth) {
-  const queryObject = query_stringToObject(query);
+  const { option } = query_stringToObject(query);
 
-  if (lastLockersPageOption != queryObject.option) {
+  if (renderLockersPage.lastOption != option) {
     clearLockersState();
-    lastLockersPageOption = queryObject.option;
+    renderLockersPage.lastOption = option;
   }
 
-  if (query) {
-    query = `?${query}`;
-  } else {
-    query = '';
-  }
+  const nextQuery = query_objectToString({ option, resetState: 'yes' });
 
   $pageContainer.html(`
     <p><a href="#home">Back to Home</a></p>
-
-    ${queryObject.option === 'today' ? '<h2>Today</h2>' : ''}
-    ${queryObject.option === 'thisyear' ? '<h2>This Year</h2>' : ''}
-
     <div class="datatable"></div>
   `);
 
-  let locationMap = {};
+  const columns = {};
 
-  const columns = {
-    'Action': {
-      title: 'Action',
-      className: 'excludeFromButtons openButtonWidth',
-      data: 'id',
-      orderable: false,
-      render(data) {
-        return `<a href="#lockers/${data}${query}" class="btn btn-default">Open</a>`;
-      },
-      searchable: false
+  columns['Action'] = {
+    title: 'Action',
+    className: 'excludeFromButtons openButtonWidth',
+    data: 'id',
+    orderable: false,
+    render(data) {
+      return `<a href="#lockers/${data}?${nextQuery}" class="btn btn-default">Open</a>`;
     },
-    'Location': {
-      title: 'Location',
-      className: 'minWidth',
-      data: 'location',
-      type: 'string',
-      searchType: 'equals',
-      choices: {
-        url: '/* @echo C3DATA_LOCATIONS */?$select=id,name&$filter=__Status eq \'Active\'&$top=5000',
-        beforeSend(jqXHR) {
-          if (auth && auth.sId) {
-            jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
-          }
-        }
-      },
-      choicesMap(data) {
-        if (data && data.value) {
-          return data.value.map((value) => ({ text: value.name, value: value.id }));
-        }
-        return [];
-      },
-      render(data) {
-        return locationMap[data] || '...';
+    searchable: false
+  };
+
+  columns['Location'] = {
+    title: 'Location',
+    className: 'minWidth',
+    data: 'location_site_name',
+    type: 'string'
+  };
+
+  columns['Number'] = {
+    title: 'Number',
+    className: 'minWidthSmall',
+    data: 'number',
+    type: 'string'
+  };
+
+  columns['Customer First Name'] = {
+    visible: false,
+    title: 'Customer First Name',
+    className: 'minWidth',
+    data: 'customer_first_name',
+    type: 'string'
+  };
+  columns['Customer Last Name'] = {
+    visible: false,
+    title: 'Customer Last Name',
+    className: 'minWidth',
+    data: 'customer_last_name',
+    type: 'string'
+  };
+  columns['Customer'] = {
+    title: 'Customer',
+    className: 'minWidth',
+    data: 'customer_first_name',
+    type: 'string',
+    render(data, settings, row) {
+      return [row['customer_first_name'], row['customer_last_name']].filter((value) => value).join(' ');
+    }
+  };
+
+  columns['Inspected On'] = {
+    title: 'Inspected On',
+    className: 'minWidth',
+    data: 'latest_inspection_date',
+    type: 'date',
+    render(data) {
+      const dataMoment = moment(data);
+      if (dataMoment.isValid()) {
+        return dataMoment.format('YYYY/MM/DD');
+      } else {
+        return '-';
       }
-    },
-    'Number': {
-      title: 'Number',
-      className: 'minWidthSmall',
-      data: 'number',
-      type: 'string'
-    },
-    'Description': {
-      title: 'Description',
-      className: 'minWidthLarge',
-      data: 'description',
-      type: 'string'
-    },
-    'Modified On': {
-      title: 'Modified On',
-      className: 'minWidth',
-      data: '__ModifiedOn',
-      type: 'date',
-      render(data) {
-        const dataMoment = moment(data);
-        if (dataMoment.isValid()) {
-          return dataMoment.format('YYYY/MM/DD');
-        } else {
-          return '-';
-        }
+    }
+  };
+
+  columns['Inspection Result'] = {
+    title: 'Inspection Result',
+    className: 'minWidth',
+    data: 'latest_inspection_result',
+    type: 'string',
+    choices: [{ text: 'Unknown' }, { text: 'Ok' }, { text: 'Problem' }]
+  };
+
+  columns['Modified On'] = {
+    title: 'Modified On',
+    className: 'minWidth',
+    data: '__ModifiedOn',
+    type: 'date',
+    render(data) {
+      const dataMoment = moment(data);
+      if (dataMoment.isValid()) {
+        return dataMoment.format('YYYY/MM/DD');
+      } else {
+        return '-';
       }
-    },
-    'Modified By': {
-      title: 'Modified By',
-      className: 'minWidth',
-      data: '__Owner',
-      type: 'string'
-    },
-    'Status': {
-      title: 'Status',
-      className: 'statusWidth',
-      data: '__Status',
-      type: 'string',
-      searchType: 'equals',
-      choices: [{ text: 'Active' }, { text: 'Inactive' }],
-      render(data) {
-        return `<span class="label label-${data === 'Active' ? 'success' : data === 'Inactive' ? 'danger' : 'default'}" style="font-size: 90%;">${data}</span>`;
-      }
-    },
-    'Hidden Modified On': {
-      visible: false,
-      data: '__ModifiedOn',
-      type: 'date'
-    },
-    'Hidden Status': {
-      visible: false,
-      data: '__Status',
-      type: 'string',
-      searchType: 'equals'
+    }
+  };
+
+  columns['Modified By'] = {
+    title: 'Modified By',
+    className: 'minWidth',
+    data: '__Owner',
+    type: 'string'
+  };
+
+  columns['Status'] = {
+    title: 'Status',
+    className: 'statusWidth',
+    data: '__Status',
+    type: 'string',
+    searchType: 'equals',
+    choices: [{ text: 'Active' }, { text: 'Inactive' }],
+    render(data) {
+      return `<span class="label label-${data === 'Active' ? 'success' : data === 'Inactive' ? 'danger' : 'default'}" style="font-size: 90%;">${data}</span>`;
     }
   };
 
@@ -125,79 +132,53 @@ function renderLockersPage($pageContainer, query, auth) {
     searchCols: []
   };
 
-  definition.columns[0] = columns['Action'];
-  definition.columns[1] = columns['Location'];
-  definition.columns[2] = columns['Number'];
-  definition.columns[3] = columns['Description'];
-  definition.columns[4] = columns['Modified On'];
-  definition.columns[5] = columns['Modified By'];
+  let colIndex = 0;
 
-  definition.order.push([1, 'asc']);
+  definition.columns[colIndex] = columns['Action'];
+  colIndex++;
 
-  definition.initComplete = function (settings, json) {
-    if (json && json.data && json.data.length > 0) {
-      const filter = json.data
-        .map((value) => value.location)
-        .filter((value, index, array) => array.indexOf(value) === index)
-        .map((value) => `id eq '${value}'`)
-        .join(' or ');
+  definition.columns[colIndex] = columns['Location'];
+  definition.order.push([colIndex, 'asc']);
+  colIndex++;
 
-      $.ajax(`/* @echo C3DATA_LOCATIONS */?$select=id,name&$filter=${filter}`, {
-        beforeSend(jqXHR) {
-          if (auth && auth.sId) {
-            jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
-          }
-        }
-      }).then((response) => {
-        locationMap = response.value.reduce((accumulator, value) => {
-          accumulator[value.id] = value.name;
-          return accumulator;
-        }, {});
-        this.dataTable().api().columns.adjust().draw();
-      });
-    }
-  };
+  definition.columns[colIndex] = columns['Number'];
+  colIndex++;
+
+  definition.columns[colIndex] = columns['Customer First Name'];
+  colIndex++;
+
+  definition.columns[colIndex] = columns['Customer Last Name'];
+  colIndex++;
+
+  definition.columns[colIndex] = columns['Customer'];
+  colIndex++;
+
+  definition.columns[colIndex] = columns['Inspected On'];
+  colIndex++;
+
+  definition.columns[colIndex] = columns['Inspection Result'];
+  colIndex++;
 
   const related = [
     {
-      title: 'Today',
-      fragment: `lockers?${query_objectToString({ option: 'today', resetState: 'yes' })}`
-    },
-    {
-      title: 'This Year',
-      fragment: `lockers?${query_objectToString({ option: 'thisyear', resetState: 'yes' })}`
-    },
-    {
       title: 'All',
-      fragment: `lockers?${query_objectToString({ resetState: 'yes' })}`
+      fragment: `lockers?${query_objectToString({ option: 'all', resetState: 'yes' })}`
     }
   ];
 
-  switch (queryObject.option) {
-    case 'today':
-      definition.columns[6] = columns['Hidden Modified On'];
-      definition.columns[7] = columns['Hidden Status'];
+  switch (option) {
+    default:
+      definition.columns[colIndex] = columns['Modified On'];
+      colIndex++;
 
-      definition.searchCols[6] = { search: moment().format() };
-      definition.searchCols[7] = { search: 'Active' };
+      definition.columns[colIndex] = columns['Modified By'];
+      colIndex++;
+
+      definition.columns[colIndex] = columns['Status'];
+      definition.searchCols[colIndex] = { search: 'Active' };
+      colIndex++;
 
       related[0].isCurrent = true;
-      break;
-
-    case 'thisyear':
-      definition.columns[6] = columns['Hidden Modified On'];
-      definition.columns[7] = columns['Hidden Status'];
-
-      definition.searchCols[6] = { search: `${moment().startOf('year').format()} to ${moment().endOf('year').format()}` };
-      definition.searchCols[7] = { search: 'Active' };
-
-      related[1].isCurrent = true;
-      break;
-
-    default:
-      definition.columns[6] = columns['Status'];
-
-      related[2].isCurrent = true;
   }
 
   renderDatatable($pageContainer.find('.datatable'), definition, {
@@ -205,7 +186,7 @@ function renderLockersPage($pageContainer, query, auth) {
     url: '/* @echo C3DATA_LOCKERS */',
 
     newButtonLabel: 'New Locker',
-    newButtonFragment: `lockers/new${query}`,
+    newButtonFragment: `lockers/new?${nextQuery}`,
 
     stateSaveWebStorageKey: `lockers`,
 

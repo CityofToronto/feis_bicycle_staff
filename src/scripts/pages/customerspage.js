@@ -21,76 +21,70 @@ function renderCustomersPage($pageContainer, query, auth) {
   $pageContainer.html(`
     <p><a href="#home">Back to Home</a></p>
 
-    ${queryObject.option === 'today' ? '<h2>Today</h2>' : ''}
-    ${queryObject.option === 'thisyear' ? '<h2>This Year</h2>' : ''}
+    ${queryObject.option === 'active' ? '<h2>All Active</h2>' : ''}
 
     <div class="datatable"></div>
   `);
 
-  const columns = {
-    'Action': {
-      title: 'Action',
-      className: 'excludeFromButtons openButtonWidth',
-      data: 'id',
-      orderable: false,
-      render(data) {
-        return `<a href="#customers/${data}${query}" class="btn btn-default">Open</a>`;
-      },
-      searchable: false
+  const columns = {};
+
+  columns['Action'] = {
+    title: 'Action',
+    className: 'excludeFromButtons openButtonWidth',
+    data: 'id',
+    orderable: false,
+    render(data) {
+      return `<a href="#customers/${data}${query}" class="btn btn-default">Open</a>`;
     },
-    'First Name': {
-      title: 'First Name',
-      className: 'minWidth',
-      data: 'first_name',
-      type: 'string'
-    },
-    'Last Name': {
-      title: 'Last Name',
-      className: 'minWidth',
-      data: 'last_name',
-      type: 'string'
-    },
-    'Modified On': {
-      title: 'Modified On',
-      className: 'minWidth',
-      data: '__ModifiedOn',
-      type: 'date',
-      render(data) {
-        const dataMoment = moment(data);
-        if (dataMoment.isValid()) {
-          return dataMoment.format('YYYY/MM/DD');
-        } else {
-          return '-';
-        }
+    searchable: false
+  };
+
+  columns['First Name'] = {
+    title: 'First Name',
+    className: 'minWidth',
+    data: 'first_name',
+    type: 'string'
+  };
+
+  columns['Last Name'] = {
+    title: 'Last Name',
+    className: 'minWidth',
+    data: 'last_name',
+    type: 'string'
+  };
+
+  columns['Modified On'] = {
+    title: 'Modified On',
+    className: 'minWidth',
+    data: '__ModifiedOn',
+    type: 'date',
+    render(data) {
+      const dataMoment = moment(data);
+      if (dataMoment.isValid()) {
+        return dataMoment.format('YYYY/MM/DD');
+      } else {
+        return '-';
       }
-    },
-    'Modified By': {
-      title: 'Modified By',
-      className: 'minWidth',
-      data: '__Owner',
-      type: 'string'
-    },
-    'Status': {
-      title: 'Status',
-      className: 'statusWidth',
-      data: '__Status',
-      type: 'string',
-      searchType: 'equals',
-      choices: [{ text: 'Active' }, { text: 'Inactive' }],
-      render(data) {
-        return `<span class="label label-${data === 'Active' ? 'success' : data === 'Inactive' ? 'danger' : 'default'}" style="font-size: 90%;">${data}</span>`;
-      }
-    },
-    'Hidden Modified On': {
-      visible: false,
-      data: '__ModifiedOn',
-      type: 'date'
-    },
-    'Hidden Status': {
-      visible: false,
-      data: '__Status',
-      type: 'string',
-      searchType: 'equals'
+    }
+  };
+
+  columns['Modified By'] = {
+    title: 'Modified By',
+    className: 'minWidth',
+    data: '__Owner',
+    type: 'string'
+  };
+
+
+  columns['Status'] = {
+    title: 'Status',
+    className: 'statusWidth',
+    data: '__Status',
+    type: 'string',
+    searchType: 'equals',
+    choices: [{ text: 'Active' }, { text: 'Inactive' }],
+    render(data) {
+      return `<span class="label label-${data === 'Active' ? 'success' : data === 'Inactive' ? 'danger' : 'default'}" style="font-size: 90%;">${data}</span>`;
     }
   };
 
@@ -100,62 +94,42 @@ function renderCustomersPage($pageContainer, query, auth) {
     searchCols: []
   };
 
-  let colIndex = 0;
+  let columnCounter = 0;
 
-  definition.columns[colIndex] = columns['Action'];
+  definition.columns[columnCounter++] = columns['Action'];
 
-  definition.columns[++colIndex] = columns['First Name'];
-  definition.order.push([colIndex, 'asc']);
+  definition.columns[columnCounter++] = columns['First Name'];
+  definition.order.push([columnCounter - 1, 'asc']);
 
-  definition.columns[++colIndex] = columns['Last Name'];
-
-  definition.columns[++colIndex] = columns['Modified On'];
-
-  definition.columns[++colIndex] = columns['Modified By'];
+  definition.columns[columnCounter++] = columns['Last Name'];
 
   const related = [
     {
-      title: 'Today\'s Entries',
-      fragment: `customers?${query_objectToString({ option: 'today', resetState: 'yes' })}`
+      title: 'All Active',
+      fragment: `customers?${query_objectToString({ option: 'active', resetState: 'yes' })}`
     },
     {
-      title: 'This Year\'s Entries',
-      fragment: `customers?${query_objectToString({ option: 'thisyear', resetState: 'yes' })}`
-    },
-    {
-      title: 'All Entries',
+      title: 'All',
       fragment: `customers?${query_objectToString({ resetState: 'yes' })}`
     }
   ];
 
   switch (queryObject.option) {
-    case 'today':
-      definition.columns[++colIndex] = columns['Hidden Modified On'];
-      definition.searchCols[colIndex] = { search: moment().format() };
-
-      definition.columns[++colIndex] = columns['Hidden Status'];
-      definition.searchCols[colIndex] = { search: 'Active' };
+    case 'active':
+      definition.columns[columnCounter++] = columns['Status'];
+      definition.columns[columnCounter - 1].visible = false;
+      definition.searchCols[columnCounter - 1] = { search: 'Active' };
 
       related[0].isCurrent = true;
       break;
 
-    case 'thisyear':
-      definition.columns[++colIndex] = columns['Hidden Modified On'];
-      definition.searchCols[colIndex] = { search: `${moment().startOf('year').format()} to ${moment().endOf('year').format()}` };
-
-      definition.columns[++colIndex] = columns['Hidden Status'];
-      definition.searchCols[colIndex] = { search: 'Active' };
+    default:
+      definition.columns[columnCounter++] = columns['Modified On'];
+      definition.columns[columnCounter++] = columns['Modified By'];
+      definition.columns[columnCounter++] = columns['Status'];
 
       related[1].isCurrent = true;
-      break;
-
-    default:
-      definition.columns[++colIndex] = columns['Status'];
-
-      related[2].isCurrent = true;
   }
-
-  console.log(definition);
 
   renderDatatable($pageContainer.find('.datatable'), definition, {
     auth,

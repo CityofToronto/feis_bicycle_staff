@@ -9,7 +9,9 @@ function query_objectToString(obj) {
 function query_stringToObject(str) {
   return (str || '').split('&').reduce((acc, cur) => {
     const [name, value] = cur.split('=');
-    acc[name] = decodeURIComponent(value);
+    if (name && value) {
+      acc[name] = decodeURIComponent(value);
+    }
     return acc;
   }, {});
 }
