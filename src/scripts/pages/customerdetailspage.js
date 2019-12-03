@@ -40,8 +40,45 @@ function renderCustomerDetailsPage($container, id, query, auth, routeCbk) {
 
   let Model = Backbone.Model.extend({
     defaults: {
-      municipality: 'Toronto',
-      province: 'Ontario',
+      "first_name": "string",
+      "last_name": "string",
+      "title": "string",
+      "email": "string",
+      "primary_phone": "string",
+      "alternate_phone": "string",
+      "civic_address": "string",
+      "municipality": "string",
+      "province": "string",
+      "postal_code": "string",
+      "request_type": "string",
+      "request_locker_choice_1": "string",
+      "request_locker_choice_2": "string",
+      "request_locker_choice_3": "string",
+      "request_station_choice_1": "string",
+      "request_station_choice_2": "string",
+      "request_station_choice_3": "string",
+      "bicycle_1_make": "string",
+      "bicycle_1_model": "string",
+      "bicycle_1_colour": "string",
+      "bicycle_2_make": "string",
+      "bicycle_2_model": "string",
+      "bicycle_2_colour": "string",
+      "subscription_locker": "string",
+      "subscription_locker_location_site_name": "string",
+      "subscription_locker_number": "string",
+      "subscription_locker_key_date_assigned": "string",
+      "subscription_locker_key_date_returned": "string",
+      "subscription_station": "string",
+      "subscription_station_site_name": "string",
+      "subscription_keyfob": "string",
+      "subscription_keyfob_number": "string",
+      "subscription_keyfob_date_assigned": "string",
+      "subscription_keyfob_date_returned": "string",
+      "subscription_expiration_date": "2019-01-01T00:00:00.000-05:00",
+      "status": "New",
+      "latest_note": "string",
+      "latest_note_note": "string",
+
       __Status: 'Active'
     }
   });
@@ -429,7 +466,6 @@ function renderCustomerDetailsPage($container, id, query, auth, routeCbk) {
                 id: 'lockers_choice_1',
                 choices: {
                   url: '/* @echo C3DATA_LOCATIONS */?$select=id,site_name&$filter=__Status eq \'Active\'',
-                  // headers: auth && auth.sId ? { Authorization: `AuthSession ${auth.sId}` } : {},
                   beforeSend(jqXHR) {
                     if (auth && auth.sId) {
                       jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
@@ -493,7 +529,6 @@ function renderCustomerDetailsPage($container, id, query, auth, routeCbk) {
                 id: 'lockers_choice_2',
                 choices: {
                   url: '/* @echo C3DATA_LOCATIONS */?$select=id,site_name&$filter=__Status eq \'Active\'',
-                  // headers: auth && auth.sId ? { Authorization: `AuthSession ${auth.sId}` } : {},
                   beforeSend(jqXHR) {
                     if (auth && auth.sId) {
                       jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
@@ -826,24 +861,59 @@ function renderCustomerDetailsPage($container, id, query, auth, routeCbk) {
           {
             fields: [
               {
-                title: 'Status'
-              },
+                title: 'Status',
+                className: 'col-sm-4',
+                htmlAttr: { readOnly: true }
+              }
             ]
           },
           {
             fields: [
+              {
+                title: 'Type',
+                type: 'dropdown',
+                choices: [
+                  { text: 'Bicycle Lockers' },
+                  { text: 'Bicycle Stations' }
+                ],
+              },
               {
                 title: 'Location'
               },
               {
                 title: 'Locker'
-              },
+              }
             ]
           },
           {
             fields: [
               {
-                title: 'Expiry Date'
+                title: 'Assignment Date',
+                type: 'text'
+              },
+              {
+                title: 'Start Date',
+                type: 'text'
+              },
+              {
+                title: 'Expiry Date',
+                type: 'text'
+              }
+            ]
+          },
+          {
+            fields: [
+              {
+                title: 'Key Fob Number',
+                type: 'text'
+              },
+              {
+                title: 'Assignment Date',
+                type: 'text'
+              },
+              {
+                title: 'Return Date',
+                type: 'text'
               }
             ]
           }
