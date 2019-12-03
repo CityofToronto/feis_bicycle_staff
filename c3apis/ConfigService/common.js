@@ -7,24 +7,24 @@ module.exports.DA_APP_BASE_URL = module.exports.DA_BASE_URL + '/bicycle_parking'
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-module.exports.locations_getLockersTotals = function(locationId, options) {
-  options = options || {};
-  var Authorization = options.Authorization;
-
+module.exports.locations_getLockersTotals = function(request, locationId) {
   var returnValue = {};
+
+  var uri = [module.exports.DA_APP_BASE_URL, '/lockers?$select=id,customer&$filter=location eq \'', locationId, '\'&$skip=0&$top=1000'].join('');
 
   var headers = {
     'Content-Type': 'application/json'
   };
+
+  var Authorization = request.getHeader('Authorization');
   if (Authorization) {
     headers.Authorization = Authorization;
   }
 
-  var uri = [module.exports.DA_APP_BASE_URL, '/lockers?$select=id,customer&$filter=location eq \'', locationId, '\'&$skip=0&$top=1000'].join('');
   ajax.request({
     uri: encodeURI(uri),
-    method: 'GET',
-    headers: headers
+    headers: headers,
+    method: 'GET'
   }, function (ajaxSuccessResponse) {
     var body = JSON.parse(ajaxSuccessResponse.body);
 
@@ -41,6 +41,8 @@ module.exports.locations_getLockersTotals = function(locationId, options) {
 
   return returnValue;
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // var body = [
 //   'BEFORE CONTENT PARSE<br><br>',
