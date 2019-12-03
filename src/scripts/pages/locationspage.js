@@ -47,8 +47,15 @@ function renderLocationsPage($pageContainer, query, auth) {
 
   columns['Lockers'] = {
     title: 'Lockers',
-    className: 'minWidthSmall',
+    className: 'minWidth',
     data: 'locker_count',
+    type: 'number',
+  };
+
+  columns['Available Lockers'] = {
+    title: 'Available Lockers',
+    className: 'minWidth',
+    data: 'locker_available',
     type: 'number',
   };
 
@@ -143,6 +150,9 @@ function renderLocationsPage($pageContainer, query, auth) {
   colIndex++;
 
   definition.columns[colIndex] = columns['Lockers'];
+  colIndex++;
+
+  definition.columns[colIndex] = columns['Available Lockers'];
   colIndex++;
 
   definition.columns[colIndex] = columns['Contact First Name'];
