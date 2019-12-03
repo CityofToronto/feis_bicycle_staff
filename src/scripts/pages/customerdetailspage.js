@@ -861,15 +861,6 @@ function renderCustomerDetailsPage($container, id, query, auth, routeCbk) {
           {
             fields: [
               {
-                title: 'Status',
-                className: 'col-sm-4',
-                htmlAttr: { readOnly: true }
-              }
-            ]
-          },
-          {
-            fields: [
-              {
                 title: 'Type',
                 type: 'dropdown',
                 choices: [
@@ -914,6 +905,48 @@ function renderCustomerDetailsPage($container, id, query, auth, routeCbk) {
               {
                 title: 'Return Date',
                 type: 'text'
+              }
+            ]
+          }
+        ]
+      }, {
+        title: 'Status',
+
+        rows: [
+          {
+            fields: [
+              {
+                title: 'Status',
+                className: 'col-sm-4',
+                htmlAttr: { readOnly: true }
+              }
+            ]
+          },
+          {
+            fields: [
+              {
+                title: 'Request Date',
+                className: 'col-sm-4',
+                htmlAttr: { readOnly: true }
+              },
+              {
+                title: 'Waiting Date',
+                className: 'col-sm-4',
+                htmlAttr: { readOnly: true }
+              },
+              {
+                title: 'Assigned Date',
+                className: 'col-sm-4',
+                htmlAttr: { readOnly: true }
+              }
+            ]
+          },
+          {
+            fields: [
+              {
+                title: 'Date Closed',
+                className: 'col-sm-4',
+                htmlAttr: { readOnly: true }
               }
             ]
           }
