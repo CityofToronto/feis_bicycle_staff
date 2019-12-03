@@ -87,6 +87,9 @@ function renderLocationsPage($pageContainer, query, auth) {
         .filter((value, index, array) => value && array.indexOf(value) === index)
         .map((value) => `(contains(tolower(primary_contact_first_name),'${oData_escapeValue(value.toLowerCase())}') or contains(tolower(primary_contact_last_name),'${oData_escapeValue(value.toLowerCase())}'))`)
         .join(' and ');
+    },
+    orderBy(order) {
+      return `tolower(primary_contact_first_name) ${order.dir},tolower(primary_contact_last_name) ${order.dir}`;
     }
   };
 
