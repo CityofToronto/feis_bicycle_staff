@@ -40,7 +40,7 @@ function beforeContentParse(content, request, uriInfo, response) {
     content.remove('lockers_unassigned');
   }
 
-  var lockersTotals = getLocationLockersTotals(jsonContent.id, {
+  var lockersTotals = common.locations_getLockersTotals(jsonContent.id, {
     Authorization: request.getHeader('Authorization')
   });
 
@@ -59,40 +59,3 @@ function beforeContentParse(content, request, uriInfo, response) {
 // function afterUpdate(content, request, uriInfo, response) { }
 
 // function afterDelete(content, request, uriInfo, response) { }
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-function getLocationLockersTotals(locationId, options) {
-  options = options || {};
-  var Authorization = options.Authorization;
-
-  var returnValue = {};
-
-  var headers = {
-    'Content-Type': 'application/json'
-  };
-  if (Authorization) {
-    headers.Authorization = Authorization;
-  }
-
-  var uri = [common.DA_APP_BASE_URL, '/lockers?$select=id,customer&$filter=location eq \'', locationId, '\'&$skip=0&$top=1000'].join('');
-  ajax.request({
-    uri: encodeURI(uri),
-    method: 'GET',
-    headers: headers
-  }, function (ajaxSuccessResponse) {
-    var body = JSON.parse(ajaxSuccessResponse.body);
-
-    returnValue.lockersTotal = body.value.length;
-
-    returnValue.lockersAssigned = returnValue.lockersTotal === 1000 ? null
-      : body.value.filter(function (value) { return value.customer != null; }).length;
-
-    returnValue.lockersUnassigned = returnValue.lockersTotal === 1000 ? null
-      : returnValue.lockersTotal - returnValue.lockersAssigned;
-  }, function (ajaxErrorResponse) {
-    throw 'An Error Occured.';
-  });
-
-  return returnValue;
-}
