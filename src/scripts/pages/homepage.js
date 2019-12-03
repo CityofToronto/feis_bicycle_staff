@@ -51,12 +51,7 @@ function renderHomePage($container, query, auth) {
       <h3 aria-labelledby="lockersHeader">Lockers</h3>
 
       <div class="list-group">
-        <a href="#lockers?${query_objectToString({ option: 'active', resetState: 'yes' })}" class="list-group-item">
-          <span class="badge badge-lockers-active">~</span>
-          All Active
-        </a>
-
-        <a href="#lockers?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
+        <a href="#lockers?${query_objectToString({ option: 'all', resetState: 'yes' })}" class="list-group-item">
           <span class="badge badge-lockers">~</span>
           All
         </a>
@@ -65,19 +60,7 @@ function renderHomePage($container, query, auth) {
   `);
 
   ajaxes({
-    url: `/* @echo C3DATA_LOCKERS */?$select=id&$top=1000&$filter=__Status eq 'Active'`,
-    method: 'GET',
-    beforeSend(jqXHR) {
-      if (auth && auth.sId) {
-        jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
-      }
-    }
-  }).then(({ data }) => {
-    $lockers.find('.badge-lockers-active').html(data.value.length !== 1000 ? data.value.length : '999+');
-  });
-
-  ajaxes({
-    url: `/* @echo C3DATA_LOCKERS */?$select=id&$top=1000`,
+    url: '/* @echo C3DATA_LOCKERS */?$select=id&$top=1000&$filter=__Status eq \'Active\'',
     method: 'GET',
     beforeSend(jqXHR) {
       if (auth && auth.sId) {
@@ -108,7 +91,7 @@ function renderHomePage($container, query, auth) {
   `);
 
   ajaxes({
-    url: `/* @echo C3DATA_CUSTOMERS */?$select=id&$top=1000`,
+    url: '/* @echo C3DATA_CUSTOMERS */?$select=id&$top=1000&$filter=__Status eq \'Active\'',
     method: 'GET',
     beforeSend(jqXHR) {
       if (auth && auth.sId) {
