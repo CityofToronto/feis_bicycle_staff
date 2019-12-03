@@ -77,7 +77,7 @@ function renderLockerDetailsPage($container, id, query, auth, routeCbk) {
 
                   return result.value.map((value) => ({
                     value: value.id,
-                    text: value.name
+                    text: value.site_name
                   }));
                 }
               },

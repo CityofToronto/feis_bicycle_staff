@@ -1,27 +1,20 @@
-/* global renderDatatable query_objectToString query_stringToObject moment */
-
-let lastLockersPageOption;
+/* global moment */
+/* global query_objectToString query_stringToObject  */
+/* global renderDatatable */
 
 /* exported renderLockersPage */
 function renderLockersPage($pageContainer, query, auth) {
-  const queryObject = query_stringToObject(query);
+  const { option } = query_stringToObject(query);
 
-  if (lastLockersPageOption != queryObject.option) {
+  if (renderLockersPage.lastOption != option) {
     clearLockersState();
-    lastLockersPageOption = queryObject.option;
+    renderLockersPage.lastOption = option;
   }
 
-  if (query) {
-    query = `?${query}`;
-  } else {
-    query = '';
-  }
+  const nextQuery = query_objectToString({ option, resetState: 'yes' });
 
   $pageContainer.html(`
     <p><a href="#home">Back to Home</a></p>
-
-    ${queryObject.option === 'active' ? '<h2>All Active</h2>' : ''}
-
     <div class="datatable"></div>
   `);
 
@@ -33,7 +26,7 @@ function renderLockersPage($pageContainer, query, auth) {
     data: 'id',
     orderable: false,
     render(data) {
-      return `<a href="#lockers/${data}${query}" class="btn btn-default">Open</a>`;
+      return `<a href="#lockers/${data}?${nextQuery}" class="btn btn-default">Open</a>`;
     },
     searchable: false
   };
@@ -139,49 +132,53 @@ function renderLockersPage($pageContainer, query, auth) {
     searchCols: []
   };
 
-  let columnCounter = 0;
+  let colIndex = 0;
 
-  definition.columns[columnCounter++] = columns['Action'];
+  definition.columns[colIndex] = columns['Action'];
+  colIndex++;
 
-  definition.columns[columnCounter++] = columns['Location'];
-  definition.order.push([columnCounter - 1, 'asc']);
+  definition.columns[colIndex] = columns['Location'];
+  definition.order.push([colIndex, 'asc']);
+  colIndex++;
 
-  definition.columns[columnCounter++] = columns['Number'];
+  definition.columns[colIndex] = columns['Number'];
+  colIndex++;
 
-  definition.columns[columnCounter++] = columns['Customer First Name'];
-  definition.columns[columnCounter++] = columns['Customer Last Name'];
-  definition.columns[columnCounter++] = columns['Customer'];
+  definition.columns[colIndex] = columns['Customer First Name'];
+  colIndex++;
 
-  definition.columns[columnCounter++] = columns['Inspected On'];
+  definition.columns[colIndex] = columns['Customer Last Name'];
+  colIndex++;
 
-  definition.columns[columnCounter++] = columns['Inspection Result'];
+  definition.columns[colIndex] = columns['Customer'];
+  colIndex++;
+
+  definition.columns[colIndex] = columns['Inspected On'];
+  colIndex++;
+
+  definition.columns[colIndex] = columns['Inspection Result'];
+  colIndex++;
 
   const related = [
     {
-      title: 'All Active',
-      fragment: `lockers?${query_objectToString({ option: 'active', resetState: 'yes' })}`
-    },
-    {
       title: 'All',
-      fragment: `lockers?${query_objectToString({ resetState: 'yes' })}`
+      fragment: `lockers?${query_objectToString({ option: 'all', resetState: 'yes' })}`
     }
   ];
 
-  switch (queryObject.option) {
-    case 'active':
-      definition.columns[columnCounter++] = columns['Status'];
-      definition.columns[columnCounter - 1].visible = false;
-      definition.searchCols[columnCounter - 1] = { search: 'Active' };
+  switch (option) {
+    default:
+      definition.columns[colIndex] = columns['Modified On'];
+      colIndex++;
+
+      definition.columns[colIndex] = columns['Modified By'];
+      colIndex++;
+
+      definition.columns[colIndex] = columns['Status'];
+      definition.searchCols[colIndex] = { search: 'Active' };
+      colIndex++;
 
       related[0].isCurrent = true;
-      break;
-
-    default:
-      definition.columns[columnCounter++] = columns['Modified On'];
-      definition.columns[columnCounter++] = columns['Modified By'];
-      definition.columns[columnCounter++] = columns['Status'];
-
-      related[1].isCurrent = true;
   }
 
   renderDatatable($pageContainer.find('.datatable'), definition, {
@@ -189,7 +186,7 @@ function renderLockersPage($pageContainer, query, auth) {
     url: '/* @echo C3DATA_LOCKERS */',
 
     newButtonLabel: 'New Locker',
-    newButtonFragment: `lockers/new${query}`,
+    newButtonFragment: `lockers/new?${nextQuery}`,
 
     stateSaveWebStorageKey: `lockers`,
 

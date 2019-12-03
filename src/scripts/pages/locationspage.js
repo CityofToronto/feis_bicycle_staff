@@ -46,7 +46,7 @@ function renderLocationsPage($pageContainer, query, auth) {
   };
 
   columns['Lockers'] = {
-    title: 'Lockers',
+    title: 'Total Lockers',
     className: 'minWidth',
     data: 'locker_count',
     type: 'number',
