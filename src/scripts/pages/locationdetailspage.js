@@ -24,10 +24,6 @@ function renderLocationDetailsPage($container, id, query, auth, routeCbk) {
           </li>
 
           <li class="nav-item" role="presentation">
-            <a class="nav-link">Notes</a>
-          </li>
-
-          <li class="nav-item" role="presentation">
             <a class="nav-link">Inspections</a>
           </li>
 
@@ -60,7 +56,15 @@ function renderLocationDetailsPage($container, id, query, auth, routeCbk) {
       "alternate_contact_last_name": "string",
       "alternate_contact_email": "email@toronto.ca",
       "alternate_contact_primary_phone": "416-555-5555",
-      "alternate_contact_alternate_phone": "416-555-5555"
+      "alternate_contact_alternate_phone": "416-555-5555",
+
+      "notes": "string",
+
+      lockers_total: 0,
+      lockers_assigned: 0,
+      lockers_available: 0,
+
+      __Status: 'Active'
     }
   });
 
@@ -107,6 +111,16 @@ function renderLocationDetailsPage($container, id, query, auth, routeCbk) {
                 title: 'Postal Code',
                 bindTo: 'postal_code',
                 validationtype: 'PostalCode'
+              }
+            ]
+          },
+          {
+            fields: [
+              {
+                title: 'Notes',
+                type: 'textarea',
+                rows: 10,
+                bindTo: 'notes'
               }
             ]
           }
@@ -191,6 +205,56 @@ function renderLocationDetailsPage($container, id, query, auth, routeCbk) {
               }
             ]
           }
+        ]
+      }, {
+        title: 'Related Information',
+
+        rows: [
+          {
+            fields: [
+              {
+                title: 'Total Lockers',
+                bindTo: 'lockers_total',
+                htmlAttr: { readOnly: true }
+              },
+              {
+                title: 'Available Lockers',
+                bindTo: 'lockers_assigned',
+                htmlAttr: { readOnly: true }
+              },
+              {
+                title: 'Assigned Lockers',
+                bindTo: 'lockers_available',
+                htmlAttr: { readOnly: true }
+              }
+            ]
+          },
+          {
+            fields: [
+              {
+                title: 'Latest Inspection Date',
+                bindTo: 'latest_inspection_date',
+                htmlAttr: { readOnly: true },
+                className: 'col-sm-4'
+              },
+              {
+                title: 'Latest Inspection Result',
+                bindTo: 'latest_inspection_result',
+                htmlAttr: { readOnly: true },
+                className: 'col-sm-4'
+              }
+            ],
+          }, {
+            fields: [
+              {
+                title: 'Latest Inspection Notes',
+                bindTo: 'latest_inspection_notes',
+                htmlAttr: { readOnly: true },
+                type: 'textarea',
+                rows: 5
+              }
+            ]
+          },
         ]
       }
     ]
