@@ -2,6 +2,11 @@
 /* global oData_escapeValue query_objectToString query_stringToObject */
 /* global renderDatatable */
 
+/* exported locationsPage */
+const locationsPage = {
+
+};
+
 /* exported renderLocationsPage */
 function renderLocationsPage($pageContainer, query, auth) {
   const { locations } = query_stringToObject(query);

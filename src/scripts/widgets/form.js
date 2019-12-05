@@ -1,6 +1,6 @@
 /* global $ Backbone moment */
 /* global CotForm */
-/* global auth_checkLogin deepCloneObject fixButtonLinks functionToValue oData_getErrorMessage showAlert showConfirm showLogin showPrompt stringToFunction */
+/* global auth__checkLogin deepCloneObject fixButtonLinks functionToValue oData_getErrorMessage showAlert showConfirm showLogin showPrompt stringToFunction */
 /* global renderAlert */
 
 /* exported renderForm */
@@ -34,7 +34,9 @@ function renderForm($container, definition, {
 
   unsaveMessage = 'There may be one or more unsaved data. Do you want to continue?',
   unsaveCancelButtonLabel = 'Cancel',
-  unsaveConfirmButtonLabel = 'Continue'
+  unsaveConfirmButtonLabel = 'Continue',
+
+
 } = {}) {
   let dataSnapShot = JSON.stringify(model.toJSON());
   let $form, formValidator;
@@ -45,16 +47,19 @@ function renderForm($container, definition, {
 
   definition.betterSuccess = definition.betterSuccess || function ({ auth, model } = {}) {
     return new Promise((resolve, reject) => {
-      const data = model.toJSON();
+      let data = model.toJSON();
       delete data.__CreatedOn;
       delete data.__ModifiedOn;
       delete data.__Owner;
+
+      if (definition.prepareData) {
+        data = definition.prepareData(data);
+      }
 
       $.ajax(`${url}${data.id ? `('${data.id}')` : ''}`, {
         contentType: 'application/json; charset=utf-8',
         data: JSON.stringify(data),
         dataType: 'json',
-        // headers: auth && auth.sId ? { Authorization: `AuthSession ${auth.sId}` } : {},
         method: data.id ? 'PUT' : 'POST',
         beforeSend(jqXHR) {
           if (auth && auth.sId) {
@@ -96,7 +101,7 @@ function renderForm($container, definition, {
         renderAlert($form, oData_getErrorMessage(jqXHR, errorThrown), { bootstrayType: 'danger' });
 
         if (auth) {
-          auth_checkLogin(auth, true).then((isLoggedIn) => {
+          auth__checkLogin(auth, true).then((isLoggedIn) => {
             if (!isLoggedIn) {
               showLogin(auth).then((isLoggedIn) => {
                 if (isLoggedIn) {
@@ -157,9 +162,9 @@ function renderForm($container, definition, {
               title: 'Created On',
               bindTo: '__CreatedOn',
               required: true,
+              htmlAttr: { readOnly: true },
 
               postRender({ field }) {
-                $(`#${field.id}`).prop('readonly', true);
                 model.on(`change:${field.bindTo}`, () => {
                   $(`#${field.id}`).val(moment(model.get(field.bindTo)).format('YYYY/MM/DD h:mm:ss A'));
                 });
@@ -170,9 +175,9 @@ function renderForm($container, definition, {
               title: 'Modified On',
               bindTo: '__ModifiedOn',
               required: true,
+              htmlAttr: { readOnly: true },
 
               postRender({ field }) {
-                $(`#${field.id}`).prop('readonly', true);
                 model.on(`change:${field.bindTo}`, () => {
                   $(`#${field.id}`).val(moment(model.get(field.bindTo)).format('YYYY/MM/DD h:mm:ss A'));
                 });
@@ -183,9 +188,9 @@ function renderForm($container, definition, {
               title: 'Modified By',
               bindTo: '__Owner',
               required: true,
+              htmlAttr: { readOnly: true },
 
               postRender({ field }) {
-                $(`#${field.id}`).prop('readonly', true);
                 model.on(`change:${field.bindTo}`, () => {
                   $(`#${field.id}`).val(model.get(field.bindTo));
                 });
@@ -402,7 +407,6 @@ function renderForm($container, definition, {
         const doDownload = () => {
           $.ajax(`${url}('${model.id}')`, {
             dataType: 'json',
-            // headers: auth && auth.sId ? { Authorization: `AuthSession ${auth.sId}` } : {},
             methd: 'GET',
             beforeSend(jqXHR) {
               if (auth && auth.sId) {
@@ -419,7 +423,7 @@ function renderForm($container, definition, {
             renderAlert($container, oData_getErrorMessage(jqXHR, errorThrown), { bootstrayType: 'danger' });
 
             if (auth) {
-              auth_checkLogin(auth, true).then((isLoggedIn) => {
+              auth__checkLogin(auth, true).then((isLoggedIn) => {
                 if (!isLoggedIn) {
                   showLogin(auth).then((isLoggedIn) => {
                     if (isLoggedIn) {
@@ -488,7 +492,6 @@ function renderForm($container, definition, {
           }).then((confirm) => {
             if (confirm) {
               $.ajax(`${url}${model.id ? `('${model.id}')` : ''}`, {
-                // headers: auth && auth.sId ? { Authorization: `AuthSession ${auth.sId}` } : {},
                 method: 'DELETE',
                 beforeSend(jqXHR) {
                   if (auth && auth.sId) {
@@ -504,7 +507,7 @@ function renderForm($container, definition, {
                 });
 
                 if (auth) {
-                  auth_checkLogin(auth, true).then((isLoggedIn) => {
+                  auth__checkLogin(auth, true).then((isLoggedIn) => {
                     if (!isLoggedIn) {
                       showLogin(auth).then((isLoggedIn) => {
                         if (isLoggedIn) {

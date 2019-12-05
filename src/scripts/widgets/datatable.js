@@ -1,5 +1,5 @@
 /* global $ moment */
-/* global auth_checkLogin showLogin deepCloneObject fixButtonLinks oData_escapeValue oData_getErrorMessage query_objectToString stringToFunction */
+/* global auth__checkLogin showLogin deepCloneObject fixButtonLinks oData_escapeValue oData_getErrorMessage query_objectToString stringToFunction */
 /* global renderAlert */
 
 /* exported renderDatatable */
@@ -52,7 +52,7 @@ function renderDatatable($container, definition, options = {}) {
 
         const dateFilter = (column, filterString) => {
           filterString = filterString.trim().toLowerCase();
-          if (filterString.indexOf(' to ') !== -1) {
+          if (filterString.indexOf('to') !== -1) {
             let [startDate, endDate] = filterString.split('to');
             startDate = startDate.trim();
             endDate = endDate.trim();
@@ -71,13 +71,10 @@ function renderDatatable($container, definition, options = {}) {
               }
               if (momentEndDate.isValid()) {
                 if (/^[^/]+$/.test(endDate)) {
-                  // returnValues.push(`${column} le ${oData_escapeValue(momentEndDate.endOf('year').format())}`);
                   returnValues.push(`${column} le ${oData_escapeValue(momentEndDate.startOf('year').format())}`);
                 } else if (/^[^/]+\/[^/]+$/.test(endDate)) {
-                  // returnValues.push(`${column} le ${oData_escapeValue(momentEndDate.endOf('month').format())}`);
                   returnValues.push(`${column} le ${oData_escapeValue(momentEndDate.startOf('month').format())}`);
                 } else {
-                  // returnValues.push(`${column} le ${oData_escapeValue(momentEndDate.endOf('day').format())}`);
                   returnValues.push(`${column} le ${oData_escapeValue(momentEndDate.startOf('day').format())}`);
                 }
               }
@@ -210,7 +207,7 @@ function renderDatatable($container, definition, options = {}) {
           callback({ data: [], draw: data.draw, recordsTotal: 0, recordsFiltered: 0 });
 
           if (auth) {
-            auth_checkLogin(auth, true).then((isLoggedIn) => {
+            auth__checkLogin(auth, true).then((isLoggedIn) => {
               if (!isLoggedIn) {
                 showLogin(auth).then((isLoggedIn) => {
                   if (isLoggedIn) {
@@ -401,6 +398,12 @@ function renderDatatable($container, definition, options = {}) {
   $table.find('thead').append($filterRow);
 
   $table.appendTo($innerContainer);
+
+  // definition.columns.forEach((column, index) => {
+  //   if (column.type === 'date') {
+  //     $(`[data-column-index="${index}"]`).datetimepicker({ format: 'YY/MM/DD' });
+  //   }
+  // });
 
   definition.orderCellsTop = definition.orderCellsTop != null ? definition.orderCellsTop : true;
 

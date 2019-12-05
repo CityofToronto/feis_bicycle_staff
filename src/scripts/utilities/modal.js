@@ -1,5 +1,5 @@
 /* global Backbone */
-/* global auth_login auth_checkLogin deepCloneObject */
+/* global auth__login auth__checkLogin deepCloneObject */
 /* global renderAlert renderForm */
 
 /* exported showAlert */
@@ -158,7 +158,7 @@ function showLogin(auth, options = {}) {
 
   const definition = {
     betterSuccess({ $form, formValidator, model }, callback) {
-      auth_login(auth, model.get('user'), model.get('pwd')).then(() => {
+      auth__login(auth, model.get('user'), model.get('pwd')).then(() => {
         callback();
       }, () => {
         formValidator.updateStatus('user', 'NOT_VALIDATED');
@@ -200,5 +200,5 @@ function showLogin(auth, options = {}) {
   };
 
   return showModalForm(definition, options)
-    .then(() => auth_checkLogin(auth));
+    .then(() => auth__checkLogin(auth));
 }

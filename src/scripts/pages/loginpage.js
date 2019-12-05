@@ -1,4 +1,4 @@
-/* global auth_login */
+/* global auth__login */
 /* global renderAlert renderForm */
 
 /* exported renderLoginPage */
@@ -18,7 +18,7 @@ function renderLoginPage($container, query, auth, routeCbk) {
 
   const definition = {
     betterSuccess({ $form, formValidator, model }) {
-      return auth_login(auth, model.get('user'), model.get('pwd')).then(() => {
+      return auth__login(auth, model.get('user'), model.get('pwd')).then(() => {
         routeCbk();
       }, () => {
         formValidator.updateStatus('user', 'NOT_VALIDATED');

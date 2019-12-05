@@ -1,20 +1,21 @@
 /* global $ */
 /* global oData_getErrorMessage */
 
-const AUTH_WEBSTORAGE = localStorage;
-const AUTH_WEBSTORAGE_KEY = 'bicycle_auth';
+let auth__webStorage = localStorage;
+let auth__webStorageKey = 'bicycle_auth';
 
-const AUTH_URL = '/* @echo C3AUTH_URL */';
-const AUTH_APPNAME = 'Bicycle Parking';
+let auth__url = '/* @echo C3auth__url */';
+let auth__app = 'Bicycle Parking';
+let auth__checkLoginInterval = 5 * 60000;
 
-const AUTH_CHECKACCESS_URL = '/* @echo C3CONFIG_ISAUTH */';
+let auth__checkAccessUrl = '/* @echo C3CONFIG_ISAUTH */';
 
-/* exported auth_init */
-function auth_init(auth = {}) {
+/* exported auth__init */
+function auth__init(auth = {}) {
   try {
-    const data = JSON.parse(AUTH_WEBSTORAGE.getItem(AUTH_WEBSTORAGE_KEY));
-    auth.sId = data.sId;
-    auth.userId = data.userId;
+    const { sId, userId } = JSON.parse(auth__webStorage.getItem(auth__webStorageKey));
+    auth.sId = sId;
+    auth.userId = userId;
   } catch (error) {
     // Do nothing
   }
@@ -22,31 +23,33 @@ function auth_init(auth = {}) {
   return auth;
 }
 
-/* exported auth_login */
-function auth_login(auth, user, pwd) {
-  auth_logout(auth);
+/* exported auth__login */
+function auth__login(auth, user, pwd) {
+  auth__logout(auth);
 
   return new Promise((resolve, reject) => {
-    $.ajax(AUTH_URL, {
+    $.ajax(auth__url, {
       contentType: 'application/json; charset=utf-8',
-      data: JSON.stringify({ app: AUTH_APPNAME, user, pwd }),
+      data: JSON.stringify({ app: auth__app, user, pwd }),
       dataType: 'json',
       method: 'POST',
-    }).then((data) => {
-      auth.sId = data.sid;
-      auth.userId = data.userID;
+    }).then(({ sid, userID } = {}) => {
+      auth.sId = sid;
+      auth.userId = userID;
 
-      AUTH_WEBSTORAGE.setItem(AUTH_WEBSTORAGE_KEY, JSON.stringify(auth));
+      if (auth__webStorage && auth__webStorageKey) {
+        auth__webStorage.setItem(auth__webStorageKey, JSON.stringify(auth));
+      }
 
-      resolve(data);
+      resolve(auth);
     }, (jqXHR, textStatus, errorThrown) => {
       reject(oData_getErrorMessage(jqXHR, errorThrown));
     });
   });
 }
 
-/* exported auth_logout */
-function auth_logout(auth = {}) {
+/* exported auth__logout */
+function auth__logout(auth = {}) {
   const { sId, userId } = auth;
 
   if (sId) {
@@ -54,10 +57,12 @@ function auth_logout(auth = {}) {
     delete auth.userId;
     delete auth.lastChecked;
 
-    AUTH_WEBSTORAGE.removeItem(AUTH_WEBSTORAGE_KEY);
+    if (auth__webStorage && auth__webStorageKey) {
+      auth__webStorage.removeItem(auth__webStorageKey);
+    }
 
     return new Promise((resolve, reject) => {
-      $.ajax(`${AUTH_URL}('${sId}')`, {
+      $.ajax(`${auth__url}('${sId}')`, {
         headers: { Authorization: userId },
         method: 'DELETE'
       }).then((data) => {
@@ -71,8 +76,8 @@ function auth_logout(auth = {}) {
   }
 }
 
-/* exported auth_checkLogin */
-function auth_checkLogin(auth = {}, force = false) {
+/* exported auth__checkLogin */
+function auth__checkLogin(auth = {}, force = false) {
   if (force) {
     delete auth.lastChecked;
   }
@@ -81,13 +86,15 @@ function auth_checkLogin(auth = {}, force = false) {
 
   if (sId) {
     const now = new Date();
-    if (!lastChecked || (now.getTime() - lastChecked.getTime()) > (5 * 60000)) {
+
+    if (!lastChecked || (now.getTime() - lastChecked.getTime()) > auth__checkLoginInterval) {
       auth.lastChecked = now;
+
       return new Promise((resolve) => {
-        $.ajax(`${AUTH_URL}('${sId}')`).then(() => {
+        $.ajax(`${auth__url}('${sId}')`).then(() => {
           resolve(true);
         }, () => {
-          auth_logout(auth);
+          auth__logout(auth);
           resolve(false);
         });
       });
@@ -99,9 +106,9 @@ function auth_checkLogin(auth = {}, force = false) {
   }
 }
 
-/* exported auth_checkAccess */
-function auth_checkAccess(auth = {}, resource, action) {
-  return auth_checkLogin(auth).then((isLoggedIn) => {
+/* exported auth__checkAccess */
+function auth__checkAccess(auth = {}, ApplicationName, Resource, Action) {
+  return auth__checkLogin(auth).then((isLoggedIn) => {
     return new Promise((resolve, reject) => {
       $.ajax({
         beforeSend: (jqXHR) => {
@@ -111,16 +118,12 @@ function auth_checkAccess(auth = {}, resource, action) {
           }
         },
         contentType: 'application/json',
-        data: JSON.stringify({
-          ApplicationName: 'bicycle_parking',
-          Resource: resource,
-          Action: action
-        }),
+        data: JSON.stringify({ ApplicationName, Resource, Action }),
         method: 'POST',
-        url: AUTH_CHECKACCESS_URL
+        url: auth__checkAccessUrl
       }).then((data) => {
-        const dataObject = JSON.parse(data);
-        resolve(dataObject.Authorized === true);
+        const json = JSON.parse(data);
+        resolve(json.Authorized === true);
       }, (jqXHR, textStatus, errorThrown) => {
         reject(oData_getErrorMessage(jqXHR, errorThrown));
       });

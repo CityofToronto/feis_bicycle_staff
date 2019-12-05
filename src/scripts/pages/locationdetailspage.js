@@ -1,4 +1,5 @@
-/* global Backbone */
+/* global $ Backbone moment */
+/* global query_stringToObject query_objectToString */
 /* global renderForm */
 
 /* exported renderLocationDetailsPage */
@@ -7,24 +8,21 @@ function renderLocationDetailsPage($container, id, query, auth, routeCbk) {
     id = null;
   }
 
-  if (query) {
-    query = `?${query}`;
-  } else {
-    query = '';
-  }
+  const { locations, inspections, lockers } = query_stringToObject(query);
 
+  const navQuery = query_objectToString({ locations, inspections, lockers });
   $container.html(`
-    <p><a href="#locations${query}">Back to Locker Locations</a></p>
+    <p><a href="#locations?${query_objectToString({ locations })}">Back to Locker Locations</a></p>
 
     ${id ? `
       <div class="navbar">
         <ul class="nav nav-tabs">
           <li class="nav-item active" role="presentation">
-            <a class="nav-link">Location</a>
+            <a href="#locations/${id}?${navQuery}" class="nav-link">Location</a>
           </li>
 
           <li class="nav-item" role="presentation">
-            <a class="nav-link">Inspections</a>
+            <a href="#locations/${id}/inspections?${navQuery}" class="nav-link">Inspections</a>
           </li>
 
           <li class="nav-item" role="presentation">
@@ -232,13 +230,25 @@ function renderLocationDetailsPage($container, id, query, auth, routeCbk) {
           {
             fields: [
               {
-                title: 'Latest Inspection Date',
+                type: 'html',
+                html: '<h4>Latest Inspection</h4>'
+              }
+            ]
+          },
+          {
+            fields: [
+              {
+                title: 'Date',
                 bindTo: 'latest_inspection_date',
                 htmlAttr: { readOnly: true },
-                className: 'col-sm-4'
+                className: 'col-sm-4',
+
+                postRender({ field }) {
+                  $(`#${field.id}`).val(moment(model.get(field.bindTo)).format('YYYY/MM/DD'));
+                }
               },
               {
-                title: 'Latest Inspection Result',
+                title: 'Result',
                 bindTo: 'latest_inspection_result',
                 htmlAttr: { readOnly: true },
                 className: 'col-sm-4'
@@ -247,7 +257,7 @@ function renderLocationDetailsPage($container, id, query, auth, routeCbk) {
           }, {
             fields: [
               {
-                title: 'Latest Inspection Notes',
+                title: 'Notes',
                 bindTo: 'latest_inspection_notes',
                 htmlAttr: { readOnly: true },
                 type: 'textarea',
@@ -269,7 +279,7 @@ function renderLocationDetailsPage($container, id, query, auth, routeCbk) {
 
     saveButtonLabel: (model) => model.isNew() ? 'Create Locker Location' : 'Update Locker Location',
     cancelButtonLabel: 'Cancel',
-    cancelButtonFragment: `locations${query}`,
+    cancelButtonFragment: `locations?${query_objectToString({ locations })}`,
     removeButtonLabel: 'Remove Locker Location',
     removePromptValue: 'DELETE'
   });

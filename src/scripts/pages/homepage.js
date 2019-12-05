@@ -24,7 +24,7 @@ function renderHomePage($container, query, auth) {
       <h3 aria-labelledby="lockersHeader">Locations</h3>
 
       <div class="list-group">
-        <a href="#locations?${query_objectToString({ option: 'all', resetState: 'yes' })}" class="list-group-item">
+        <a href="#locations?${query_objectToString({ locations: 'all', resetState: 'yes' })}" class="list-group-item">
           <span class="badge badge-locations">~</span>
           All
         </a>
@@ -631,7 +631,7 @@ function renderHomePage($container, query, auth) {
   // ROW 3
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // auth_checkAccess(auth, '/* @echo C3CONFIG_ADMIN_RESOURCE */', 'GET').then((hasAccess) => {
+  // auth__checkAccess(auth, '/* @echo C3CONFIG_ADMIN_RESOURCE */', 'GET').then((hasAccess) => {
   //   if (hasAccess) {
   //     const $row3 = $('<div class="row"></div>');
   //     $container.append($row3);

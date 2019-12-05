@@ -57,7 +57,7 @@
     "includeMultiSelect": true,
     "includeMap": false,
     "includeFullCalendar": false,
-    "includeDatePicker": false,
+    "includeDatePicker": true,
     "includeLogin": false,
     "includeRangePicker": false,
     "includeMoment": true,
@@ -75,9 +75,10 @@
     "upload_dataaccess": "gulp c3api_dataaccess",
     "upload_media": "gulp c3api_dataaccess_media",
 
+    "upload_config_acl": "gulp c3api_config --suffix acl.js",
     "upload_config_common": "gulp c3api_config --suffix common.js",
-    "upload_config_locations": "gulp c3api_config --suffix dataaccess.locations.extension.js",
+    "upload_config_entity": "gulp c3api_config --suffix dataaccess.location_inspections.extension.js",
 
-    "upload_dataaccess_locations": "gulp c3api_dataaccess --localPath ./c3apis/DataAccess/locations.json --deleteEntity --truncateEntityAfter"
+    "upload_dataaccess_entity": "gulp c3api_dataaccess --localPath ./c3apis/DataAccess/location_inspections.json --deleteEntity --truncateEntityAfter"
   }
 }

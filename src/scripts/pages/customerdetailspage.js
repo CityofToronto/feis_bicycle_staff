@@ -590,7 +590,6 @@ function renderCustomerDetailsPage($container, id, query, auth, routeCbk) {
                 id: 'lockers_choice_3',
                 choices: {
                   url: '/* @echo C3DATA_LOCATIONS */?$select=id,site_name&$filter=__Status eq \'Active\'',
-                  // headers: auth && auth.sId ? { Authorization: `AuthSession ${auth.sId}` } : {},
                   beforeSend(jqXHR) {
                     if (auth && auth.sId) {
                       jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
@@ -669,7 +668,6 @@ function renderCustomerDetailsPage($container, id, query, auth, routeCbk) {
                 id: 'stations_choice_1',
                 choices: {
                   url: '/* @echo C3DATA_STATIONS */?$select=id,site_name&$filter=__Status eq \'Active\'',
-                  // headers: auth && auth.sId ? { Authorization: `AuthSession ${auth.sId}` } : {},
                   beforeSend(jqXHR) {
                     if (auth && auth.sId) {
                       jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
@@ -733,7 +731,6 @@ function renderCustomerDetailsPage($container, id, query, auth, routeCbk) {
                 id: 'stations_choice_2',
                 choices: {
                   url: '/* @echo C3DATA_STATIONS */?$select=id,site_name&$filter=__Status eq \'Active\'',
-                  // headers: auth && auth.sId ? { Authorization: `AuthSession ${auth.sId}` } : {},
                   beforeSend(jqXHR) {
                     if (auth && auth.sId) {
                       jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
@@ -795,7 +792,6 @@ function renderCustomerDetailsPage($container, id, query, auth, routeCbk) {
                 id: 'stations_choice_3',
                 choices: {
                   url: '/* @echo C3DATA_STATIONS */?$select=id,site_name&$filter=__Status eq \'Active\'',
-                  // headers: auth && auth.sId ? { Authorization: `AuthSession ${auth.sId}` } : {},
                   beforeSend(jqXHR) {
                     if (auth && auth.sId) {
                       jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
