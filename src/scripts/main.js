@@ -5,7 +5,7 @@
 
 /* global $ Backbone moment */
 /* global cot_app */
-/* global auth__checkLogin auth__init auth__logout query_objectToString query_stringToObject showLogin Router */
+/* global auth__checkLogin auth__init auth__logout query__objectToString query__stringToObject modal__showLogin Router */
 /* global renderLoginButton */
 /* global renderLoadingPage */
 
@@ -65,12 +65,12 @@ $(function () {
   }
 
   function handleResetStateQuery(router, fragment, query, cbk = (() => { })) {
-    const queryObject = query_stringToObject(query);
+    const queryObject = query__stringToObject(query);
     if (queryObject.resetState) {
       cbk();
 
       delete queryObject.resetState;
-      query = query_objectToString(queryObject);
+      query = query__objectToString(queryObject);
 
       let queryString = query;
       if (queryString) {
@@ -127,7 +127,7 @@ $(function () {
     routeHome(query) {
       return auth__checkLogin(auth).then((isLoggedIn) => {
         if (!isLoggedIn) {
-          this.navigate(`login?${query_objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
+          this.navigate(`login?${query__objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
           return;
         }
 
@@ -141,7 +141,7 @@ $(function () {
     routeLogin(query) {
       return auth__checkLogin(auth).then((isLoggedIn) => {
         if (isLoggedIn) {
-          this.navigate(query_stringToObject(query).redirect || this.defaultFragment, { trigger: true });
+          this.navigate(query__stringToObject(query).redirect || this.defaultFragment, { trigger: true });
           return;
         }
 
@@ -178,7 +178,7 @@ $(function () {
 
       return auth__checkLogin(auth).then((isLoggedIn) => {
         if (!isLoggedIn) {
-          this.navigate(`login?${query_objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
+          this.navigate(`login?${query__objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
           return;
         }
 
@@ -196,7 +196,7 @@ $(function () {
     routeLocationDetails(id, query) {
       return auth__checkLogin(auth).then((isLoggedIn) => {
         if (!isLoggedIn) {
-          this.navigate(`login?${query_objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
+          this.navigate(`login?${query__objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
           return;
         }
 
@@ -204,8 +204,8 @@ $(function () {
           clearLocationInspectionsState();
         });
 
-        const { locations } = query_stringToObject(query);
-        const breadcrumb = [{ name: 'Locker Locations', link: `#locations?${query_objectToString({ locations })}` }];
+        const { locations } = query__stringToObject(query);
+        const breadcrumb = [{ name: 'Locker Locations', link: `#locations?${query__objectToString({ locations })}` }];
 
         if (id === 'new') {
           updatePageHeader('New Locker Location', breadcrumb, { breadcrumbTitle: 'New' });
@@ -213,8 +213,8 @@ $(function () {
 
         return renderLocationDetailsPage($pageContainer, id, query, auth, (model) => {
           if (model.id) {
-            const { inspections, lockers } = query_stringToObject(query);
-            this.navigate(`locations/${model.id}?${query_objectToString({ locations, inspections, lockers })}`, { trigger: false, replace: true });
+            const { inspections, lockers } = query__stringToObject(query);
+            this.navigate(`locations/${model.id}?${query__objectToString({ locations, inspections, lockers })}`, { trigger: false, replace: true });
             updatePageHeader(model.escape('site_name'), breadcrumb  );
           }
         });
@@ -225,7 +225,7 @@ $(function () {
     routeLocationInspections(location, query) {
       return auth__checkLogin(auth).then((isLoggedIn) => {
         if (!isLoggedIn) {
-          this.navigate(`login?${query_objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
+          this.navigate(`login?${query__objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
           return;
         }
 
@@ -243,10 +243,10 @@ $(function () {
               }
             }
           }).then((data) => {
-            const { locations, inspections, lockers } = query_stringToObject(query);
+            const { locations, inspections, lockers } = query__stringToObject(query);
             updatePageHeader(data.site_name, [
-              { name: 'Locker Locations', link: `#locations?${query_objectToString({ locations })}` },
-              { name: data.site_name, link: `#locations/${location}?${query_objectToString({ locations, inspections, lockers })}` }
+              { name: 'Locker Locations', link: `#locations?${query__objectToString({ locations })}` },
+              { name: data.site_name, link: `#locations/${location}?${query__objectToString({ locations, inspections, lockers })}` }
             ], {
               breadcrumbTitle: 'Inspections',
               documentTitle: `Inspections - ${data.site_name}`
@@ -255,7 +255,7 @@ $(function () {
             if (auth) {
               auth__checkLogin(auth, true).then((isLoggedIn) => {
                 if (!isLoggedIn) {
-                  showLogin(auth).then((isLoggedIn) => {
+                  modal__showLogin(auth).then((isLoggedIn) => {
                     if (isLoggedIn) {
                       doDownload();
                     }
@@ -275,13 +275,13 @@ $(function () {
     routeLocationInspectionDetails(location, id, query) {
       return auth__checkLogin(auth).then((isLoggedIn) => {
         if (!isLoggedIn) {
-          this.navigate(`login?${query_objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
+          this.navigate(`login?${query__objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
           return;
         }
 
         query = handleResetStateQuery(this, `locations/${location}/inspections/${id}`, query);
 
-        const { locations, inspections, lockers } = query_stringToObject(query);
+        const { locations, inspections, lockers } = query__stringToObject(query);
 
         const doDownload = ({ breadcrumbTitle, documentTitle } = {}) => {
           $.ajax(`/* @echo C3DATA_LOCATIONS */('${location}')?$select=site_name`, {
@@ -294,9 +294,9 @@ $(function () {
             }
           }).then((data) => {
             updatePageHeader(data.site_name, [
-              { name: 'Locker Locations', link: `#locations?${query_objectToString({ locations })}` },
-              { name: data.site_name, link: `#locations/${location}?${query_objectToString({ locations, inspections, lockers })}` },
-              { name:'Inspections', link: `#locations/${location}/inspections?${query_objectToString({ locations, inspections, lockers })}` }
+              { name: 'Locker Locations', link: `#locations?${query__objectToString({ locations })}` },
+              { name: data.site_name, link: `#locations/${location}?${query__objectToString({ locations, inspections, lockers })}` },
+              { name:'Inspections', link: `#locations/${location}/inspections?${query__objectToString({ locations, inspections, lockers })}` }
             ], {
               breadcrumbTitle: breadcrumbTitle || 'New',
               documentTitle: `${documentTitle || 'New Inspections'} - ${data.site_name}`
@@ -305,7 +305,7 @@ $(function () {
             if (auth) {
               auth__checkLogin(auth, true).then((isLoggedIn) => {
                 if (!isLoggedIn) {
-                  showLogin(auth).then((isLoggedIn) => {
+                  modal__showLogin(auth).then((isLoggedIn) => {
                     if (isLoggedIn) {
                       doDownload();
                     }
@@ -322,7 +322,7 @@ $(function () {
 
         return renderLocationInspectionDetailsPage($pageContainer, location, id, query, auth, (model) => {
           if (model.id) {
-            this.navigate(`locations/${location}/inspections/${model.id}?${query_objectToString({ locations, inspections, lockers })}`, { trigger: false, replace: true });
+            this.navigate(`locations/${location}/inspections/${model.id}?${query__objectToString({ locations, inspections, lockers })}`, { trigger: false, replace: true });
             const inspectionDate = moment(model.get('date')).format('YY/MM/DD');
             doDownload({ breadcrumbTitle: inspectionDate, documentTitle: `${inspectionDate} Inspection` });
           }
@@ -334,7 +334,7 @@ $(function () {
     routeLockers(query) {
       return auth__checkLogin(auth).then((isLoggedIn) => {
         if (!isLoggedIn) {
-          this.navigate(`login?${query_objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
+          this.navigate(`login?${query__objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
           return;
         }
 
@@ -350,7 +350,7 @@ $(function () {
     routeLockerDetails(id, query) {
       return auth__checkLogin(auth).then((isLoggedIn) => {
         if (!isLoggedIn) {
-          this.navigate(`login?${query_objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
+          this.navigate(`login?${query__objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
           return;
         }
 
@@ -381,7 +381,7 @@ $(function () {
     routeCustomers(query) {
       return auth__checkLogin(auth).then((isLoggedIn) => {
         if (!isLoggedIn) {
-          this.navigate(`login?${query_objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
+          this.navigate(`login?${query__objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
           return;
         }
 
@@ -399,7 +399,7 @@ $(function () {
     routeCustomerDetails(id, query) {
       return auth__checkLogin(auth).then((isLoggedIn) => {
         if (!isLoggedIn) {
-          this.navigate(`login?${query_objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
+          this.navigate(`login?${query__objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
           return;
         }
 
@@ -433,7 +433,7 @@ $(function () {
     routeStations(query) {
       return auth__checkLogin(auth).then((isLoggedIn) => {
         if (!isLoggedIn) {
-          this.navigate(`login?${query_objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
+          this.navigate(`login?${query__objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
           return;
         }
 
@@ -449,7 +449,7 @@ $(function () {
     routeStationDetails(id, query) {
       return auth__checkLogin(auth).then((isLoggedIn) => {
         if (!isLoggedIn) {
-          this.navigate(`login?${query_objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
+          this.navigate(`login?${query__objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
           return;
         }
 
@@ -481,7 +481,7 @@ $(function () {
     routeKeyfobs(query) {
       return auth__checkLogin(auth).then((isLoggedIn) => {
         if (!isLoggedIn) {
-          this.navigate(`login?${query_objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
+          this.navigate(`login?${query__objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
           return;
         }
 
@@ -497,7 +497,7 @@ $(function () {
     routeKeyfobDetails(id, query) {
       return auth__checkLogin(auth).then((isLoggedIn) => {
         if (!isLoggedIn) {
-          this.navigate(`login?${query_objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
+          this.navigate(`login?${query__objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
           return;
         }
 

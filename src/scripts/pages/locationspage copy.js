@@ -1,5 +1,5 @@
 /* global moment */
-/* global oData_escapeValue query_objectToString query_stringToObject */
+/* global oData__escapeValue query__objectToString query__stringToObject */
 /* global renderDatatable */
 
 /* exported locationsPage */
@@ -9,7 +9,7 @@ const locationsPage = {
 
 /* exported renderLocationsPage */
 function renderLocationsPage($pageContainer, query, auth) {
-  const { locations } = query_stringToObject(query);
+  const { locations } = query__stringToObject(query);
 
   if (renderLocationsPage.lastLocation != location) {
     clearLocationsPageState();
@@ -28,7 +28,7 @@ function renderLocationsPage($pageContainer, query, auth) {
       data: 'id',
       orderable: false,
       render(data) {
-        return `<a href=#locations/${data}?${query_objectToString({ locations, inspections: 'all', lockers: 'all', resetState: 'yes' })} class="btn btn-default">Open</a>`;
+        return `<a href=#locations/${data}?${query__objectToString({ locations, inspections: 'all', lockers: 'all', resetState: 'yes' })} class="btn btn-default">Open</a>`;
       },
       searchable: false
     },
@@ -92,7 +92,7 @@ function renderLocationsPage($pageContainer, query, auth) {
         return column.search.value
           .split(' ')
           .filter((value, index, array) => value && array.indexOf(value) === index)
-          .map((value) => `contains(tolower(concat(concat(primary_contact_first_name,' '),primary_contact_last_name)),'${oData_escapeValue(value.toLowerCase())}')`)
+          .map((value) => `contains(tolower(concat(concat(primary_contact_first_name,' '),primary_contact_last_name)),'${oData__escapeValue(value.toLowerCase())}')`)
           .join(' and ');
       },
       orderBy(order) {
@@ -143,7 +143,7 @@ function renderLocationsPage($pageContainer, query, auth) {
         return column.search.value
           .split(' ')
           .filter((value, index, array) => value && array.indexOf(value) === index)
-          .map((value) => `contains(tolower(concat(concat(alternate_contact_first_name,' '),alternate_contact_last_name)),'${oData_escapeValue(value.toLowerCase())}')`)
+          .map((value) => `contains(tolower(concat(concat(alternate_contact_first_name,' '),alternate_contact_last_name)),'${oData__escapeValue(value.toLowerCase())}')`)
           .join(' and ');
       },
       orderBy(order) {
@@ -286,7 +286,7 @@ function renderLocationsPage($pageContainer, query, auth) {
   const related = [
     {
       title: 'All',
-      fragment: `locations?${query_objectToString({ location: 'all', resetState: 'yes' })}`
+      fragment: `locations?${query__objectToString({ location: 'all', resetState: 'yes' })}`
     }
   ];
 
@@ -330,7 +330,7 @@ function renderLocationsPage($pageContainer, query, auth) {
     url: '/* @echo C3DATA_LOCATIONS */',
 
     newButtonLabel: 'New Locker Location',
-    newButtonFragment: `locations/new?${query_objectToString({ locations, inspections: 'all', lockers: 'all', resetState: 'yes' })}`,
+    newButtonFragment: `locations/new?${query__objectToString({ locations, inspections: 'all', lockers: 'all', resetState: 'yes' })}`,
 
     stateSaveWebStorageKey: `locations`,
 

@@ -1,10 +1,10 @@
 /* global moment */
-/* global query_objectToString query_stringToObject */
+/* global query__objectToString query__stringToObject */
 /* global renderDatatable */
 
 /* exported renderLocationInspectionsPage */
 function renderLocationInspectionsPage($pageContainer, location, query, auth) {
-  const { locations, inspections, lockers } = query_stringToObject(query);
+  const { locations, inspections, lockers } = query__stringToObject(query);
 
   if (renderLocationInspectionsPage.lastLocation != location || renderLocationInspectionsPage.lastInspections != inspections) {
     clearLocationInspectionsState();
@@ -12,9 +12,9 @@ function renderLocationInspectionsPage($pageContainer, location, query, auth) {
     renderLocationInspectionsPage.lastInspections = inspections;
   }
 
-  const navQuery = query_objectToString({ locations, inspections, lockers });
+  const navQuery = query__objectToString({ locations, inspections, lockers });
   $pageContainer.html(`
-    <p><a href="#locations?${query_objectToString({ locations })}">Back to Locker Locations</a></p>
+    <p><a href="#locations?${query__objectToString({ locations })}">Back to Locker Locations</a></p>
 
     <div class="navbar">
       <ul class="nav nav-tabs">
@@ -42,7 +42,7 @@ function renderLocationInspectionsPage($pageContainer, location, query, auth) {
       data: 'id',
       orderable: false,
       render(data) {
-        return `<a href=#locations/${location}/inspections/${data}?${query_objectToString({ locations, inspections, lockers, resetState: 'yes' })} class="btn btn-default">Open</a>`;
+        return `<a href=#locations/${location}/inspections/${data}?${query__objectToString({ locations, inspections, lockers, resetState: 'yes' })} class="btn btn-default">Open</a>`;
       },
       searchable: false
     },
@@ -144,7 +144,7 @@ function renderLocationInspectionsPage($pageContainer, location, query, auth) {
   const related = [
     {
       title: 'All',
-      fragment: `locations/${location}/inspections?${query_objectToString({ locations, inspections: 'all', lockers, resetState: 'yes' })}`
+      fragment: `locations/${location}/inspections?${query__objectToString({ locations, inspections: 'all', lockers, resetState: 'yes' })}`
     }
   ];
 
@@ -178,7 +178,7 @@ function renderLocationInspectionsPage($pageContainer, location, query, auth) {
     url: '/* @echo C3DATA_LOCATION_INSPECTIONS */',
 
     newButtonLabel: 'New Inspection',
-    newButtonFragment: `locations/${location}/inspections/new?${query_objectToString({ locations, inspections, lockers, resetState: 'yes' })}`,
+    newButtonFragment: `locations/${location}/inspections/new?${query__objectToString({ locations, inspections, lockers, resetState: 'yes' })}`,
 
     stateSaveWebStorageKey: `locationinspections`,
 

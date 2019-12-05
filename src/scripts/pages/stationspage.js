@@ -1,10 +1,10 @@
-/* global renderDatatable query_stringToObject query_objectToString moment */
+/* global renderDatatable query__stringToObject query__objectToString moment */
 
 let lastStationsPageOption;
 
 /* exported renderStationsPage */
 function renderStationsPage($pageContainer, query, auth) {
-  const queryObject = query_stringToObject(query);
+  const queryObject = query__stringToObject(query);
 
   if (lastStationsPageOption != queryObject.option) {
     clearStationsState();
@@ -110,15 +110,15 @@ function renderStationsPage($pageContainer, query, auth) {
   const related = [
     {
       title: 'Today',
-      fragment: `stations?${query_objectToString({ option: 'today', resetState: 'yes' })}`
+      fragment: `stations?${query__objectToString({ option: 'today', resetState: 'yes' })}`
     },
     {
       title: 'This Year',
-      fragment: `stations?${query_objectToString({ option: 'thisyear', resetState: 'yes' })}`
+      fragment: `stations?${query__objectToString({ option: 'thisyear', resetState: 'yes' })}`
     },
     {
       title: 'All',
-      fragment: `stations?${query_objectToString({ resetState: 'yes' })}`
+      fragment: `stations?${query__objectToString({ resetState: 'yes' })}`
     }
   ];
 

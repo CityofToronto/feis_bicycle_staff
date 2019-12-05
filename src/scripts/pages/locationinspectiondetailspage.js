@@ -1,5 +1,5 @@
 /* global Backbone moment */
-/* global query_objectToString query_stringToObject */
+/* global query__objectToString query__stringToObject */
 /* global renderForm */
 
 /* exported renderLocationInspectionDetailsPage */
@@ -8,11 +8,11 @@ function renderLocationInspectionDetailsPage($container, location, id, query, au
     id = null;
   }
 
-  const { locations, inspections, lockers } = query_stringToObject(query);
+  const { locations, inspections, lockers } = query__stringToObject(query);
 
-  const navQuery = query_objectToString({ locations, inspections, lockers });
+  const navQuery = query__objectToString({ locations, inspections, lockers });
   $container.html(`
-    <p><a href="#locations?${query_objectToString({ locations })}">Back to Locker Locations</a></p>
+    <p><a href="#locations?${query__objectToString({ locations })}">Back to Locker Locations</a></p>
 
     <div class="navbar">
       <ul class="nav nav-tabs">
@@ -109,7 +109,7 @@ function renderLocationInspectionDetailsPage($container, location, id, query, au
 
     saveButtonLabel: (model) => model.isNew() ? 'Create Inspection' : 'Update Inspection',
     cancelButtonLabel: 'Cancel',
-    cancelButtonFragment: `locations/${location}/inspections?${query_objectToString({ locations, inspections, lockers })}`,
+    cancelButtonFragment: `locations/${location}/inspections?${query__objectToString({ locations, inspections, lockers })}`,
     removeButtonLabel: 'Remove Inspection',
     removePromptValue: 'DELETE'
   });

@@ -1,6 +1,6 @@
 /* global $ Backbone moment */
 /* global CotForm */
-/* global auth__checkLogin deepCloneObject fixButtonLinks functionToValue oData_getErrorMessage showAlert showConfirm showLogin showPrompt stringToFunction */
+/* global auth__checkLogin deepCloneObject fixButtonLinks functionToValue oData__getErrorMessage modal__showAlert modal__showConfirm modal__showLogin modal__showPrompt stringToFunction */
 /* global renderAlert */
 
 /* exported renderForm */
@@ -98,12 +98,12 @@ function renderForm($container, definition, {
       }, ({ jqXHR, errorThrown } = {}) => {
         $disabled.prop('disabled', false);
 
-        renderAlert($form, oData_getErrorMessage(jqXHR, errorThrown), { bootstrayType: 'danger' });
+        renderAlert($form, oData__getErrorMessage(jqXHR, errorThrown), { bootstrayType: 'danger' });
 
         if (auth) {
           auth__checkLogin(auth, true).then((isLoggedIn) => {
             if (!isLoggedIn) {
-              showLogin(auth).then((isLoggedIn) => {
+              modal__showLogin(auth).then((isLoggedIn) => {
                 if (isLoggedIn) {
                   doSubmit();
                 }
@@ -420,12 +420,12 @@ function renderForm($container, definition, {
 
             resolve(data);
           }, (jqXHR, textStatus, errorThrown) => {
-            renderAlert($container, oData_getErrorMessage(jqXHR, errorThrown), { bootstrayType: 'danger' });
+            renderAlert($container, oData__getErrorMessage(jqXHR, errorThrown), { bootstrayType: 'danger' });
 
             if (auth) {
               auth__checkLogin(auth, true).then((isLoggedIn) => {
                 if (!isLoggedIn) {
-                  showLogin(auth).then((isLoggedIn) => {
+                  modal__showLogin(auth).then((isLoggedIn) => {
                     if (isLoggedIn) {
                       doDownload();
                     } else {
@@ -467,7 +467,7 @@ function renderForm($container, definition, {
         const doRemove = () => {
           Promise.resolve().then(() => {
             if (removePromptValue) {
-              return showPrompt(`${functionToValue(removeMessage, model)} To continue, enter "${removePromptValue}".`, '', {
+              return modal__showPrompt(`${functionToValue(removeMessage, model)} To continue, enter "${removePromptValue}".`, '', {
                 title: 'Confirm',
                 cancelButtonLabel: functionToValue(removeMessageCancelButtonLabel, model),
                 confirmButtonLabel: functionToValue(removeMessageContinueButtonLabel, model),
@@ -483,7 +483,7 @@ function renderForm($container, definition, {
                 return data === removePromptValue;
               });
             } else {
-              return showConfirm(functionToValue(removeMessage, model), {
+              return modal__showConfirm(functionToValue(removeMessage, model), {
                 title: 'Confirm',
                 cancelButtonLabel: functionToValue(removeMessageCancelButtonLabel, model),
                 confirmButtonLabel: functionToValue(removeMessageContinueButtonLabel, model)
@@ -499,17 +499,17 @@ function renderForm($container, definition, {
                   }
                 }
               }).then(() => {
-                showAlert(removeSuccessMessage);
+                modal__showAlert(removeSuccessMessage);
                 Backbone.history.navigate(finalRemoveButtonFragment, { trigger: true });
               }, (jqXHR, textStatus, errorThrown) => {
-                renderAlert($container.find('form'), oData_getErrorMessage(jqXHR, errorThrown), {
+                renderAlert($container.find('form'), oData__getErrorMessage(jqXHR, errorThrown), {
                   type: 'danger'
                 });
 
                 if (auth) {
                   auth__checkLogin(auth, true).then((isLoggedIn) => {
                     if (!isLoggedIn) {
-                      showLogin(auth).then((isLoggedIn) => {
+                      modal__showLogin(auth).then((isLoggedIn) => {
                         if (isLoggedIn) {
                           doRemove();
                         }
@@ -519,7 +519,7 @@ function renderForm($container, definition, {
                 }
               });
             } else {
-              showAlert(removeFailedMessage);
+              modal__showAlert(removeFailedMessage);
             }
           });
         };
@@ -587,7 +587,7 @@ function renderForm($container, definition, {
   return () => {
     const finalUnsaveMessage = functionToValue(unsaveMessage, model);
     if (dataSnapShot !== JSON.stringify(model.toJSON()) && finalUnsaveMessage) {
-      return showConfirm(finalUnsaveMessage, {
+      return modal__showConfirm(finalUnsaveMessage, {
         title: 'Confirm',
         cancelButtonLabel: functionToValue(unsaveCancelButtonLabel, model),
         confirmButtonLabel: functionToValue(unsaveConfirmButtonLabel, model)

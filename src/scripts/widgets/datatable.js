@@ -1,5 +1,5 @@
 /* global $ moment */
-/* global auth__checkLogin showLogin deepCloneObject fixButtonLinks oData_escapeValue oData_getErrorMessage query_objectToString stringToFunction */
+/* global auth__checkLogin modal__showLogin deepCloneObject fixButtonLinks oData__escapeValue oData__getErrorMessage query__objectToString stringToFunction */
 /* global renderAlert */
 
 /* exported renderDatatable */
@@ -62,20 +62,20 @@ function renderDatatable($container, definition, options = {}) {
               let returnValues = [];
               if (momentStartDate.isValid()) {
                 if (/^[^/]+$/.test(startDate)) {
-                  returnValues.push(`${column} ge ${oData_escapeValue(momentStartDate.startOf('year').format())}`);
+                  returnValues.push(`${column} ge ${oData__escapeValue(momentStartDate.startOf('year').format())}`);
                 } else if (/^[^/]+\/[^/]+$/.test(startDate)) {
-                  returnValues.push(`${column} ge ${oData_escapeValue(momentStartDate.startOf('month').format())}`);
+                  returnValues.push(`${column} ge ${oData__escapeValue(momentStartDate.startOf('month').format())}`);
                 } else {
-                  returnValues.push(`${column} ge ${oData_escapeValue(momentStartDate.startOf('day').format())}`);
+                  returnValues.push(`${column} ge ${oData__escapeValue(momentStartDate.startOf('day').format())}`);
                 }
               }
               if (momentEndDate.isValid()) {
                 if (/^[^/]+$/.test(endDate)) {
-                  returnValues.push(`${column} le ${oData_escapeValue(momentEndDate.startOf('year').format())}`);
+                  returnValues.push(`${column} le ${oData__escapeValue(momentEndDate.startOf('year').format())}`);
                 } else if (/^[^/]+\/[^/]+$/.test(endDate)) {
-                  returnValues.push(`${column} le ${oData_escapeValue(momentEndDate.startOf('month').format())}`);
+                  returnValues.push(`${column} le ${oData__escapeValue(momentEndDate.startOf('month').format())}`);
                 } else {
-                  returnValues.push(`${column} le ${oData_escapeValue(momentEndDate.startOf('day').format())}`);
+                  returnValues.push(`${column} le ${oData__escapeValue(momentEndDate.startOf('day').format())}`);
                 }
               }
               return `(${returnValues.join(' and ')})`;
@@ -88,18 +88,18 @@ function renderDatatable($container, definition, options = {}) {
               let returnValues = false;
               if (/^[^/]+$/.test(filterString)) {
                 returnValues = `(${[
-                  `${column} ge ${oData_escapeValue(momentDate.startOf('year').format())}`,
-                  `${column} le ${oData_escapeValue(momentDate.endOf('year').format())}`
+                  `${column} ge ${oData__escapeValue(momentDate.startOf('year').format())}`,
+                  `${column} le ${oData__escapeValue(momentDate.endOf('year').format())}`
                 ].join(' and ')})`;
               } else if (/^[^/]+\/[^/]+$/.test(filterString)) {
                 returnValues = `(${[
-                  `${column} ge ${oData_escapeValue(momentDate.startOf('month').format())}`,
-                  `${column} le ${oData_escapeValue(momentDate.endOf('month').format())}`
+                  `${column} ge ${oData__escapeValue(momentDate.startOf('month').format())}`,
+                  `${column} le ${oData__escapeValue(momentDate.endOf('month').format())}`
                 ].join(' and ')})`;
               } else {
                 returnValues = `(${[
-                  `${column} ge ${oData_escapeValue(momentDate.startOf('day').format())}`,
-                  `${column} le ${oData_escapeValue(momentDate.endOf('day').format())}`
+                  `${column} ge ${oData__escapeValue(momentDate.startOf('day').format())}`,
+                  `${column} le ${oData__escapeValue(momentDate.endOf('day').format())}`
                 ].join(' and ')})`;
               }
 
@@ -117,7 +117,7 @@ function renderDatatable($container, definition, options = {}) {
               switch (definition.columns[index].type) {
                 case 'boolean':
                 case 'number':
-                  return `(${column.data} eq ${oData_escapeValue(column.search.value)})`;
+                  return `(${column.data} eq ${oData__escapeValue(column.search.value)})`;
 
                 case 'date':
                   return dateFilter(column.data, column.search.value);
@@ -132,12 +132,12 @@ function renderDatatable($container, definition, options = {}) {
 
                 default:
                   if (definition.columns[index].searchType === 'equals') {
-                    return `(tolower(${column.data}) eq '${oData_escapeValue(column.search.value.toLowerCase())}')`;
+                    return `(tolower(${column.data}) eq '${oData__escapeValue(column.search.value.toLowerCase())}')`;
                   } else {
                     return `(${column.search.value
                       .split(' ')
                       .filter((value, index, array) => value && array.indexOf(value) === index)
-                      .map((value) => `contains(tolower(${column.data}),'${oData_escapeValue(value.toLowerCase())}')`)
+                      .map((value) => `contains(tolower(${column.data}),'${oData__escapeValue(value.toLowerCase())}')`)
                       .join(' and ')})`;
                   }
 
@@ -183,7 +183,7 @@ function renderDatatable($container, definition, options = {}) {
         queryObject['$top'] = data.length;
 
         $.ajax({
-          url: `${url}?${query_objectToString(queryObject)}`,
+          url: `${url}?${query__objectToString(queryObject)}`,
           method: 'GET',
           contentType: 'application/json; charset=utf-8',
           beforeSend(jqXHR) {
@@ -199,7 +199,7 @@ function renderDatatable($container, definition, options = {}) {
             recordsFiltered: response['@odata.count']
           });
         }, (jqXHR, textStatus, errorThrown) => {
-          renderAlert($innerContainer.find('.row-btn-top'), oData_getErrorMessage(jqXHR, errorThrown), {
+          renderAlert($innerContainer.find('.row-btn-top'), oData__getErrorMessage(jqXHR, errorThrown), {
             bootstrayType: 'danger',
             position: 'before'
           });
@@ -209,7 +209,7 @@ function renderDatatable($container, definition, options = {}) {
           if (auth) {
             auth__checkLogin(auth, true).then((isLoggedIn) => {
               if (!isLoggedIn) {
-                showLogin(auth).then((isLoggedIn) => {
+                modal__showLogin(auth).then((isLoggedIn) => {
                   if (isLoggedIn) {
                     doAjax();
                   }

@@ -2,8 +2,8 @@
 /* global auth__login auth__checkLogin deepCloneObject */
 /* global renderAlert renderForm */
 
-/* exported showAlert */
-function showAlert(message) {
+/* exported modal__showAlert */
+function modal__showAlert(message) {
   return new Promise((resolve) => {
     (window['cot_app'] || window['CotApp']).showModal({
       preset: 'alert',
@@ -16,8 +16,8 @@ function showAlert(message) {
   });
 }
 
-/* exported showConfirm */
-function showConfirm(message, {
+/* exported modal__showConfirm */
+function modal__showConfirm(message, {
   title = 'Confirm',
   cancelButtonLabel = 'Cancel',
   cancelButtonBootstrapType = 'default',
@@ -52,8 +52,8 @@ function showConfirm(message, {
   });
 }
 
-/* exported showModalForm */
-function showModalForm(definition, options = {}) {
+/* exported modal__showModalForm */
+function modal__showModalForm(definition, options = {}) {
   options.model = options.model || new Backbone.Model(),
     options.includeMeta = options.includeMeta || false,
     options.saveButtonLabel = options.saveButtonLabel || null;
@@ -93,7 +93,7 @@ function showModalForm(definition, options = {}) {
       });
     };
 
-    definition.id = definition.id || showModalForm.genFormId();
+    definition.id = definition.id || modal__showModalForm.genFormId();
 
     renderForm($modalElement.find('.modal-body'), definition, options);
 
@@ -108,15 +108,15 @@ function showModalForm(definition, options = {}) {
   });
 }
 
-showModalForm.genFormId = () => {
-  if (!showModalForm.genFormId.idCounter) {
-    showModalForm.genFormId.idCounter = 0;
+modal__showModalForm.genFormId = () => {
+  if (!modal__showModalForm.genFormId.idCounter) {
+    modal__showModalForm.genFormId.idCounter = 0;
   }
-  return `modelform_${showModalForm.genFormId.idCounter++}`;
+  return `modelform_${modal__showModalForm.genFormId.idCounter++}`;
 };
 
-/* exported showPrompt */
-function showPrompt(message, defaultValue = '', {
+/* exported modal__showPrompt */
+function modal__showPrompt(message, defaultValue = '', {
   title = 'Prompt',
   validators
 } = {}) {
@@ -140,16 +140,15 @@ function showPrompt(message, defaultValue = '', {
     ]
   };
 
-  return showModalForm(definition, {
+  return modal__showModalForm(definition, {
     title,
     model: new Backbone.Model({ value: defaultValue }),
     saveMessage: null
   }).then((finalValue) => finalValue.value);
 }
 
-/* exported showLogin */
-// TODO: Test function
-function showLogin(auth, options = {}) {
+/* exported modal__showLogin */
+function modal__showLogin(auth, options = {}) {
   options.title = options.title || 'Login';
   options.confirmButtonLabel = options.confirmButtonLabel || 'Login';
   options.confirmButtonBootstrapType = options.confirmButtonBootstrapType || 'primary';
@@ -199,6 +198,6 @@ function showLogin(auth, options = {}) {
     ]
   };
 
-  return showModalForm(definition, options)
+  return modal__showModalForm(definition, options)
     .then(() => auth__checkLogin(auth));
 }

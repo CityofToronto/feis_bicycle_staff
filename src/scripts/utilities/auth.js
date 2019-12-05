@@ -1,5 +1,5 @@
 /* global $ */
-/* global oData_getErrorMessage */
+/* global oData__getErrorMessage */
 
 let auth__webStorage = localStorage;
 let auth__webStorageKey = 'bicycle_auth';
@@ -43,7 +43,7 @@ function auth__login(auth, user, pwd) {
 
       resolve(auth);
     }, (jqXHR, textStatus, errorThrown) => {
-      reject(oData_getErrorMessage(jqXHR, errorThrown));
+      reject(oData__getErrorMessage(jqXHR, errorThrown));
     });
   });
 }
@@ -68,7 +68,7 @@ function auth__logout(auth = {}) {
       }).then((data) => {
         resolve(data);
       }, (jqXHR, textStatus, errorThrown) => {
-        reject(oData_getErrorMessage(jqXHR, errorThrown));
+        reject(oData__getErrorMessage(jqXHR, errorThrown));
       });
     });
   } else {
@@ -125,7 +125,7 @@ function auth__checkAccess(auth = {}, ApplicationName, Resource, Action) {
         const json = JSON.parse(data);
         resolve(json.Authorized === true);
       }, (jqXHR, textStatus, errorThrown) => {
-        reject(oData_getErrorMessage(jqXHR, errorThrown));
+        reject(oData__getErrorMessage(jqXHR, errorThrown));
       });
     });
   });

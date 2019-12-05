@@ -1,5 +1,5 @@
 /* global $ Backbone moment */
-/* global query_stringToObject query_objectToString */
+/* global query__stringToObject query__objectToString */
 /* global renderForm */
 
 /* exported renderLocationDetailsPage */
@@ -8,11 +8,11 @@ function renderLocationDetailsPage($container, id, query, auth, routeCbk) {
     id = null;
   }
 
-  const { locations, inspections, lockers } = query_stringToObject(query);
+  const { locations, inspections, lockers } = query__stringToObject(query);
 
-  const navQuery = query_objectToString({ locations, inspections, lockers });
+  const navQuery = query__objectToString({ locations, inspections, lockers });
   $container.html(`
-    <p><a href="#locations?${query_objectToString({ locations })}">Back to Locker Locations</a></p>
+    <p><a href="#locations?${query__objectToString({ locations })}">Back to Locker Locations</a></p>
 
     ${id ? `
       <div class="navbar">
@@ -279,7 +279,7 @@ function renderLocationDetailsPage($container, id, query, auth, routeCbk) {
 
     saveButtonLabel: (model) => model.isNew() ? 'Create Locker Location' : 'Update Locker Location',
     cancelButtonLabel: 'Cancel',
-    cancelButtonFragment: `locations?${query_objectToString({ locations })}`,
+    cancelButtonFragment: `locations?${query__objectToString({ locations })}`,
     removeButtonLabel: 'Remove Locker Location',
     removePromptValue: 'DELETE'
   });

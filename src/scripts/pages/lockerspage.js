@@ -1,17 +1,17 @@
 /* global moment */
-/* global query_objectToString query_stringToObject  */
+/* global query__objectToString query__stringToObject  */
 /* global renderDatatable */
 
 /* exported renderLockersPage */
 function renderLockersPage($pageContainer, query, auth) {
-  const { option } = query_stringToObject(query);
+  const { option } = query__stringToObject(query);
 
   if (renderLockersPage.lastOption != option) {
     clearLockersState();
     renderLockersPage.lastOption = option;
   }
 
-  const nextQuery = query_objectToString({ option, resetState: 'yes' });
+  const nextQuery = query__objectToString({ option, resetState: 'yes' });
 
   $pageContainer.html(`
     <p><a href="#home">Back to Home</a></p>
@@ -162,7 +162,7 @@ function renderLockersPage($pageContainer, query, auth) {
   const related = [
     {
       title: 'All',
-      fragment: `lockers?${query_objectToString({ option: 'all', resetState: 'yes' })}`
+      fragment: `lockers?${query__objectToString({ option: 'all', resetState: 'yes' })}`
     }
   ];
 

@@ -1,12 +1,12 @@
 /* global moment */
-/* global oData_escapeValue query_stringToObject query_objectToString */
+/* global oData__escapeValue query__stringToObject query__objectToString */
 /* global renderDatatable */
 
 let lastLocationsPageOption;
 
 /* exported renderCustomersPage */
 function renderCustomersPage($pageContainer, query, auth) {
-  const queryObject = query_stringToObject(query);
+  const queryObject = query__stringToObject(query);
 
   if (lastLocationsPageOption != queryObject.option) {
     clearCustomersState();
@@ -52,7 +52,7 @@ function renderCustomersPage($pageContainer, query, auth) {
       return column.search.value
         .split(' ')
         .filter((value, index, array) => value && array.indexOf(value) === index)
-        .map((value) => `(contains(tolower(first_name),'${oData_escapeValue(value.toLowerCase())}') or contains(tolower(last_name),'${oData_escapeValue(value.toLowerCase())}'))`)
+        .map((value) => `(contains(tolower(first_name),'${oData__escapeValue(value.toLowerCase())}') or contains(tolower(last_name),'${oData__escapeValue(value.toLowerCase())}'))`)
         .join(' and ');
     },
     orderBy(order) {
@@ -111,11 +111,11 @@ function renderCustomersPage($pageContainer, query, auth) {
   const related = [
     {
       title: 'All Active',
-      fragment: `customers?${query_objectToString({ option: 'active', resetState: 'yes' })}`
+      fragment: `customers?${query__objectToString({ option: 'active', resetState: 'yes' })}`
     },
     {
       title: 'All',
-      fragment: `customers?${query_objectToString({ resetState: 'yes' })}`
+      fragment: `customers?${query__objectToString({ resetState: 'yes' })}`
     }
   ];
 
