@@ -297,7 +297,7 @@ function locationsPage__render($pageContainer, opt, query, auth) {
 
   const action = Object.assign({}, locationsPage__columns.action, {
     render(data) {
-      return `<a href="#locations/${opt}/${data}?${query__objectToString({ resetState: 'yes' })}" class="btn btn-default">Open</a>`;
+      return `<a href="#locations/${opt}/${data}?${query__objectToString({ resetState: 'yes' })}" class="btn btn-default dblclick-target">Open</a>`;
     }
   });
 

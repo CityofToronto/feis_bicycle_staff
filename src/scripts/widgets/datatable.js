@@ -471,10 +471,15 @@ function renderDatatable($container, definition, options = {}) {
     $innerContainer.find('.dt-buttons .buttons-pdf').click();
   });
 
-  $table.on('keyup change', 'thead th input, thead th select', (event) => {
-    const $target = $(event.target);
+  $table.find('thead th input, thead th select').on('keyup change', (event) => {
+    const $target = $(event.currentTarget);
     datatable.column($target.attr('data-column-index')).search($target.val());
     datatable.draw();
+  });
+
+  $innerContainer.find('tbody').on('dblclick', (event) => {
+    const $link = $(event.target).closest('tr').find('.dblclick-target');
+    window.location.href = $link.attr('href');
   });
 
   if (newButtonLabel && newButtonFragment) {
