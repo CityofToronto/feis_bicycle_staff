@@ -1,5 +1,5 @@
-/* exported renderLogoutPage */
-function renderLogoutPage($container) {
+/* exported logoutPage__render */
+function logoutPage__render($container) {
   $container.html(`
     <div class="row">
       <div class="col-sm-10">

@@ -5,6 +5,30 @@ module.exports.DA_BASE_URL = 'https://config.cc.toronto.ca:49093/c3api_data/v2/D
 
 module.exports.DA_APP_BASE_URL = module.exports.DA_BASE_URL + '/bicycle_parking';
 
+module.exports.DA_LOCATIONS_URL = module.exports.DA_APP_BASE_URL + '/locations';
+module.exports.DA_LOCATION_NOTES_URL = module.exports.DA_APP_BASE_URL + '/location_notes';
+module.exports.DA_LOCATION_INSPECTIONS_URL = module.exports.DA_APP_BASE_URL + '/location_inspections';
+
+module.exports.DA_LOCKERS_URL = module.exports.DA_APP_BASE_URL + '/lockers';
+module.exports.DA_LOCKER_NOTES_URL = module.exports.DA_APP_BASE_URL + '/locker_notes';
+module.exports.DA_LOCKER_INSPECTIONS_URL = module.exports.DA_APP_BASE_URL + '/locker_inspections';
+
+module.exports.DA_STATIONS_URL = module.exports.DA_APP_BASE_URL + '/stations';
+module.exports.DA_STATION_NOTES_URL = module.exports.DA_APP_BASE_URL + '/station_notes';
+module.exports.DA_STATION_INSPECTIONS_URL = module.exports.DA_APP_BASE_URL + '/station_inspections';
+
+module.exports.DA_KEYFOBS_URL = module.exports.DA_APP_BASE_URL + '/keyfobs';
+module.exports.DA_KEYFOB_NOTES_URL = module.exports.DA_APP_BASE_URL + '/keyfob_notes';
+module.exports.DA_KEYFOB_INSPECTIONS_URL = module.exports.DA_APP_BASE_URL + '/keyfob_inspections';
+
+module.exports.DA_CUSTOMERS_URL = module.exports.DA_APP_BASE_URL + '/customers';
+module.exports.DA_CUSTOMER_NOTES_URL = module.exports.DA_APP_BASE_URL + '/customer_notes';
+module.exports.DA_CUSTOMER_INSPECTIONS_URL = module.exports.DA_APP_BASE_URL + '/customer_inspections';
+
+module.exports.DA_PAYMENTS_URL = module.exports.DA_APP_BASE_URL + '/payments';
+module.exports.DA_PAYMENT_NOTES_URL = module.exports.DA_APP_BASE_URL + '/payment_notes';
+module.exports.DA_PAYMENT_INSPECTIONS_URL = module.exports.DA_APP_BASE_URL + '/payment_inspections';
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 module.exports.locations_getLockersTotals = function(request, locationId) {

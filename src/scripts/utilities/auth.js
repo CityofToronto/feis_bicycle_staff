@@ -4,11 +4,11 @@
 let auth__webStorage = localStorage;
 let auth__webStorageKey = 'bicycle_auth';
 
-let auth__url = '/* @echo C3auth__url */';
+let auth__url = '/* @echo C3AUTH_URL */';
 let auth__app = 'Bicycle Parking';
 let auth__checkLoginInterval = 5 * 60000;
 
-let auth__checkAccessUrl = '/* @echo C3CONFIG_ISAUTH */';
+let auth__checkAccessUrl = '/* @echo C3CONFIG_ISAUTH_URL */';
 
 /* exported auth__init */
 function auth__init(auth = {}) {

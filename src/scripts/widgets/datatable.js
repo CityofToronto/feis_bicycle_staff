@@ -1,5 +1,6 @@
 /* global $ moment */
-/* global auth__checkLogin modal__showLogin deepCloneObject fixButtonLinks oData__escapeValue oData__getErrorMessage query__objectToString stringToFunction */
+/* global ajaxes auth__checkLogin modal__showLogin deepCloneObject fixButtonLinks oData__escapeValue
+  oData__getErrorMessage query__objectToString stringToFunction */
 /* global renderAlert */
 
 /* exported renderDatatable */
@@ -39,14 +40,14 @@ function renderDatatable($container, definition, options = {}) {
           .concat(definition.columns
             // .filter((column) => Array.isArray(column.select)||  typeof column.select === 'string')
             .map((column) => column.select))
-            .reduce((acc, cur) => {
-              if (typeof cur === 'string') {
-                acc.push(cur);
-              } else if (Array.isArray(cur)) {
-                acc.push(...cur);
-              }
-              return acc;
-            }, [])
+          .reduce((acc, cur) => {
+            if (typeof cur === 'string') {
+              acc.push(cur);
+            } else if (Array.isArray(cur)) {
+              acc.push(...cur);
+            }
+            return acc;
+          }, [])
           .filter((select, index, array) => array.indexOf(select) === index)
           .join(',');
 
@@ -182,7 +183,7 @@ function renderDatatable($container, definition, options = {}) {
         // $top
         queryObject['$top'] = data.length;
 
-        $.ajax({
+        ajaxes({
           url: `${url}?${query__objectToString(queryObject)}`,
           method: 'GET',
           contentType: 'application/json; charset=utf-8',
@@ -191,7 +192,7 @@ function renderDatatable($container, definition, options = {}) {
               jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
             }
           }
-        }).then((response) => {
+        }).then(({ data: response }) => {
           callback({
             data: response.value,
             draw: data.draw,
@@ -341,7 +342,7 @@ function renderDatatable($container, definition, options = {}) {
             }
             if (typeof choices === 'object' && choices !== null) {
               return new Promise((resolve, reject) => {
-                $.ajax(choices).then((data) => {
+                ajaxes(choices).then(({ data }) => {
                   column.choices = data;
                   resolve(data);
                 }, () => {

@@ -3,11 +3,13 @@
 // Any resources from this project should be referenced using SRC_PATH preprocessor var
 // Ex: let myImage = '/*@echo SRC_PATH*//img/sample.jpg';
 
-/* global $ Backbone moment */
-/* global cot_app */
-/* global auth__checkLogin auth__init auth__logout query__objectToString query__stringToObject modal__showLogin Router */
-/* global renderLoginButton */
-/* global renderLoadingPage */
+/* global
+  $ Backbone moment
+  cot_app
+  ajaxes auth__checkLogin auth__init auth__logout query__objectToString query__stringToObject modal__showLogin Router
+  renderLoginButton
+  loadingPage__render
+ */
 
 $(function () {
   const app = new cot_app('Bicycle Parking', {
@@ -86,7 +88,7 @@ $(function () {
   // START
   //////////////////////////////////////////////////
 
-  renderLoadingPage($pageContainer);
+  loadingPage__render($pageContainer);
 
   const AppRouter = Router.extend({
     defaultFragment: DEFAULT_ROUTE_FRAGMENT,
@@ -94,7 +96,7 @@ $(function () {
     routes: {
       // 'locations/:location/inspections/:id(/)': 'routeLocationInspectionDetails',
       // 'locations/:location/inspections(/)': 'routeLocationInspections',
-      // 'locations/:id(/)': 'routeLocationDetails',
+      'locations/:opt/:id(/)': 'routeLocationDetails',
       'locations(/:opt)(/)': 'routeLocations',
 
       'lockers/:id(/)': 'routeLockerDetails',
@@ -123,7 +125,7 @@ $(function () {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /* global renderHomePage */
+    /* global homePage__render */
     routeHome(query) {
       return auth__checkLogin(auth).then((isLoggedIn) => {
         if (!isLoggedIn) {
@@ -133,11 +135,11 @@ $(function () {
 
         updatePageHeader();
 
-        return renderHomePage($pageContainer, query, auth);
+        return homePage__render($pageContainer, query, auth);
       });
     },
 
-    /* global renderLoginPage */
+    /* global loginPage__render */
     routeLogin(query) {
       return auth__checkLogin(auth).then((isLoggedIn) => {
         if (isLoggedIn) {
@@ -147,7 +149,7 @@ $(function () {
 
         updatePageHeader('Bicycle Parking', [], { breadcrumbTitle: 'Login', documentTitle: 'Login' });
 
-        return renderLoginPage($pageContainer, query, auth, () => {
+        return loginPage__render($pageContainer, query, auth, () => {
           auth__checkLogin(auth).then((isLoggedIn) => {
             if (isLoggedIn) {
               Backbone.history.stop();
@@ -158,18 +160,18 @@ $(function () {
       });
     },
 
-    /* global renderLogoutPage */
+    /* global logoutPage__render */
     routeLogout(query) {
       auth__logout(auth);
 
       updatePageHeader('Bicycle Parking', [], { breadcrumbTitle: 'Logout', documentTitle: 'Logout' });
 
-      return renderLogoutPage($pageContainer, query);
+      return logoutPage__render($pageContainer, query);
     },
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /* global renderLocationsPage clearLocationsPageState */
+    /* global locationsPage__render */
     routeLocations(opt, query) {
       if (!opt) {
         this.navigate('locations/all', { trigger: true, replace: true });
@@ -182,40 +184,39 @@ $(function () {
           return;
         }
 
-        query = handleResetStateQuery(this, 'locations', query, () => {
-          clearLocationsPageState();
-        });
+        const breadcrumb = [{ name: 'Locker Locations', link: '#locations' }];
+        let breadcrumbTitle, documentTitle;
+        switch (opt) {
+          default:
+            breadcrumbTitle = 'All';
+            documentTitle = 'All Locker Locations';
+        }
+        updatePageHeader('Locker Locations', breadcrumb, { breadcrumbTitle, documentTitle });
 
-        updatePageHeader('Locker Locations');
-
-        return renderLocationsPage($pageContainer, query, auth);
+        return locationsPage__render($pageContainer, opt, query, auth);
       });
     },
 
-    /* global renderLocationDetailsPage */
-    routeLocationDetails(id, query) {
+    /* global locationDetailsPage_render */
+    routeLocationDetails(opt, id, query) {
       return auth__checkLogin(auth).then((isLoggedIn) => {
         if (!isLoggedIn) {
           this.navigate(`login?${query__objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
           return;
         }
 
-        query = handleResetStateQuery(this, `locations/${id}`, query, () => {
-          clearLocationInspectionsState();
-        });
-
-        const { locations } = query__stringToObject(query);
-        const breadcrumb = [{ name: 'Locker Locations', link: `#locations?${query__objectToString({ locations })}` }];
-
-        if (id === 'new') {
-          updatePageHeader('New Locker Location', breadcrumb, { breadcrumbTitle: 'New' });
+        const breadcrumb = [{ name: 'Locker Locations', link: '#locations' }];
+        switch (opt) {
+          default:
+            breadcrumb.push({ name: 'All', link: `#locations/all` });
         }
 
-        return renderLocationDetailsPage($pageContainer, id, query, auth, (model) => {
+        return locationDetailsPage_render($pageContainer, opt, id, query, auth, (dataSnapShot, model) => {
           if (model.id) {
-            const { inspections, lockers } = query__stringToObject(query);
-            this.navigate(`locations/${model.id}?${query__objectToString({ locations, inspections, lockers })}`, { trigger: false, replace: true });
-            updatePageHeader(model.escape('site_name'), breadcrumb  );
+            this.navigate(`locations/${opt}/${model.id}`, { trigger: false, replace: true });
+            updatePageHeader(model.escape('site_name'), breadcrumb);
+          } else {
+            updatePageHeader('New Locker Location', breadcrumb, { breadcrumbTitle: 'New' });
           }
         });
       });
@@ -234,7 +235,8 @@ $(function () {
         });
 
         const doDownload = () => {
-          $.ajax(`/* @echo C3DATA_LOCATIONS */('${location}')?$select=site_name`, {
+          // $.ajax(`/* @echo C3DATA_LOCATIONS */('${location}')?$select=site_name`, {
+          ajaxes(`/* @echo C3DATA_LOCATIONS */('${location}')?$select=site_name`, {
             dataType: 'json',
             methd: 'GET',
             beforeSend(jqXHR) {
@@ -242,7 +244,7 @@ $(function () {
                 jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
               }
             }
-          }).then((data) => {
+          }).then(({data}) => {
             const { locations, inspections, lockers } = query__stringToObject(query);
             updatePageHeader(data.site_name, [
               { name: 'Locker Locations', link: `#locations?${query__objectToString({ locations })}` },
@@ -284,7 +286,8 @@ $(function () {
         const { locations, inspections, lockers } = query__stringToObject(query);
 
         const doDownload = ({ breadcrumbTitle, documentTitle } = {}) => {
-          $.ajax(`/* @echo C3DATA_LOCATIONS */('${location}')?$select=site_name`, {
+          // $.ajax(`/* @echo C3DATA_LOCATIONS */('${location}')?$select=site_name`, {
+          ajaxes(`/* @echo C3DATA_LOCATIONS */('${location}')?$select=site_name`, {
             dataType: 'json',
             methd: 'GET',
             beforeSend(jqXHR) {
@@ -296,7 +299,7 @@ $(function () {
             updatePageHeader(data.site_name, [
               { name: 'Locker Locations', link: `#locations?${query__objectToString({ locations })}` },
               { name: data.site_name, link: `#locations/${location}?${query__objectToString({ locations, inspections, lockers })}` },
-              { name:'Inspections', link: `#locations/${location}/inspections?${query__objectToString({ locations, inspections, lockers })}` }
+              { name: 'Inspections', link: `#locations/${location}/inspections?${query__objectToString({ locations, inspections, lockers })}` }
             ], {
               breadcrumbTitle: breadcrumbTitle || 'New',
               documentTitle: `${documentTitle || 'New Inspections'} - ${data.site_name}`

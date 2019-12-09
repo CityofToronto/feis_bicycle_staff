@@ -1,8 +1,8 @@
 /* global auth__login */
 /* global renderAlert renderForm */
 
-/* exported renderLoginPage */
-function renderLoginPage($container, query, auth, routeCbk) {
+/* exported loginPage__render */
+function loginPage__render($container, query, auth, routeCbk) {
   $container.html(`
     <div class="row">
       <div class="col-sm-8">

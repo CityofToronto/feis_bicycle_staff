@@ -1,6 +1,7 @@
 /* global $ Backbone moment */
 /* global CotForm */
-/* global auth__checkLogin deepCloneObject fixButtonLinks functionToValue oData__getErrorMessage modal__showAlert modal__showConfirm modal__showLogin modal__showPrompt stringToFunction */
+/* global ajaxes auth__checkLogin deepCloneObject fixButtonLinks functionToValue oData__getErrorMessage modal__showAlert
+  modal__showConfirm modal__showLogin modal__showPrompt stringToFunction */
 /* global renderAlert */
 
 /* exported renderForm */
@@ -9,7 +10,7 @@ function renderForm($container, definition, {
   model = new Backbone.Model(),
   url,
   loadModelData = true,
-  routeCbk,
+  snapShotCbk = () => { },
 
   includeMeta = true,
 
@@ -38,7 +39,8 @@ function renderForm($container, definition, {
 
 
 } = {}) {
-  let dataSnapShot = JSON.stringify(model.toJSON());
+  let dataSnapShot;
+
   let $form, formValidator;
 
   definition = deepCloneObject(definition);
@@ -46,31 +48,25 @@ function renderForm($container, definition, {
   definition.useBinding = definition.useBinding || true;
 
   definition.betterSuccess = definition.betterSuccess || function ({ auth, model } = {}) {
-    return new Promise((resolve, reject) => {
-      let data = model.toJSON();
-      delete data.__CreatedOn;
-      delete data.__ModifiedOn;
-      delete data.__Owner;
+    let data = model.toJSON();
+    delete data.__CreatedOn;
+    delete data.__ModifiedOn;
+    delete data.__Owner;
 
-      if (definition.prepareData) {
-        data = definition.prepareData(data);
-      }
+    if (definition.prepareData) {
+      data = definition.prepareData(data);
+    }
 
-      $.ajax(`${url}${data.id ? `('${data.id}')` : ''}`, {
-        contentType: 'application/json; charset=utf-8',
-        data: JSON.stringify(data),
-        dataType: 'json',
-        method: data.id ? 'PUT' : 'POST',
-        beforeSend(jqXHR) {
-          if (auth && auth.sId) {
-            jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
-          }
+    return ajaxes(`${url}${data.id ? `('${data.id}')` : ''}`, {
+      contentType: 'application/json; charset=utf-8',
+      data: JSON.stringify(data),
+      dataType: 'json',
+      method: data.id ? 'PUT' : 'POST',
+      beforeSend(jqXHR) {
+        if (auth && auth.sId) {
+          jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
         }
-      }).then((data, textStatus, jqXHR) => {
-        resolve({ data, textStatus, jqXHR });
-      }, (jqXHR, textStatus, errorThrown) => {
-        reject({ jqXHR, textStatus, errorThrown });
-      });
+      }
     });
   };
 
@@ -93,7 +89,7 @@ function renderForm($container, definition, {
         if (data) {
           model.set(data);
           dataSnapShot = JSON.stringify(model.toJSON());
-          routeCbk(model);
+          snapShotCbk(dataSnapShot, model);
         }
       }, ({ jqXHR, errorThrown } = {}) => {
         $disabled.prop('disabled', false);
@@ -320,13 +316,8 @@ function renderForm($container, definition, {
               };
             }
             if (typeof choices === 'object' && choices !== null) {
-              return new Promise((resolve, reject) => {
-                $.ajax(choices).then((data) => {
-                  field.choices = data;
-                  resolve(data);
-                }, () => {
-                  reject();
-                });
+              return ajaxes(choices).then(({ data }) => {
+                field.choices = data;
               });
             }
           }
@@ -405,7 +396,7 @@ function renderForm($container, definition, {
     if (loadModelData && !model.isNew()) {
       return new Promise((resolve, reject) => {
         const doDownload = () => {
-          $.ajax(`${url}('${model.id}')`, {
+          ajaxes(`${url}('${model.id}')`, {
             dataType: 'json',
             methd: 'GET',
             beforeSend(jqXHR) {
@@ -413,13 +404,16 @@ function renderForm($container, definition, {
                 jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
               }
             }
-          }).then((data) => {
+          }).then(({ data }) => {
             model.set(data);
             dataSnapShot = JSON.stringify(model.toJSON());
-            routeCbk(model);
+            snapShotCbk(dataSnapShot, model);
 
             resolve(data);
-          }, (jqXHR, textStatus, errorThrown) => {
+          }, ({ jqXHR, errorThrown }) => {
+            dataSnapShot = JSON.stringify(model.toJSON());
+            snapShotCbk(dataSnapShot, model);
+
             renderAlert($container, oData__getErrorMessage(jqXHR, errorThrown), { bootstrayType: 'danger' });
 
             if (auth) {
@@ -443,6 +437,9 @@ function renderForm($container, definition, {
         };
         doDownload();
       });
+    } else {
+      dataSnapShot = JSON.stringify(model.toJSON());
+      snapShotCbk(dataSnapShot, model);
     }
   }).then(() => {
     return doPreRender();
@@ -491,7 +488,7 @@ function renderForm($container, definition, {
             }
           }).then((confirm) => {
             if (confirm) {
-              $.ajax(`${url}${model.id ? `('${model.id}')` : ''}`, {
+              ajaxes(`${url}${model.id ? `('${model.id}')` : ''}`, {
                 method: 'DELETE',
                 beforeSend(jqXHR) {
                   if (auth && auth.sId) {
@@ -501,7 +498,7 @@ function renderForm($container, definition, {
               }).then(() => {
                 modal__showAlert(removeSuccessMessage);
                 Backbone.history.navigate(finalRemoveButtonFragment, { trigger: true });
-              }, (jqXHR, textStatus, errorThrown) => {
+              }, ({ jqXHR, errorThrown }) => {
                 renderAlert($container.find('form'), oData__getErrorMessage(jqXHR, errorThrown), {
                   type: 'danger'
                 });

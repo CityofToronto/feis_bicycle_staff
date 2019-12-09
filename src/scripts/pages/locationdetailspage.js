@@ -1,9 +1,9 @@
 /* global $ Backbone moment */
-/* global query__stringToObject query__objectToString */
+/* global query__objectToString query__stringToObject */
 /* global renderForm */
 
-/* exported renderLocationDetailsPage */
-function renderLocationDetailsPage($container, id, query, auth, routeCbk) {
+/* exported locationDetailsPage_render */
+function locationDetailsPage_render($container, opt, id, query, auth, snapShotCbk) {
   if (id === 'new') {
     id = null;
   }
@@ -275,7 +275,7 @@ function renderLocationDetailsPage($container, id, query, auth, routeCbk) {
     model,
     url: '/* @echo C3DATA_LOCATIONS */',
 
-    routeCbk,
+    snapShotCbk,
 
     saveButtonLabel: (model) => model.isNew() ? 'Create Locker Location' : 'Update Locker Location',
     cancelButtonLabel: 'Cancel',

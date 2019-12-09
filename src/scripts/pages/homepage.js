@@ -1,8 +1,8 @@
 /* global $ */
 /* global ajaxes fixButtonLinks query__objectToString */
 
-/* exported renderHomePage */
-function renderHomePage($container, query, auth) {
+/* exported homePage__render */
+function homePage__render($container, query, auth) {
   $container.empty();
 
   const $wrapper = $('<div class="homePage"></div>');
@@ -24,8 +24,8 @@ function renderHomePage($container, query, auth) {
       <h3 aria-labelledby="lockersHeader">Locations</h3>
 
       <div class="list-group">
-        <a href="#locations?${query__objectToString({ locations: 'all', resetState: 'yes' })}" class="list-group-item">
-          <span class="badge badge-locations">~</span>
+        <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+          <span class="badge badge-locations-all">~</span>
           All
         </a>
       </div>
@@ -33,15 +33,11 @@ function renderHomePage($container, query, auth) {
   `);
 
   ajaxes({
-    url: '/* @echo C3DATA_LOCATIONS */?$select=id&$top=1000&$filter= __Status eq \'Active\'',
+    url: '/* @echo C3DATA_LOCATIONS_URL */?$select=id&$top=1000&$filter=__Status eq \'Active\'',
     method: 'GET',
-    beforeSend(jqXHR) {
-      if (auth && auth.sId) {
-        jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
-      }
-    }
+    headers: { Authorization: `AuthSession ${auth.sId}` },
   }).then(({ data }) => {
-    $lockers.find('.badge-locations').html(data.value.length !== 1000 ? data.value.length : '999+');
+    $lockers.find('.badge-locations-all').html(data.value.length !== 1000 ? data.value.length : '999+');
   });
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -51,7 +47,7 @@ function renderHomePage($container, query, auth) {
       <h3 aria-labelledby="lockersHeader">Lockers</h3>
 
       <div class="list-group">
-        <a href="#lockers?${query__objectToString({ option: 'all', resetState: 'yes' })}" class="list-group-item">
+        <a href="#lockers/all?${query__objectToString({ option: 'all', resetState: 'yes' })}" class="list-group-item">
           <span class="badge badge-lockers">~</span>
           All
         </a>
@@ -82,7 +78,7 @@ function renderHomePage($container, query, auth) {
       <h3 aria-labelledby="lockersHeader">Customer Requests</h3>
 
       <div class="list-group">
-        <a href="#customers?${query__objectToString({ option: 'all', resetState: 'yes' })}" class="list-group-item">
+        <a href="#customers/lockers/all?${query__objectToString({ option: 'all', resetState: 'yes' })}" class="list-group-item">
           <span class="badge badge-customers">~</span>
           All
         </a>
@@ -109,18 +105,8 @@ function renderHomePage($container, query, auth) {
       <h3 aria-labelledby="lockersHeader">Payments</h3>
 
       <div class="list-group">
-        <a href="#registrations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-          <span class="badge badge-registrations">~</span>
-          All Active
-        </a>
-        <!--
-        <a href="#registrations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-          <span class="badge badge-registrations">~</span>
-          By Year
-        </a>
-        -->
-        <a href="#registrations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-          <span class="badge badge-registrations">~</span>
+        <a href="#payments/lockers/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+          <span class="badge badge-payments">~</span>
           All
         </a>
       </div>
