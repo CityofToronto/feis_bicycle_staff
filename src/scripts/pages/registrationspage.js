@@ -1,11 +1,11 @@
-/* global moment query_stringToObject query_objectToString */
+/* global moment query__stringToObject query__objectToString */
 /* global renderDatatable */
 
 let lastRegistrationsPageOption;
 
 /* exported renderRegistrationsPage */
 function renderRegistrationsPage($pageContainer, query, auth) {
-  const queryObject = query_stringToObject(query);
+  const queryObject = query__stringToObject(query);
 
   if (lastRegistrationsPageOption != queryObject.option) {
     clearRegistrationsState();
@@ -127,15 +127,15 @@ function renderRegistrationsPage($pageContainer, query, auth) {
   const related = [
     {
       title: 'Today',
-      fragment: `locations?${query_objectToString({ option: 'today', resetState: 'yes' })}`
+      fragment: `locations?${query__objectToString({ option: 'today', resetState: 'yes' })}`
     },
     {
       title: 'This Year',
-      fragment: `locations?${query_objectToString({ option: 'thisyear', resetState: 'yes' })}`
+      fragment: `locations?${query__objectToString({ option: 'thisyear', resetState: 'yes' })}`
     },
     {
       title: 'All',
-      fragment: `locations?${query_objectToString({ resetState: 'yes' })}`
+      fragment: `locations?${query__objectToString({ resetState: 'yes' })}`
     }
   ];
 

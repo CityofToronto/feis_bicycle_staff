@@ -9,14 +9,14 @@ function renderForm($container, definition, {
   auth,
   model = new Backbone.Model(),
   url,
+  loadModelData = true,
+  snapShotCbk = () => { },
 
   includeMeta = true,
 
   saveButtonLabel = 'Save',
-
   cancelButtonLabel = 'Cancel',
   cancelButtonFragment,
-
   removeButtonLabel = 'Remove',
   removeButtonFragment = cancelButtonFragment,
 
@@ -32,7 +32,13 @@ function renderForm($container, definition, {
   removeSuccessMessage = 'The record was removed',
   removeFailedMessage = 'The record was not removed',
   removePromptValue,
+
+  unsaveMessage = 'There may be one or more unsaved data. Do you want to continue?',
+  unsaveCancelButtonLabel = 'Cancel',
+  unsaveConfirmButtonLabel = 'Continue',
 } = {}) {
+  let dataSnapShot;
+
   let $form, formValidator;
 
   definition = deepCloneObject(definition);
@@ -49,8 +55,7 @@ function renderForm($container, definition, {
       data = definition.prepareData(data);
     }
 
-    return ajaxes({
-      url: `${url}${data.id ? `('${data.id}')` : ''}`,
+    return ajaxes(`${url}${data.id ? `('${data.id}')` : ''}`, {
       contentType: 'application/json; charset=utf-8',
       data: JSON.stringify(data),
       dataType: 'json',
@@ -71,12 +76,18 @@ function renderForm($container, definition, {
 
       Promise.resolve().then(() => {
         return definition.betterSuccess({ $form, formValidator, auth, model, url });
-      }).then(() => {
+      }).then(({ data } = {}) => {
         $disabled.prop('disabled', false);
 
         const finalSaveMessage = functionToValue(saveMessage, model);
         if (finalSaveMessage) {
           renderAlert($form, finalSaveMessage);
+        }
+
+        if (data) {
+          model.set(data);
+          dataSnapShot = JSON.stringify(model.toJSON());
+          snapShotCbk(dataSnapShot, model);
         }
       }, ({ jqXHR, errorThrown } = {}) => {
         $disabled.prop('disabled', false);
@@ -380,6 +391,55 @@ function renderForm($container, definition, {
   }
 
   Promise.resolve().then(() => {
+    if (loadModelData && !model.isNew()) {
+      return new Promise((resolve, reject) => {
+        const doDownload = () => {
+          ajaxes(`${url}('${model.id}')`, {
+            dataType: 'json',
+            methd: 'GET',
+            beforeSend(jqXHR) {
+              if (auth && auth.sId) {
+                jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+              }
+            }
+          }).then(({ data }) => {
+            model.set(data);
+            dataSnapShot = JSON.stringify(model.toJSON());
+            snapShotCbk(dataSnapShot, model);
+
+            resolve(data);
+          }, ({ jqXHR, errorThrown }) => {
+            dataSnapShot = JSON.stringify(model.toJSON());
+            snapShotCbk(dataSnapShot, model);
+
+            renderAlert($container, oData__getErrorMessage(jqXHR, errorThrown), { bootstrayType: 'danger' });
+
+            if (auth) {
+              auth__checkLogin(auth, true).then((isLoggedIn) => {
+                if (!isLoggedIn) {
+                  modal__showLogin(auth).then((isLoggedIn) => {
+                    if (isLoggedIn) {
+                      doDownload();
+                    } else {
+                      reject();
+                    }
+                  });
+                } else {
+                  reject();
+                }
+              });
+            } else {
+              reject();
+            }
+          });
+        };
+        doDownload();
+      });
+    } else {
+      dataSnapShot = JSON.stringify(model.toJSON());
+      snapShotCbk(dataSnapShot, model);
+    }
+  }).then(() => {
     return doPreRender();
   }).then(() => {
     const cotForm = new CotForm(definition);
@@ -426,8 +486,7 @@ function renderForm($container, definition, {
             }
           }).then((confirm) => {
             if (confirm) {
-              ajaxes({
-                url: `${url}${model.id ? `('${model.id}')` : ''}`,
+              ajaxes(`${url}${model.id ? `('${model.id}')` : ''}`, {
                 method: 'DELETE',
                 beforeSend(jqXHR) {
                   if (auth && auth.sId) {
@@ -519,4 +578,15 @@ function renderForm($container, definition, {
 
     return doPostRender();
   });
+
+  return () => {
+    const finalUnsaveMessage = functionToValue(unsaveMessage, model);
+    if (dataSnapShot !== JSON.stringify(model.toJSON()) && finalUnsaveMessage) {
+      return modal__showConfirm(finalUnsaveMessage, {
+        title: 'Confirm',
+        cancelButtonLabel: functionToValue(unsaveCancelButtonLabel, model),
+        confirmButtonLabel: functionToValue(unsaveConfirmButtonLabel, model)
+      });
+    }
+  };
 }

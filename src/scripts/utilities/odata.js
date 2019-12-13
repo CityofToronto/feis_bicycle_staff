@@ -1,5 +1,5 @@
-/* exported oData_escapeValue */
-function oData_escapeValue(value) {
+/* exported oData__escapeValue */
+function oData__escapeValue(value) {
   return value
     .replace(/'/g, "''")
     .replace(/%/g, '%25')
@@ -13,8 +13,8 @@ function oData_escapeValue(value) {
     .replace(/\s/g, '%20');
 }
 
-/* exported oData_getErrorMessage */
-function oData_getErrorMessage(jqXHR, errorThrown) {
+/* exported oData__getErrorMessage */
+function oData__getErrorMessage(jqXHR, errorThrown) {
   if (jqXHR) {
     if (jqXHR.responseJSON) {
       if (jqXHR.responseJSON.error && jqXHR.responseJSON.error.message) {

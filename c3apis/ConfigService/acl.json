@@ -5,12 +5,7 @@
     "action": "**"
   },
   {
-    "group": "anonymous",
-    "resource": "/c3api_config/v2/ConfigService.svc/ConfigSet/bicycle_parking/config.json",
-    "action": "GET"
-  },
-  {
-    "group": "anonymous",
+    "group": "staff",
     "resource": "/c3api_data/v2/DataAccess.svc/bicycle_parking/**",
     "action": "**"
   },

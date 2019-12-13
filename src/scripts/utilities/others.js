@@ -71,6 +71,11 @@ function stringToFunction(str) {
   return null;
 }
 
+let ajaxes__requests = [];
+let ajaxes_activeCounter = 0;
+let ajaxes__maxRequests = 3;
+let ajaxes__delay = 0;
+
 /* exported ajaxes */
 function ajaxes(options) {
   if (Array.isArray(options)) {
@@ -81,31 +86,26 @@ function ajaxes(options) {
 
   if (options) {
     promise = new Promise((resolve, reject) => {
-      ajaxes.requests.push(() => {
-        ajaxes.active++;
+      ajaxes__requests.push(() => {
+        ajaxes_activeCounter++;
         setTimeout(() => {
           $.ajax(options).then((data, textStatus, jqXHR) => {
-            ajaxes.active--;
+            ajaxes_activeCounter--;
             resolve({ data, textStatus, jqXHR });
             ajaxes();
           }, (jqXHR, textStatus, errorThrown) => {
-            ajaxes.active--;
+            ajaxes_activeCounter--;
             ajaxes();
             reject({ jqXHR, textStatus, errorThrown });
           });
-        }, ajaxes.DELAY);
+        }, ajaxes__delay);
       });
     });
   }
 
-  if (ajaxes.active !== ajaxes.MAX && ajaxes.requests.length > 0) {
-    (ajaxes.requests.shift())();
+  if (ajaxes_activeCounter !== ajaxes__maxRequests && ajaxes__requests.length > 0) {
+    (ajaxes__requests.shift())();
   }
 
   return promise;
 }
-
-ajaxes.requests = [];
-ajaxes.active = 0;
-ajaxes.MAX = 3;
-ajaxes.DELAY = 0;

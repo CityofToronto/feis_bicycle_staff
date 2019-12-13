@@ -1,128 +1,74 @@
 /* global $ Backbone moment */
-/* global ajaxes query__stringToObject */
+/* global query__objectToString query__stringToObject */
 /* global renderForm */
-/* global locationInspectionsPage__defaultOpt2 locationInspectionsPage__lastOpt2
-  locationInspectionsPage__stateSaveWebStorageKey */
 
-/* exported locationDetailsPage__fetch */
-function locationDetailsPage__fetch(id, auth) {
-  return Promise.resolve().then(() => {
-    if (id != 'new') {
-      return ajaxes(`/* @echo C3DATA_LOCATIONS */('${id}')`, {
-        contentType: 'application/json; charset=utf-8',
-        method: 'GET',
-        beforeSend(jqXHR) {
-          if (auth && auth.sId) {
-            jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
-          }
-        }
-      });
-    }
-
-    return {
-      data: {}
-    };
-  }).then(({ data }) => {
-    let Model = Backbone.Model.extend({
-      defaults: {
-        // "site_name": "string",
-
-        // "civic_address": "55 John Street",
-        // "municipality": "Toronto",
-        // "province": "Ontario",
-        // "postal_code": "M5V 3C6",
-
-        // "primary_contact_first_name": "string",
-        // "primary_contact_last_name": "string",
-        // "primary_contact_email": "email@toronto.ca",
-        // "primary_contact_primary_phone": "416-555-5555",
-        // "primary_contact_alternate_phone": "416-555-5555",
-
-        // "alternate_contact_first_name": "string",
-        // "alternate_contact_last_name": "string",
-        // "alternate_contact_email": "email@toronto.ca",
-        // "alternate_contact_primary_phone": "416-555-5555",
-        // "alternate_contact_alternate_phone": "416-555-5555",
-
-        // "notes": "string",
-
-        lockers_total: 0,
-        lockers_assigned: 0,
-        lockers_available: 0,
-
-        __Status: 'Active'
-      }
-    });
-
-    return new Model(data);
-  });
-}
-
-/* exported locationDetailsPage__render */
-function locationDetailsPage__render($container, opt, id, query, model, auth, updateCallback) {
-  const { resetState } = query__stringToObject(query);
-  if (resetState === 'yes') {
-    sessionStorage.removeItem(locationInspectionsPage__stateSaveWebStorageKey);
+/* exported locationDetailsPage_render */
+function locationDetailsPage_render($container, opt, id, query, auth, snapShotCbk) {
+  if (id === 'new') {
+    id = null;
   }
 
-  $container.html(`
-    <p><a href="#locations/${opt}">Back to Locker Locations</a></p>
+  const { locations, inspections, lockers } = query__stringToObject(query);
 
-    <div class="navbarContainer"></div>
+  const navQuery = query__objectToString({ locations, inspections, lockers });
+  $container.html(`
+    <p><a href="#locations?${query__objectToString({ locations })}">Back to Locker Locations</a></p>
+
+    ${id ? `
+      <div class="navbar">
+        <ul class="nav nav-tabs">
+          <li class="nav-item active" role="presentation">
+            <a href="#locations/${id}?${navQuery}" class="nav-link">Location</a>
+          </li>
+
+          <li class="nav-item" role="presentation">
+            <a href="#locations/${id}/inspections?${navQuery}" class="nav-link">Inspections</a>
+          </li>
+
+          <li class="nav-item" role="presentation">
+            <a class="nav-link">Lockers</a>
+          </li>
+        </ul>
+      </div>
+    ` : ''}
 
     <div class="form"></div>
   `);
 
-  console.log(locationInspectionsPage__lastOpt2 || locationInspectionsPage__defaultOpt2);
+  let Model = Backbone.Model.extend({
+    defaults: {
+      "site_name": "string",
 
-  function renderNavBar() {
-    $container.find('.navbarContainer').html(`
-      <div class="navbar">
-        <ul class="nav nav-tabs">
-          <li class="nav-item active" role="presentation">
-            <a href="#locations/${opt}/${model.id}" class="nav-link">Location</a>
-          </li>
+      "civic_address": "55 John Street",
+      "municipality": "Toronto",
+      "province": "Ontario",
+      "postal_code": "M5V 3C6",
 
-          <li class="nav-item" role="presentation">
-            <a href="#locations/${opt}/${id}/inspections/${locationInspectionsPage__lastOpt2 || locationInspectionsPage__defaultOpt2}" class="nav-link">Inspections</a>
-          </li>
-        </ul>
-      </div>
-    `);
-  }
+      "primary_contact_first_name": "string",
+      "primary_contact_last_name": "string",
+      "primary_contact_email": "email@toronto.ca",
+      "primary_contact_primary_phone": "416-555-5555",
+      "primary_contact_alternate_phone": "416-555-5555",
 
-  if (!model.isNew()) {
-    renderNavBar();
-  }
+      "alternate_contact_first_name": "string",
+      "alternate_contact_last_name": "string",
+      "alternate_contact_email": "email@toronto.ca",
+      "alternate_contact_primary_phone": "416-555-5555",
+      "alternate_contact_alternate_phone": "416-555-5555",
+
+      "notes": "string",
+
+      lockers_total: 0,
+      lockers_assigned: 0,
+      lockers_available: 0,
+
+      __Status: 'Active'
+    }
+  });
+
+  let model = new Model({ id });
 
   const definition = {
-    betterSuccess({ auth, model, url }) {
-
-      let data = model.toJSON();
-      delete data.__CreatedOn;
-      delete data.__ModifiedOn;
-      delete data.__Owner;
-
-      const method = data.id ? 'PUT' : 'POST';
-
-      return ajaxes({
-        url: `${url}${data.id ? `('${data.id}')` : ''}`,
-        contentType: 'application/json; charset=utf-8',
-        data: JSON.stringify(data),
-        dataType: 'json',
-        method,
-        beforeSend(jqXHR) {
-          if (auth && auth.sId) {
-            jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
-          }
-        }
-      }).then(({ data }) => {
-        model.set(data);
-        renderNavBar();
-        updateCallback();
-      });
-    },
-
     sections: [
       {
         title: 'Details',
@@ -260,7 +206,6 @@ function locationDetailsPage__render($container, opt, id, query, model, auth, up
         ]
       }, {
         title: 'Related Information',
-        id: 'related',
 
         rows: [
           {
@@ -299,9 +244,7 @@ function locationDetailsPage__render($container, opt, id, query, model, auth, up
                 className: 'col-sm-4',
 
                 postRender({ field }) {
-                  if (moment(model.get(field.bindTo)).isValid()) {
-                    $(`#${field.id}`).val(moment(model.get(field.bindTo)).format('YYYY/MM/DD'));
-                  }
+                  $(`#${field.id}`).val(moment(model.get(field.bindTo)).format('YYYY/MM/DD'));
                 }
               },
               {
@@ -322,20 +265,7 @@ function locationDetailsPage__render($container, opt, id, query, model, auth, up
               }
             ]
           },
-        ],
-
-        postRender({ section }) {
-          const $section = $(`#${section.id}`);
-          const handler = () => {
-            if (model.isNew()) {
-              $section.addClass('hide');
-            } else {
-              $section.removeClass('hide');
-            }
-          };
-          model.on('change:id', handler);
-          handler();
-        }
+        ]
       }
     ]
   };
@@ -345,11 +275,11 @@ function locationDetailsPage__render($container, opt, id, query, model, auth, up
     model,
     url: '/* @echo C3DATA_LOCATIONS */',
 
+    snapShotCbk,
+
     saveButtonLabel: (model) => model.isNew() ? 'Create Locker Location' : 'Update Locker Location',
-
     cancelButtonLabel: 'Cancel',
-    cancelButtonFragment: `locations/${opt}`,
-
+    cancelButtonFragment: `locations?${query__objectToString({ locations })}`,
     removeButtonLabel: 'Remove Locker Location',
     removePromptValue: 'DELETE'
   });

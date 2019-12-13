@@ -1,8 +1,8 @@
 /* global $ */
-/* global ajaxes fixButtonLinks query_objectToString */
+/* global ajaxes fixButtonLinks query__objectToString */
 
-/* exported renderHomePage */
-function renderHomePage($container, query, auth) {
+/* exported homePage__render */
+function homePage__render($container, query, auth) {
   $container.empty();
 
   const $wrapper = $('<div class="homePage"></div>');
@@ -24,8 +24,8 @@ function renderHomePage($container, query, auth) {
       <h3 aria-labelledby="lockersHeader">Locations</h3>
 
       <div class="list-group">
-        <a href="#locations?${query_objectToString({ option: 'all', resetState: 'yes' })}" class="list-group-item">
-          <span class="badge badge-locations">~</span>
+        <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+          <span class="badge badge-locations-all">~</span>
           All
         </a>
       </div>
@@ -33,15 +33,11 @@ function renderHomePage($container, query, auth) {
   `);
 
   ajaxes({
-    url: '/* @echo C3DATA_LOCATIONS */?$select=id&$top=1000&$filter= __Status eq \'Active\'',
+    url: '/* @echo C3DATA_LOCATIONS_URL */?$select=id&$top=1000&$filter=__Status eq \'Active\'',
     method: 'GET',
-    beforeSend(jqXHR) {
-      if (auth && auth.sId) {
-        jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
-      }
-    }
+    headers: { Authorization: `AuthSession ${auth.sId}` },
   }).then(({ data }) => {
-    $lockers.find('.badge-locations').html(data.value.length !== 1000 ? data.value.length : '999+');
+    $lockers.find('.badge-locations-all').html(data.value.length !== 1000 ? data.value.length : '999+');
   });
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -51,7 +47,7 @@ function renderHomePage($container, query, auth) {
       <h3 aria-labelledby="lockersHeader">Lockers</h3>
 
       <div class="list-group">
-        <a href="#lockers?${query_objectToString({ option: 'all', resetState: 'yes' })}" class="list-group-item">
+        <a href="#lockers/all?${query__objectToString({ option: 'all', resetState: 'yes' })}" class="list-group-item">
           <span class="badge badge-lockers">~</span>
           All
         </a>
@@ -82,7 +78,7 @@ function renderHomePage($container, query, auth) {
       <h3 aria-labelledby="lockersHeader">Customer Requests</h3>
 
       <div class="list-group">
-        <a href="#customers?${query_objectToString({ option: 'all', resetState: 'yes' })}" class="list-group-item">
+        <a href="#customers/lockers/all?${query__objectToString({ option: 'all', resetState: 'yes' })}" class="list-group-item">
           <span class="badge badge-customers">~</span>
           All
         </a>
@@ -109,18 +105,8 @@ function renderHomePage($container, query, auth) {
       <h3 aria-labelledby="lockersHeader">Payments</h3>
 
       <div class="list-group">
-        <a href="#registrations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
-          <span class="badge badge-registrations">~</span>
-          All Active
-        </a>
-        <!--
-        <a href="#registrations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
-          <span class="badge badge-registrations">~</span>
-          By Year
-        </a>
-        -->
-        <a href="#registrations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
-          <span class="badge badge-registrations">~</span>
+        <a href="#payments/lockers/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+          <span class="badge badge-payments">~</span>
           All
         </a>
       </div>
@@ -143,21 +129,21 @@ function renderHomePage($container, query, auth) {
       <h3 aria-labelledby="stationsHeader">Stations</h3>
 
       <div class="list-group">
-        <a href="#registrations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
+        <a href="#registrations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
           <span class="badge badge-registrations">~</span>
           All Active
         </a>
         <!--
-        <a href="#registrations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
+        <a href="#registrations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
           <span class="badge badge-registrations">~</span>
           Waiting List
         </a>
-        <a href="#registrations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
+        <a href="#registrations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
           <span class="badge badge-registrations">~</span>
           Up for Inspection
         </a>
         -->
-        <a href="#registrations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
+        <a href="#registrations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
           <span class="badge badge-registrations">~</span>
           All
         </a>
@@ -172,11 +158,11 @@ function renderHomePage($container, query, auth) {
       <h3 aria-labelledby="stationsHeader">Key Fobs</h3>
 
       <div class="list-group">
-        <a href="#registrations?${query_objectToString({ option: 'active', resetState: 'yes' })}" class="list-group-item">
+        <a href="#registrations?${query__objectToString({ option: 'active', resetState: 'yes' })}" class="list-group-item">
           <span class="badge badge-keyfobs-active">~</span>
           All Active
         </a>
-        <a href="#registrations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
+        <a href="#registrations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
           <span class="badge badge-keyfobs">~</span>
           All
         </a>
@@ -219,33 +205,33 @@ function renderHomePage($container, query, auth) {
       <h3 aria-labelledby="stationsHeader">Customer Requests</h3>
 
       <div class="list-group">
-        <a href="#registrations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
+        <a href="#registrations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
           <span class="badge badge-registrations">~</span>
           All Active
         </a>
         <!--
-        <a href="#registrations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
+        <a href="#registrations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
           <span class="badge badge-registrations">~</span>
           New
         </a>
-        <a href="#registrations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
+        <a href="#registrations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
           <span class="badge badge-registrations">~</span>
           Waiting
         </a>
-        <a href="#registrations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
+        <a href="#registrations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
           <span class="badge badge-registrations">~</span>
           Assigned
         </a>
-        <a href="#registrations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
+        <a href="#registrations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
           <span class="badge badge-registrations">~</span>
           Expired
         </a>
-        <a href="#registrations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
+        <a href="#registrations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
           <span class="badge badge-registrations">~</span>
           Email Addresses
         </a>
         -->
-        <a href="#registrations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
+        <a href="#registrations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
           <span class="badge badge-registrations">~</span>
           All
         </a>
@@ -260,17 +246,17 @@ function renderHomePage($container, query, auth) {
       <h3 aria-labelledby="stationsHeader">Payments</h3>
 
       <div class="list-group">
-        <a href="#registrations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
+        <a href="#registrations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
           <span class="badge badge-registrations">~</span>
           All Active
         </a>
         <!--
-        <a href="#registrations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
+        <a href="#registrations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
           <span class="badge badge-registrations">~</span>
           By Year
         </a>
         -->
-        <a href="#registrations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
+        <a href="#registrations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
           <span class="badge badge-registrations">~</span>
           All
         </a>
@@ -294,15 +280,15 @@ function renderHomePage($container, query, auth) {
   //     <h2>Registrations</h2>
 
   //     <div class="list-group">
-  //       <a href="#registrations?${query_objectToString({ option: 'today', resetState: 'yes' })}" class="list-group-item">
+  //       <a href="#registrations?${query__objectToString({ option: 'today', resetState: 'yes' })}" class="list-group-item">
   //         <span class="badge badge-registrations-today">~</span>
   //         Today's Entries
   //       </a>
-  //       <a href="#registrations?${query_objectToString({ option: 'thisyear', resetState: 'yes' })}" class="list-group-item">
+  //       <a href="#registrations?${query__objectToString({ option: 'thisyear', resetState: 'yes' })}" class="list-group-item">
   //         <span class="badge badge-registrations-thisyear">~</span>
   //         This Year's Entries
   //       </a>
-  //       <a href="#registrations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
+  //       <a href="#registrations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
   //         <span class="badge badge-registrations">~</span>
   //         All Entries
   //       </a>
@@ -312,7 +298,7 @@ function renderHomePage($container, query, auth) {
   // $row1.append($registrationsColumn);
 
   // ajaxes({
-  //   url: `/* @echo C3DATA_REGISTRATIONS */?$select=id&$top=1000&$filter=__Status eq 'Active' and __ModifiedOn ge ${oData_escapeValue(moment().startOf('day').format())} and __ModifiedOn le ${oData_escapeValue(moment().endOf('day').format())}`,
+  //   url: `/* @echo C3DATA_REGISTRATIONS */?$select=id&$top=1000&$filter=__Status eq 'Active' and __ModifiedOn ge ${oData__escapeValue(moment().startOf('day').format())} and __ModifiedOn le ${oData__escapeValue(moment().endOf('day').format())}`,
   //   method: 'GET',
   //   beforeSend(jqXHR) { if (auth && auth.sId) { jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`); } }
   // }).then(({ data }) => {
@@ -320,7 +306,7 @@ function renderHomePage($container, query, auth) {
   // });
 
   // ajaxes({
-  //   url: `/* @echo C3DATA_REGISTRATIONS */?$select=id&$top=1000&$filter=__Status eq 'Active' and __ModifiedOn ge ${oData_escapeValue(moment().startOf('year').format())} and __ModifiedOn le ${oData_escapeValue(moment().endOf('year').format())}`,
+  //   url: `/* @echo C3DATA_REGISTRATIONS */?$select=id&$top=1000&$filter=__Status eq 'Active' and __ModifiedOn ge ${oData__escapeValue(moment().startOf('year').format())} and __ModifiedOn le ${oData__escapeValue(moment().endOf('year').format())}`,
   //   method: 'GET',
   //   beforeSend(jqXHR) { if (auth && auth.sId) { jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`); } }
   // }).then(({ data }) => {
@@ -340,15 +326,15 @@ function renderHomePage($container, query, auth) {
   //     <h2>Customers</h2>
 
   //     <div class="list-group">
-  //       <a href="#customers?${query_objectToString({ option: 'today', resetState: 'yes' })}" class="list-group-item">
+  //       <a href="#customers?${query__objectToString({ option: 'today', resetState: 'yes' })}" class="list-group-item">
   //         <span class="badge badge-customers-today">~</span>
   //         Today's Entries
   //       </a>
-  //       <a href="#customers?${query_objectToString({ option: 'thisyear', resetState: 'yes' })}" class="list-group-item">
+  //       <a href="#customers?${query__objectToString({ option: 'thisyear', resetState: 'yes' })}" class="list-group-item">
   //         <span class="badge badge-customers-thisyear">~</span>
   //         This Year's Entries
   //       </a>
-  //       <a href="#customers?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
+  //       <a href="#customers?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
   //         <span class="badge badge-customers">~</span>
   //         All Entries
   //       </a>
@@ -358,7 +344,7 @@ function renderHomePage($container, query, auth) {
   // $row1.append($customersColumn);
 
   // ajaxes({
-  //   url: `/* @echo C3DATA_CUSTOMERS */?$select=id&$top=1000&$filter=__Status eq 'Active' and __ModifiedOn ge ${oData_escapeValue(moment().startOf('day').format())} and __ModifiedOn le ${oData_escapeValue(moment().endOf('day').format())}`,
+  //   url: `/* @echo C3DATA_CUSTOMERS */?$select=id&$top=1000&$filter=__Status eq 'Active' and __ModifiedOn ge ${oData__escapeValue(moment().startOf('day').format())} and __ModifiedOn le ${oData__escapeValue(moment().endOf('day').format())}`,
   //   method: 'GET',
   //   beforeSend(jqXHR) { if (auth && auth.sId) { jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`); } }
   // }).then(({ data }) => {
@@ -366,7 +352,7 @@ function renderHomePage($container, query, auth) {
   // });
 
   // ajaxes({
-  //   url: `/* @echo C3DATA_CUSTOMERS */?$select=id&$top=1000&$filter=__Status eq 'Active' and __ModifiedOn ge ${oData_escapeValue(moment().startOf('year').format())} and __ModifiedOn le ${oData_escapeValue(moment().endOf('year').format())}`,
+  //   url: `/* @echo C3DATA_CUSTOMERS */?$select=id&$top=1000&$filter=__Status eq 'Active' and __ModifiedOn ge ${oData__escapeValue(moment().startOf('year').format())} and __ModifiedOn le ${oData__escapeValue(moment().endOf('year').format())}`,
   //   method: 'GET',
   //   beforeSend(jqXHR) { if (auth && auth.sId) { jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`); } }
   // }).then(({ data }) => {
@@ -387,9 +373,9 @@ function renderHomePage($container, query, auth) {
 
   //     <div class="list-group">
   //       <a href="#subscriptions" class="list-group-item"><span class="badge">~</span> About to Expire</a>
-  //       <a href="#subscriptions?${query_objectToString({ option: 'today', resetState: 'yes' })}" class="list-group-item"><span class="badge">~</span> Today</a>
-  //       <a href="#subscriptions?${query_objectToString({ option: 'thisyear', resetState: 'yes' })}" class="list-group-item"><span class="badge">~</span> This Year</a>
-  //       <a href="#subscriptions?${query_objectToString({ resetState: 'yes' })}" class="list-group-item"><span class="badge">~</span> All</a>
+  //       <a href="#subscriptions?${query__objectToString({ option: 'today', resetState: 'yes' })}" class="list-group-item"><span class="badge">~</span> Today</a>
+  //       <a href="#subscriptions?${query__objectToString({ option: 'thisyear', resetState: 'yes' })}" class="list-group-item"><span class="badge">~</span> This Year</a>
+  //       <a href="#subscriptions?${query__objectToString({ resetState: 'yes' })}" class="list-group-item"><span class="badge">~</span> All</a>
   //     </div>
   //   </div>
   // `);
@@ -400,8 +386,8 @@ function renderHomePage($container, query, auth) {
   //     <h2>Payments</h2>
 
   //     <div class="list-group">
-  //       <a href="#payments?${query_objectToString({ option: 'today' })}" class="list-group-item"><span class="badge">~</span> Today</a>
-  //       <a href="#payments?${query_objectToString({ option: 'thisyear' })}" class="list-group-item"><span class="badge">~</span> This Year</a>
+  //       <a href="#payments?${query__objectToString({ option: 'today' })}" class="list-group-item"><span class="badge">~</span> Today</a>
+  //       <a href="#payments?${query__objectToString({ option: 'thisyear' })}" class="list-group-item"><span class="badge">~</span> This Year</a>
   //       <a href="#payments" class="list-group-item"><span class="badge">~</span> All</a>
   //     </div>
   //   </div>
@@ -422,15 +408,15 @@ function renderHomePage($container, query, auth) {
   //     <h2>Locker Locations</h2>
 
   //     <div class="list-group">
-  //       <a href="#locations?${query_objectToString({ option: 'today', resetState: 'yes' })}" class="list-group-item">
+  //       <a href="#locations?${query__objectToString({ option: 'today', resetState: 'yes' })}" class="list-group-item">
   //         <span class="badge badge-locations-today">~</span>
   //         Today's Entries
   //       </a>
-  //       <a href="#locations?${query_objectToString({ option: 'thisyear', resetState: 'yes' })}" class="list-group-item">
+  //       <a href="#locations?${query__objectToString({ option: 'thisyear', resetState: 'yes' })}" class="list-group-item">
   //         <span class="badge badge-locations-thisyear">~</span>
   //         This Year's Entries
   //       </a>
-  //       <a href="#locations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
+  //       <a href="#locations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
   //         <span class="badge badge-locations">~</span>
   //         All Entries
   //       </a>
@@ -440,7 +426,7 @@ function renderHomePage($container, query, auth) {
   // $row2.append($locationsColumn);
 
   // ajaxes({
-  //   url: `/* @echo C3DATA_LOCATIONS */?$select=id&$top=1000&$filter=__Status eq 'Active' and __ModifiedOn ge ${oData_escapeValue(moment().startOf('day').format())} and __ModifiedOn le ${oData_escapeValue(moment().endOf('day').format())}`,
+  //   url: `/* @echo C3DATA_LOCATIONS */?$select=id&$top=1000&$filter=__Status eq 'Active' and __ModifiedOn ge ${oData__escapeValue(moment().startOf('day').format())} and __ModifiedOn le ${oData__escapeValue(moment().endOf('day').format())}`,
   //   method: 'GET',
   //   beforeSend(jqXHR) { if (auth && auth.sId) { jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`); } }
   // }).then(({ data }) => {
@@ -448,7 +434,7 @@ function renderHomePage($container, query, auth) {
   // });
 
   // ajaxes({
-  //   url: `/* @echo C3DATA_LOCATIONS */?$select=id&$top=1000&$filter=__Status eq 'Active' and __ModifiedOn ge ${oData_escapeValue(moment().startOf('year').format())} and __ModifiedOn le ${oData_escapeValue(moment().endOf('year').format())}`,
+  //   url: `/* @echo C3DATA_LOCATIONS */?$select=id&$top=1000&$filter=__Status eq 'Active' and __ModifiedOn ge ${oData__escapeValue(moment().startOf('year').format())} and __ModifiedOn le ${oData__escapeValue(moment().endOf('year').format())}`,
   //   method: 'GET',
   //   beforeSend(jqXHR) { if (auth && auth.sId) { jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`); } }
   // }).then(({ data }) => {
@@ -468,15 +454,15 @@ function renderHomePage($container, query, auth) {
   //     <h2>Lockers</h2>
 
   //     <div class="list-group">
-  //       <a href="#lockers?${query_objectToString({ option: 'today', resetState: 'yes' })}" class="list-group-item">
+  //       <a href="#lockers?${query__objectToString({ option: 'today', resetState: 'yes' })}" class="list-group-item">
   //         <span class="badge badge-lockers-today">~</span>
   //         Today's Entries
   //       </a>
-  //       <a href="#lockers?${query_objectToString({ option: 'thisyear', resetState: 'yes' })}" class="list-group-item">
+  //       <a href="#lockers?${query__objectToString({ option: 'thisyear', resetState: 'yes' })}" class="list-group-item">
   //         <span class="badge badge-lockers-thisyear">~</span>
   //         This Year's Entries
   //       </a>
-  //       <a href="#lockers?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
+  //       <a href="#lockers?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
   //         <span class="badge badge-lockers">~</span>
   //         All Entries
   //       </a>
@@ -486,7 +472,7 @@ function renderHomePage($container, query, auth) {
   // $row2.append($lockersColumn);
 
   // ajaxes({
-  //   url: `/* @echo C3DATA_LOCKERS */?$select=id&$top=1000&$filter=__Status eq 'Active' and __ModifiedOn ge ${oData_escapeValue(moment().startOf('day').format())} and __ModifiedOn le ${oData_escapeValue(moment().endOf('day').format())}`,
+  //   url: `/* @echo C3DATA_LOCKERS */?$select=id&$top=1000&$filter=__Status eq 'Active' and __ModifiedOn ge ${oData__escapeValue(moment().startOf('day').format())} and __ModifiedOn le ${oData__escapeValue(moment().endOf('day').format())}`,
   //   method: 'GET',
   //   beforeSend(jqXHR) { if (auth && auth.sId) { jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`); } }
   // }).then(({ data }) => {
@@ -494,7 +480,7 @@ function renderHomePage($container, query, auth) {
   // });
 
   // ajaxes({
-  //   url: `/* @echo C3DATA_LOCKERS */?$select=id&$top=1000&$filter=__Status eq 'Active' and __ModifiedOn ge ${oData_escapeValue(moment().startOf('year').format())} and __ModifiedOn le ${oData_escapeValue(moment().endOf('year').format())}`,
+  //   url: `/* @echo C3DATA_LOCKERS */?$select=id&$top=1000&$filter=__Status eq 'Active' and __ModifiedOn ge ${oData__escapeValue(moment().startOf('year').format())} and __ModifiedOn le ${oData__escapeValue(moment().endOf('year').format())}`,
   //   method: 'GET',
   //   beforeSend(jqXHR) { if (auth && auth.sId) { jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`); } }
   // }).then(({ data }) => {
@@ -514,15 +500,15 @@ function renderHomePage($container, query, auth) {
   //     <h2>Stations</h2>
 
   //     <div class="list-group">
-  //       <a href="#stations?${query_objectToString({ option: 'today', resetState: 'yes' })}" class="list-group-item">
+  //       <a href="#stations?${query__objectToString({ option: 'today', resetState: 'yes' })}" class="list-group-item">
   //         <span class="badge badge-stations-today">~</span>
   //         Today Entries
   //       </a>
-  //       <a href="#stations?${query_objectToString({ option: 'thisyear', resetState: 'yes' })}" class="list-group-item">
+  //       <a href="#stations?${query__objectToString({ option: 'thisyear', resetState: 'yes' })}" class="list-group-item">
   //         <span class="badge badge-stations-thisyear">~</span>
   //         This Year's Entries
   //       </a>
-  //       <a href="#stations?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
+  //       <a href="#stations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
   //         <span class="badge badge-stations">~</span>
   //         All Entries
   //       </a>
@@ -532,7 +518,7 @@ function renderHomePage($container, query, auth) {
   // $row2.append($stationsColumn);
 
   // ajaxes({
-  //   url: `/* @echo C3DATA_STATIONS */?$select=id&$top=1000&$filter=__Status eq 'Active' and __ModifiedOn ge ${oData_escapeValue(moment().startOf('day').format())} and __ModifiedOn le ${oData_escapeValue(moment().endOf('day').format())}`,
+  //   url: `/* @echo C3DATA_STATIONS */?$select=id&$top=1000&$filter=__Status eq 'Active' and __ModifiedOn ge ${oData__escapeValue(moment().startOf('day').format())} and __ModifiedOn le ${oData__escapeValue(moment().endOf('day').format())}`,
   //   method: 'GET',
   //   beforeSend(jqXHR) {
   //     if (auth && auth.sId) {
@@ -544,7 +530,7 @@ function renderHomePage($container, query, auth) {
   // });
 
   // ajaxes({
-  //   url: `/* @echo C3DATA_STATIONS */?$select=id&$top=1000&$filter=__Status eq 'Active' and __ModifiedOn ge ${oData_escapeValue(moment().startOf('year').format())} and __ModifiedOn le ${oData_escapeValue(moment().endOf('year').format())}`,
+  //   url: `/* @echo C3DATA_STATIONS */?$select=id&$top=1000&$filter=__Status eq 'Active' and __ModifiedOn ge ${oData__escapeValue(moment().startOf('year').format())} and __ModifiedOn le ${oData__escapeValue(moment().endOf('year').format())}`,
   //   method: 'GET',
   //   beforeSend(jqXHR) {
   //     if (auth && auth.sId) {
@@ -572,15 +558,15 @@ function renderHomePage($container, query, auth) {
   //     <h2>Station Key Fobs</h2>
 
   //     <div class="list-group">
-  //       <a href="#keyfobs?${query_objectToString({ option: 'today', resetState: 'yes' })}" class="list-group-item">
+  //       <a href="#keyfobs?${query__objectToString({ option: 'today', resetState: 'yes' })}" class="list-group-item">
   //         <span class="badge badge-keyfobs-today">~</span>
   //         Today's Entries
   //       </a>
-  //       <a href="#keyfobs?${query_objectToString({ option: 'thisyear', resetState: 'yes' })}" class="list-group-item">
+  //       <a href="#keyfobs?${query__objectToString({ option: 'thisyear', resetState: 'yes' })}" class="list-group-item">
   //         <span class="badge badge-keyfobs-thisyear">~</span>
   //         This Year's Entries
   //       </a>
-  //       <a href="#keyfobs?${query_objectToString({ resetState: 'yes' })}" class="list-group-item">
+  //       <a href="#keyfobs?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
   //         <span class="badge badge-keyfobs">~</span>
   //         All Entries
   //       </a>
@@ -590,7 +576,7 @@ function renderHomePage($container, query, auth) {
   // $row2.append($keyfobsColumn);
 
   // ajaxes({
-  //   url: `/* @echo C3DATA_KEYFOBS */?$select=id&$top=1000&$filter=__Status eq 'Active' and __ModifiedOn ge ${oData_escapeValue(moment().startOf('day').format())} and __ModifiedOn le ${oData_escapeValue(moment().endOf('day').format())}`,
+  //   url: `/* @echo C3DATA_KEYFOBS */?$select=id&$top=1000&$filter=__Status eq 'Active' and __ModifiedOn ge ${oData__escapeValue(moment().startOf('day').format())} and __ModifiedOn le ${oData__escapeValue(moment().endOf('day').format())}`,
   //   method: 'GET',
   //   beforeSend(jqXHR) {
   //     if (auth && auth.sId) {
@@ -602,7 +588,7 @@ function renderHomePage($container, query, auth) {
   // });
 
   // ajaxes({
-  //   url: `/* @echo C3DATA_KEYFOBS */?$select=id&$top=1000&$filter=__Status eq 'Active' and __ModifiedOn ge ${oData_escapeValue(moment().startOf('year').format())} and __ModifiedOn le ${oData_escapeValue(moment().endOf('year').format())}`,
+  //   url: `/* @echo C3DATA_KEYFOBS */?$select=id&$top=1000&$filter=__Status eq 'Active' and __ModifiedOn ge ${oData__escapeValue(moment().startOf('year').format())} and __ModifiedOn le ${oData__escapeValue(moment().endOf('year').format())}`,
   //   method: 'GET',
   //   beforeSend(jqXHR) {
   //     if (auth && auth.sId) {
@@ -631,7 +617,7 @@ function renderHomePage($container, query, auth) {
   // ROW 3
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // auth_checkAccess(auth, '/* @echo C3CONFIG_ADMIN_RESOURCE */', 'GET').then((hasAccess) => {
+  // auth__checkAccess(auth, '/* @echo C3CONFIG_ADMIN_RESOURCE */', 'GET').then((hasAccess) => {
   //   if (hasAccess) {
   //     const $row3 = $('<div class="row"></div>');
   //     $container.append($row3);

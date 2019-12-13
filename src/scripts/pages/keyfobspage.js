@@ -1,10 +1,10 @@
-/* global $ renderDatatable query_stringToObject query_objectToString moment */
+/* global $ renderDatatable query__stringToObject query__objectToString moment */
 
 let lastKeyfobsPageOption;
 
 /* exported renderKeyfobsPage */
 function renderKeyfobsPage($pageContainer, query, auth) {
-  const queryObject = query_stringToObject(query);
+  const queryObject = query__stringToObject(query);
 
   if (lastKeyfobsPageOption != queryObject.option) {
     clearKeyfobsState();
@@ -161,15 +161,15 @@ function renderKeyfobsPage($pageContainer, query, auth) {
   const related = [
     {
       title: 'Today',
-      fragment: `keyfobs?${query_objectToString({ option: 'today', resetState: 'yes' })}`
+      fragment: `keyfobs?${query__objectToString({ option: 'today', resetState: 'yes' })}`
     },
     {
       title: 'This Year',
-      fragment: `keyfobs?${query_objectToString({ option: 'thisyear', resetState: 'yes' })}`
+      fragment: `keyfobs?${query__objectToString({ option: 'thisyear', resetState: 'yes' })}`
     },
     {
       title: 'All',
-      fragment: `keyfobs?${query_objectToString({ resetState: 'yes' })}`
+      fragment: `keyfobs?${query__objectToString({ resetState: 'yes' })}`
     }
   ];
 

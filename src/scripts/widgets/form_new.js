@@ -1,102 +1,23 @@
 /* global $ Backbone moment */
 /* global CotForm */
-/* global ajaxes auth__checkLogin deepCloneObject fixButtonLinks functionToValue oData__getErrorMessage modal__showAlert
-  modal__showConfirm modal__showLogin modal__showPrompt stringToFunction */
-/* global renderAlert */
+/* global deepCloneObject */
 
-/* exported renderForm */
-function renderForm($container, definition, {
-  auth,
-  model = new Backbone.Model(),
-  url,
+/* exported renderForm2 */
+function renderForm2($container, definition, json, options = {}) {
+  const {
+    includeMeta = true
+  } = options;
 
-  includeMeta = true,
+  const model = new Backbone.Model(json);
 
-  saveButtonLabel = 'Save',
-
-  cancelButtonLabel = 'Cancel',
-  cancelButtonFragment,
-
-  removeButtonLabel = 'Remove',
-  removeButtonFragment = cancelButtonFragment,
-
-  otherButtons,
-
-  saveMessage = (model) => model.isNew()
-    ? 'New record has been successfully created.'
-    : 'Record has been successfully updated.',
-
-  removeMessage = 'Do you want to permanently remove this record?',
-  removeMessageCancelButtonLabel = 'Cancel',
-  removeMessageContinueButtonLabel = 'Continue',
-  removeSuccessMessage = 'The record was removed',
-  removeFailedMessage = 'The record was not removed',
-  removePromptValue,
-} = {}) {
   let $form, formValidator;
 
   definition = deepCloneObject(definition);
   definition.rootPath = definition.rootPath || '/* @echo SRC_PATH *//';
   definition.useBinding = definition.useBinding || true;
 
-  definition.betterSuccess = definition.betterSuccess || function ({ auth, model } = {}) {
-    let data = model.toJSON();
-    delete data.__CreatedOn;
-    delete data.__ModifiedOn;
-    delete data.__Owner;
-
-    if (definition.prepareData) {
-      data = definition.prepareData(data);
-    }
-
-    return ajaxes({
-      url: `${url}${data.id ? `('${data.id}')` : ''}`,
-      contentType: 'application/json; charset=utf-8',
-      data: JSON.stringify(data),
-      dataType: 'json',
-      method: data.id ? 'PUT' : 'POST',
-      beforeSend(jqXHR) {
-        if (auth && auth.sId) {
-          jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
-        }
-      }
-    });
-  };
-
   definition.success = definition.success || function (event) {
     event.preventDefault();
-
-    const doSubmit = () => {
-      const $disabled = $form.find('button, input, select').filter(':enabled:visible').prop('disabled', true);
-
-      Promise.resolve().then(() => {
-        return definition.betterSuccess({ $form, formValidator, auth, model, url });
-      }).then(() => {
-        $disabled.prop('disabled', false);
-
-        const finalSaveMessage = functionToValue(saveMessage, model);
-        if (finalSaveMessage) {
-          renderAlert($form, finalSaveMessage);
-        }
-      }, ({ jqXHR, errorThrown } = {}) => {
-        $disabled.prop('disabled', false);
-
-        renderAlert($form, oData__getErrorMessage(jqXHR, errorThrown), { bootstrayType: 'danger' });
-
-        if (auth) {
-          auth__checkLogin(auth, true).then((isLoggedIn) => {
-            if (!isLoggedIn) {
-              modal__showLogin(auth).then((isLoggedIn) => {
-                if (isLoggedIn) {
-                  doSubmit();
-                }
-              });
-            }
-          });
-        }
-      });
-    };
-    doSubmit();
 
     return false;
   };
@@ -379,144 +300,18 @@ function renderForm($container, definition, {
     });
   }
 
-  Promise.resolve().then(() => {
-    return doPreRender();
-  }).then(() => {
-    const cotForm = new CotForm(definition);
-    cotForm.setModel(model);
-    cotForm.render({ target: $container });
+  Promise.resolve()
+    .then(() => {
+      return doPreRender();
+    })
+    .then(() => {
+      const cotForm = new CotForm(definition);
+      cotForm.setModel(model);
+      cotForm.render({ target: $container });
 
-    $form = $container.find('form');
-    formValidator = $form.data('formValidation');
+      $form = $container.find('form');
+      formValidator = $form.data('formValidation');
 
-    const $buttons = $('<div class="row"></div>');
-    $buttons.on('click', '.btn-save', (event) => {
-      event.preventDefault();
-      $form.submit();
+      return doPostRender();
     });
-    $buttons.on('click', '.btn-remove', (event) => {
-      event.preventDefault();
-
-      const finalRemoveButtonFragment = functionToValue(removeButtonFragment, model);
-      if (finalRemoveButtonFragment) {
-        const doRemove = () => {
-          Promise.resolve().then(() => {
-            if (removePromptValue) {
-              return modal__showPrompt(`${functionToValue(removeMessage, model)} To continue, enter "${removePromptValue}".`, '', {
-                title: 'Confirm',
-                cancelButtonLabel: functionToValue(removeMessageCancelButtonLabel, model),
-                confirmButtonLabel: functionToValue(removeMessageContinueButtonLabel, model),
-                confirmButtonBootstrapType: 'danger',
-                validators: {
-                  callback: {
-                    callback(value) {
-                      return value === removePromptValue;
-                    }
-                  }
-                }
-              }).then((data) => {
-                return data === removePromptValue;
-              });
-            } else {
-              return modal__showConfirm(functionToValue(removeMessage, model), {
-                title: 'Confirm',
-                cancelButtonLabel: functionToValue(removeMessageCancelButtonLabel, model),
-                confirmButtonLabel: functionToValue(removeMessageContinueButtonLabel, model)
-              });
-            }
-          }).then((confirm) => {
-            if (confirm) {
-              ajaxes({
-                url: `${url}${model.id ? `('${model.id}')` : ''}`,
-                method: 'DELETE',
-                beforeSend(jqXHR) {
-                  if (auth && auth.sId) {
-                    jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
-                  }
-                }
-              }).then(() => {
-                modal__showAlert(removeSuccessMessage);
-                Backbone.history.navigate(finalRemoveButtonFragment, { trigger: true });
-              }, ({ jqXHR, errorThrown }) => {
-                renderAlert($container.find('form'), oData__getErrorMessage(jqXHR, errorThrown), {
-                  type: 'danger'
-                });
-
-                if (auth) {
-                  auth__checkLogin(auth, true).then((isLoggedIn) => {
-                    if (!isLoggedIn) {
-                      modal__showLogin(auth).then((isLoggedIn) => {
-                        if (isLoggedIn) {
-                          doRemove();
-                        }
-                      });
-                    }
-                  });
-                }
-              });
-            } else {
-              modal__showAlert(removeFailedMessage);
-            }
-          });
-        };
-        doRemove();
-      }
-    });
-    $buttons.appendTo($form);
-
-    const doButtons = () => {
-      $buttons.empty();
-
-      const $leftColumn = $('<div>');
-
-      const finalSaveButtonLabel = functionToValue(saveButtonLabel, model);
-      if (finalSaveButtonLabel) {
-        $leftColumn.append(`<button class="btn btn-primary btn-lg btn-save">${finalSaveButtonLabel}</button>`);
-      }
-
-      const finalOtherButtons = functionToValue(otherButtons, model);
-      if (finalOtherButtons) {
-        $leftColumn.append(finalOtherButtons);
-      }
-
-      const finalCancelButtonLabel = functionToValue(cancelButtonLabel, model);
-      const finalCancelButtonFragment = functionToValue(cancelButtonFragment, model);
-      if (finalCancelButtonLabel && finalCancelButtonFragment) {
-        $leftColumn.append(`<a href="#${finalCancelButtonFragment}" class="btn btn-primary btn-lg btn-cancel">${finalCancelButtonLabel}</a>`);
-      }
-
-      const $rightColumn = $('<div class="text-right">');
-
-      if (!model.isNew()) {
-        const finalRemoveButtonLabel = functionToValue(removeButtonLabel, model);
-        const finalRemoveButtonFragment = functionToValue(removeButtonFragment, model);
-        if (finalRemoveButtonLabel && finalRemoveButtonFragment) {
-          $rightColumn.append(`<button class="btn btn-danger btn-lg btn-remove">${finalRemoveButtonLabel}</button>`);
-        }
-      }
-
-      if ($leftColumn.children().length > 0 && $rightColumn.children().length > 0) {
-        $leftColumn.addClass('col-sm-6');
-        $rightColumn.addClass('col-sm-6');
-        $buttons.append($leftColumn, $rightColumn);
-      } else if ($leftColumn.children().length > 0) {
-        $leftColumn.addClass('col-xs-12');
-        $buttons.append($leftColumn);
-      } else if ($rightColumn.children().length > 0) {
-        $rightColumn.addClass('col-xs-12');
-        $buttons.append($rightColumn);
-      }
-
-      $leftColumn.children(':not(:first-child)').before(' ');
-      $rightColumn.children(':not(:first-child)').before(' ');
-
-      fixButtonLinks($buttons);
-    };
-    model.on('change:id', () => {
-      doButtons();
-    });
-    doButtons();
-
-    return doPostRender();
-  });
 }
