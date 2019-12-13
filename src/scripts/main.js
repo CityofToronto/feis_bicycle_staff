@@ -227,7 +227,7 @@ $(function () {
         }
 
         return locationDetailsPage__fetch(id, auth).then((model) => {
-          const breadcrumb = [{ name: 'Locker Locations', link: `#locations${locationInspectionsPage__defaultOpt2}` }];
+          const breadcrumb = [{ name: 'Locker Locations', link: `#locations/${locationInspectionsPage__defaultOpt2}` }];
           switch (opt) {
             default:
               breadcrumb.push({ name: 'All', link: `#locations/${opt}` });
