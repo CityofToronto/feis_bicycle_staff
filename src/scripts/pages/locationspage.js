@@ -2,7 +2,8 @@
 /* global oData__escapeValue query__objectToString query__stringToObject */
 /* global renderDatatable */
 
-let locationsPage__defaultOpt = 'all';
+const locationsPage__defaultOpt = 'all';
+
 let locationsPage__lastOpt;
 let locationsPage__stateSaveWebStorageKey = 'locations';
 
@@ -270,7 +271,6 @@ function locationsPage__render($pageContainer, opt, query, auth) {
   opt = opt || locationsPage__defaultOpt;
 
   const { resetState } = query__stringToObject(query);
-
   if (locationsPage__lastOpt !== opt || resetState === 'yes') {
     sessionStorage.removeItem(locationsPage__stateSaveWebStorageKey);
     locationsPage__lastOpt = opt;
@@ -291,20 +291,18 @@ function locationsPage__render($pageContainer, opt, query, auth) {
   const related = [
     {
       title: 'All',
-      fragment: `locations/${opt}?${query__objectToString({ resetState: 'yes' })}`
+      fragment: `locations/all?${query__objectToString({ resetState: 'yes' })}`
     }
   ];
 
-  const action = Object.assign({}, locationsPage__columns.action, {
-    render(data) {
-      return `<a href="#locations/${opt}/${data}?${query__objectToString({ resetState: 'yes' })}" class="btn btn-default dblclick-target">Open</a>`;
-    }
-  });
-
-  switch (location) {
+  switch (opt) {
     default:
       definition.columns.push(
-        action,
+        Object.assign({}, locationsPage__columns.action, {
+          render(data) {
+            return `<a href="#locations/${opt}/${data}?${query__objectToString({ resetState: 'yes' })}" class="btn btn-default dblclick-target">Open</a>`;
+          }
+        }),
 
         locationsPage__columns.site_name,
         locationsPage__columns.civic_address,

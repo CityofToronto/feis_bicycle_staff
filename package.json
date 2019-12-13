@@ -77,7 +77,7 @@
 
     "upload_config_acl": "gulp c3api_config --suffix acl.js",
     "upload_config_common": "gulp c3api_config --suffix common.js",
-    "upload_config_entity": "gulp c3api_config --suffix dataaccess.bicycle_parking.simple.extension.js",
+    "upload_config_entity": "gulp c3api_config --suffix dataaccess.location_inspections.extension.js",
 
     "upload_dataaccess_entity": "gulp c3api_dataaccess --localPath ./c3apis/DataAccess/location_inspections.json --deleteEntity --truncateEntityAfter"
   }

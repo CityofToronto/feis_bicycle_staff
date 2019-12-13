@@ -90,44 +90,44 @@ function updateLocationLatesInspection(request, location) {
 // function afterQuery(content, request, uriInfo, response) { }
 
 function beforeContentParse(content, request, uriInfo, response) {
-  if (content.has('location')) {
-    if (content.has('location_site_name')) {
-      content.remove('location_site_name');
-    }
+  // if (content.has('location')) {
+  //   if (content.has('location_site_name')) {
+  //     content.remove('location_site_name');
+  //   }
 
-    var locationSiteName = getLocationSiteName(request, content.get('location').getAsString());
-    if (locationSiteName) {
-      content.addProperty('location_site_name', locationSiteName);
-    }
-  }
+  //   var locationSiteName = getLocationSiteName(request, content.get('location').getAsString());
+  //   if (locationSiteName) {
+  //     content.addProperty('location_site_name', locationSiteName);
+  //   }
+  // }
 }
 
 function afterCreate(content, request, uriInfo, response) {
-  mailClient.createMail()
-    .setSubject('AFTER CREATE')
-    .setBody(content.toString())
-    .setTo(['James.Ngo@toronto.ca'])
-    .send();
+  // mailClient.createMail()
+  //   .setSubject('AFTER CREATE')
+  //   .setBody(content.toString())
+  //   .setTo(['James.Ngo@toronto.ca'])
+  //   .send();
 
-  if (content.has('location')) {
-    updateLocationLatesInspection(request, content.get('location').getAsString());
-  }
+  // if (content.has('location')) {
+  //   updateLocationLatesInspection(request, content.get('location').getAsString());
+  // }
 }
 
 function afterUpdate(content, request, uriInfo, response) {
-  mailClient.createMail()
-    .setSubject('AFTER UPDATE')
-    .setBody(content.toString())
-    .setTo(['James.Ngo@toronto.ca'])
-    .send();
+  // mailClient.createMail()
+  //   .setSubject('AFTER UPDATE')
+  //   .setBody(content.toString())
+  //   .setTo(['James.Ngo@toronto.ca'])
+  //   .send();
 
-  if (content.has('location')) {
-    updateLocationLatesInspection(request, content.get('location').getAsString());
-  }
+  // if (content.has('location')) {
+  //   updateLocationLatesInspection(request, content.get('location').getAsString());
+  // }
 }
 
 function afterDelete(content, request, uriInfo, response) {
-  if (content.has('location')) {
-    updateLocationLatesInspection(request, content.get('location').getAsString());
-  }
+  // if (content.has('location')) {
+  //   updateLocationLatesInspection(request, content.get('location').getAsString());
+  // }
 }

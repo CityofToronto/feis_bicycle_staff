@@ -3,13 +3,12 @@
 // Any resources from this project should be referenced using SRC_PATH preprocessor var
 // Ex: let myImage = '/*@echo SRC_PATH*//img/sample.jpg';
 
-/* global
-  $ Backbone moment
-  cot_app
-  ajaxes auth__checkLogin auth__init auth__logout query__objectToString query__stringToObject modal__showLogin Router
-  renderLoginButton
-  loadingPage__render
- */
+/* global $ Backbone moment */
+/* global cot_app */
+/* global auth__checkLogin auth__init auth__logout functionToValue query__objectToString query__stringToObject
+  modal__showConfirm Router */
+/* global renderLoginButton */
+/* global loadingPage__render */
 
 $(function () {
   const app = new cot_app('Bicycle Parking', {
@@ -84,6 +83,27 @@ $(function () {
     return query;
   }
 
+  function cleanupFunction(model, options = {}) {
+    return function () {
+      const {
+        dataSnapShot,
+
+        unsaveMessage = 'There may be one or more unsaved data. Do you want to continue?',
+        unsaveCancelButtonLabel = 'Cancel',
+        unsaveConfirmButtonLabel = 'Continue'
+      } = options;
+
+      const finalUnsaveMessage = functionToValue(unsaveMessage, model);
+      if (dataSnapShot !== JSON.stringify(model.toJSON()) && finalUnsaveMessage) {
+        return modal__showConfirm(finalUnsaveMessage, {
+          title: 'Confirm',
+          cancelButtonLabel: functionToValue(unsaveCancelButtonLabel, model),
+          confirmButtonLabel: functionToValue(unsaveConfirmButtonLabel, model)
+        });
+      }
+    };
+  }
+
   //////////////////////////////////////////////////
   // START
   //////////////////////////////////////////////////
@@ -94,8 +114,8 @@ $(function () {
     defaultFragment: DEFAULT_ROUTE_FRAGMENT,
 
     routes: {
-      // 'locations/:location/inspections/:id(/)': 'routeLocationInspectionDetails',
-      // 'locations/:location/inspections(/)': 'routeLocationInspections',
+      'locations/:opt/:id(/)/inspections/:opt2/:id2(/)': 'routeLocationInspectionDetails',
+      'locations/:opt/:id(/)/inspections(/:opt2)(/)': 'routeLocationInspections',
       'locations/:opt/:id(/)': 'routeLocationDetails',
       'locations(/:opt)(/)': 'routeLocations',
 
@@ -135,7 +155,7 @@ $(function () {
 
         updatePageHeader();
 
-        return homePage__render($pageContainer, query, auth);
+        homePage__render($pageContainer, query, auth);
       });
     },
 
@@ -149,7 +169,7 @@ $(function () {
 
         updatePageHeader('Bicycle Parking', [], { breadcrumbTitle: 'Login', documentTitle: 'Login' });
 
-        return loginPage__render($pageContainer, query, auth, () => {
+        loginPage__render($pageContainer, query, auth, () => {
           auth__checkLogin(auth).then((isLoggedIn) => {
             if (isLoggedIn) {
               Backbone.history.stop();
@@ -166,15 +186,15 @@ $(function () {
 
       updatePageHeader('Bicycle Parking', [], { breadcrumbTitle: 'Logout', documentTitle: 'Logout' });
 
-      return logoutPage__render($pageContainer, query);
+      logoutPage__render($pageContainer, query);
     },
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /* global locationsPage__render */
+    /* global locationsPage__defaultOpt locationsPage__render */
     routeLocations(opt, query) {
       if (!opt) {
-        this.navigate('locations/all', { trigger: true, replace: true });
+        this.navigate(`locations/${locationsPage__defaultOpt}`, { trigger: true, replace: true });
         return;
       }
 
@@ -191,13 +211,14 @@ $(function () {
             breadcrumbTitle = 'All';
             documentTitle = 'All Locker Locations';
         }
+
         updatePageHeader('Locker Locations', breadcrumb, { breadcrumbTitle, documentTitle });
 
-        return locationsPage__render($pageContainer, opt, query, auth);
+        locationsPage__render($pageContainer, opt, query, auth);
       });
     },
 
-    /* global locationDetailsPage_render */
+    /* global locationDetailsPage__fetch locationDetailsPage__render */
     routeLocationDetails(opt, id, query) {
       return auth__checkLogin(auth).then((isLoggedIn) => {
         if (!isLoggedIn) {
@@ -205,130 +226,110 @@ $(function () {
           return;
         }
 
-        const breadcrumb = [{ name: 'Locker Locations', link: '#locations' }];
-        switch (opt) {
-          default:
-            breadcrumb.push({ name: 'All', link: `#locations/all` });
-        }
+        return locationDetailsPage__fetch(id, auth).then((model) => {
+          const breadcrumb = [{ name: 'Locker Locations', link: `#locations${locationInspectionsPage__defaultOpt2}` }];
+          switch (opt) {
+            default:
+              breadcrumb.push({ name: 'All', link: `#locations/${opt}` });
+          }
 
-        return locationDetailsPage_render($pageContainer, opt, id, query, auth, (dataSnapShot, model) => {
-          if (model.id) {
+          const cleanupOptions = { dataSnapShot: JSON.stringify(model.toJSON()) };
+
+          if (model.isNew()) {
+            updatePageHeader('New Location', breadcrumb);
+          } else {
+            updatePageHeader(model.escape('site_name'), breadcrumb);
+          }
+
+          locationDetailsPage__render($pageContainer, opt, id, query, model, auth, () => {
+            cleanupOptions.dataSnapShot = JSON.stringify(model.toJSON());
             this.navigate(`locations/${opt}/${model.id}`, { trigger: false, replace: true });
             updatePageHeader(model.escape('site_name'), breadcrumb);
-          } else {
-            updatePageHeader('New Locker Location', breadcrumb, { breadcrumbTitle: 'New' });
-          }
+          });
+
+          return cleanupFunction(model, cleanupOptions);
         });
       });
     },
 
-    /* global renderLocationInspectionsPage clearLocationInspectionsState */
-    routeLocationInspections(location, query) {
+    /* global locationInspectionsPage__defaultOpt2 locationInspectionsPage__render */
+    routeLocationInspections(opt, id, opt2, query) {
+      if (!opt2) {
+        this.navigate(`locations/${opt}/${id}/inspections/${locationInspectionsPage__defaultOpt2}`, { trigger: true, replace: true });
+        return;
+      }
+
       return auth__checkLogin(auth).then((isLoggedIn) => {
         if (!isLoggedIn) {
           this.navigate(`login?${query__objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
           return;
         }
 
-        query = handleResetStateQuery(this, `locations/${location}/inspections`, query, () => {
-          clearLocationInspectionsState();
+        locationDetailsPage__fetch(id, auth).then((model) => {
+          const breadcrumb = [{ name: 'Locker Locations', link: `#locations/${locationInspectionsPage__defaultOpt2}` }];
+          switch (opt) {
+            default:
+              breadcrumb.push({ name: 'All', link: `#locations/${opt}` });
+          }
+          breadcrumb.push({ name: model.escape('site_name'), link: `#locations/${opt}/${model.id}` },
+            { name: 'Inspections', link: `#locations/${opt}/${model.id}/inspections` });
+          let breadcrumbTitle, documentTitle;
+          switch (opt2) {
+            default:
+              breadcrumbTitle = 'All';
+              documentTitle = `All Inspections - ${model.escape('site_name')}`;
+          }
+
+          updatePageHeader(model.escape('site_name'), breadcrumb, { breadcrumbTitle, documentTitle });
+
+          locationInspectionsPage__render($pageContainer, opt, id, opt2, query, auth);
         });
-
-        const doDownload = () => {
-          // $.ajax(`/* @echo C3DATA_LOCATIONS */('${location}')?$select=site_name`, {
-          ajaxes(`/* @echo C3DATA_LOCATIONS */('${location}')?$select=site_name`, {
-            dataType: 'json',
-            methd: 'GET',
-            beforeSend(jqXHR) {
-              if (auth && auth.sId) {
-                jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
-              }
-            }
-          }).then(({data}) => {
-            const { locations, inspections, lockers } = query__stringToObject(query);
-            updatePageHeader(data.site_name, [
-              { name: 'Locker Locations', link: `#locations?${query__objectToString({ locations })}` },
-              { name: data.site_name, link: `#locations/${location}?${query__objectToString({ locations, inspections, lockers })}` }
-            ], {
-              breadcrumbTitle: 'Inspections',
-              documentTitle: `Inspections - ${data.site_name}`
-            });
-          }, () => {
-            if (auth) {
-              auth__checkLogin(auth, true).then((isLoggedIn) => {
-                if (!isLoggedIn) {
-                  modal__showLogin(auth).then((isLoggedIn) => {
-                    if (isLoggedIn) {
-                      doDownload();
-                    }
-                  });
-                }
-              });
-            }
-          });
-        };
-        doDownload();
-
-        return renderLocationInspectionsPage($pageContainer, location, query, auth);
       });
     },
 
-    /* global renderLocationInspectionDetailsPage */
-    routeLocationInspectionDetails(location, id, query) {
+    /* global locationInspectionDetailsPage__fetch locationInspectionDetailsPage__render */
+    routeLocationInspectionDetails(opt, id, opt2, id2, query) {
       return auth__checkLogin(auth).then((isLoggedIn) => {
         if (!isLoggedIn) {
           this.navigate(`login?${query__objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
           return;
         }
 
-        query = handleResetStateQuery(this, `locations/${location}/inspections/${id}`, query);
-
-        const { locations, inspections, lockers } = query__stringToObject(query);
-
-        const doDownload = ({ breadcrumbTitle, documentTitle } = {}) => {
-          // $.ajax(`/* @echo C3DATA_LOCATIONS */('${location}')?$select=site_name`, {
-          ajaxes(`/* @echo C3DATA_LOCATIONS */('${location}')?$select=site_name`, {
-            dataType: 'json',
-            methd: 'GET',
-            beforeSend(jqXHR) {
-              if (auth && auth.sId) {
-                jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
-              }
+        return locationDetailsPage__fetch(id, auth).then((model) => {
+          return locationInspectionDetailsPage__fetch(id, id2, auth).then((model2) => {
+            const breadcrumb = [{ name: 'Locker Locations', link: `#locations/${locationInspectionsPage__defaultOpt2}` }];
+            switch (opt) {
+              default:
+                breadcrumb.push({ name: 'All', link: `#locations/${opt}` });
             }
-          }).then((data) => {
-            updatePageHeader(data.site_name, [
-              { name: 'Locker Locations', link: `#locations?${query__objectToString({ locations })}` },
-              { name: data.site_name, link: `#locations/${location}?${query__objectToString({ locations, inspections, lockers })}` },
-              { name: 'Inspections', link: `#locations/${location}/inspections?${query__objectToString({ locations, inspections, lockers })}` }
-            ], {
-              breadcrumbTitle: breadcrumbTitle || 'New',
-              documentTitle: `${documentTitle || 'New Inspections'} - ${data.site_name}`
+            breadcrumb.push({ name: model.escape('site_name'), link: `#locations/${opt}/${model.id}` },
+              { name: 'Inspections', link: `#locations/${opt}/${model.id}/inspections` });
+            switch (opt2) {
+              default:
+                breadcrumb.push({ name: 'All', link: `#locations/${opt}/${model.id}/${opt2}` });
+            }
+
+            const cleanupOptions = { dataSnapShot: JSON.stringify(model2.toJSON()) };
+
+            let breadcrumbTitle, documentTitle;
+            if (model.isNew()) {
+              breadcrumbTitle = 'New';
+              documentTitle = 'New Inspection';
+            } else {
+              breadcrumbTitle = moment(model2.escape('date')).format('YYYY/MM/DD');
+              documentTitle = moment(model2.escape('date')).format('YYYY/MM/DD');
+            }
+
+            updatePageHeader(model.escape('site_name'), breadcrumb, { breadcrumbTitle, documentTitle});
+
+            locationInspectionDetailsPage__render($pageContainer, opt, id, opt2, id2, query, model2, auth, () => {
+              cleanupOptions.dataSnapShot = JSON.stringify(model2.toJSON());
+              this.navigate(`locations/${opt}/${id}/inspections/${model2.id}`, { trigger: false, replace: true });
+              updatePageHeader(model.escape('site_name'), breadcrumb);
             });
-          }, () => {
-            if (auth) {
-              auth__checkLogin(auth, true).then((isLoggedIn) => {
-                if (!isLoggedIn) {
-                  modal__showLogin(auth).then((isLoggedIn) => {
-                    if (isLoggedIn) {
-                      doDownload();
-                    }
-                  });
-                }
-              });
-            }
+
+            return cleanupFunction(model2, cleanupOptions);
           });
-        };
-
-        if (id === 'new') {
-          doDownload();
-        }
-
-        return renderLocationInspectionDetailsPage($pageContainer, location, id, query, auth, (model) => {
-          if (model.id) {
-            this.navigate(`locations/${location}/inspections/${model.id}?${query__objectToString({ locations, inspections, lockers })}`, { trigger: false, replace: true });
-            const inspectionDate = moment(model.get('date')).format('YY/MM/DD');
-            doDownload({ breadcrumbTitle: inspectionDate, documentTitle: `${inspectionDate} Inspection` });
-          }
         });
       });
     },

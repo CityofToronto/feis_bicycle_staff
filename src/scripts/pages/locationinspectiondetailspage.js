@@ -1,31 +1,52 @@
 /* global Backbone moment */
-/* global query__objectToString query__stringToObject */
+/* global ajaxes */
 /* global renderForm */
+/* global locationInspectionsPage__lastOpt2 locationInspectionsPage__defaultOpt2 */
 
-/* exported renderLocationInspectionDetailsPage */
-function renderLocationInspectionDetailsPage($container, location, id, query, auth, routeCbk) {
-  if (id === 'new') {
-    id = null;
-  }
+/* exported locationInspectionDetailsPage__fetch */
+function locationInspectionDetailsPage__fetch(id, id2, auth) {
+  return Promise.resolve().then(() => {
+    if (id2 != 'new') {
+      return ajaxes(`/* @echo C3DATA_LOCATION_INSPECTIONS */('${id2}')`, {
+        contentType: 'application/json; charset=utf-8',
+        method: 'GET',
+        beforeSend(jqXHR) {
+          if (auth && auth.sId) {
+            jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+          }
+        }
+      });
+    }
 
-  const { locations, inspections, lockers } = query__stringToObject(query);
+    return {
+      data: {}
+    };
+  }).then(({ data }) => {
+    let Model = Backbone.Model.extend({
+      defaults: {
+        date: moment().format('YYYY/MM/DD'),
+        location: id,
+        __Status: 'Active'
+      }
+    });
 
-  const navQuery = query__objectToString({ locations, inspections, lockers });
+    return new Model(data);
+  });
+}
+
+/* exported locationInspectionDetailsPage__render */
+function locationInspectionDetailsPage__render($container, opt, id, opt2, id2, query, model, auth, updateCallback) {
   $container.html(`
-    <p><a href="#locations?${query__objectToString({ locations })}">Back to Locker Locations</a></p>
+    <p><a href="#locations/${opt}/${id}/inspections/${opt2}">Back to Locker Locations</a></p>
 
     <div class="navbar">
       <ul class="nav nav-tabs">
         <li class="nav-item" role="presentation">
-          <a href="#locations/${location}?${navQuery}" class="nav-link">Location</a>
+          <a href="#locations/${opt}/${id}" class="nav-link">Location</a>
         </li>
 
         <li class="nav-item active" role="presentation">
-          <a href="#locations/${location}/inspections?${navQuery}" class="nav-link">Inspections</a>
-        </li>
-
-        <li class="nav-item" role="presentation">
-          <a class="nav-link">Lockers</a>
+          <a href="#locations/${opt}/${id}/inspections/${locationInspectionsPage__lastOpt2 || locationInspectionsPage__defaultOpt2}" class="nav-link">Inspections</a>
         </li>
       </ul>
     </div>
@@ -35,19 +56,34 @@ function renderLocationInspectionDetailsPage($container, location, id, query, au
     <div class="form"></div>
   `);
 
-  let Model = Backbone.Model.extend({
-    defaults: {
-      location,
-
-      date: moment().format('YYYY/MM/DD'),
-
-      __Status: 'Active'
-    }
-  });
-
-  let model = new Model({ id });
-
   const definition = {
+    betterSuccess({ auth, model, url }) {
+      let data = model.toJSON();
+      delete data.__CreatedOn;
+      delete data.__ModifiedOn;
+      delete data.__Owner;
+
+      data.date = moment(data.date, 'YYYY/MM/DD').format();
+
+      const method = data.id ? 'PUT' : 'POST';
+
+      return ajaxes({
+        url: `${url}${data.id ? `('${data.id}')` : ''}`,
+        contentType: 'application/json; charset=utf-8',
+        data: JSON.stringify(data),
+        dataType: 'json',
+        method,
+        beforeSend(jqXHR) {
+          if (auth && auth.sId) {
+            jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+          }
+        }
+      }).then(({ data }) => {
+        model.set(data);
+        updateCallback();
+      });
+    },
+
     sections: [
       {
         title: 'Details',
@@ -86,12 +122,7 @@ function renderLocationInspectionDetailsPage($container, location, id, query, au
           },
         ]
       }
-    ],
-
-    prepareData(data) {
-      data.date = moment(data.date, 'YYYY/MM/DD').format();
-      return data;
-    }
+    ]
   };
 
   return renderForm($container.find('.form'), definition, {
@@ -99,17 +130,11 @@ function renderLocationInspectionDetailsPage($container, location, id, query, au
     model,
     url: '/* @echo C3DATA_LOCATION_INSPECTIONS */',
 
-    routeCbk() {
-      if (!model.isNew()) {
-        $container.find('h2').html('Update Inspection');
-      }
-
-      routeCbk(model);
-    },
-
     saveButtonLabel: (model) => model.isNew() ? 'Create Inspection' : 'Update Inspection',
+
     cancelButtonLabel: 'Cancel',
-    cancelButtonFragment: `locations/${location}/inspections?${query__objectToString({ locations, inspections, lockers })}`,
+    cancelButtonFragment: `locations/${opt}/${id}/inspections/${opt2}`,
+
     removeButtonLabel: 'Remove Inspection',
     removePromptValue: 'DELETE'
   });
