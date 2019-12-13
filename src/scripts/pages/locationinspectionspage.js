@@ -8,7 +8,7 @@ const locationInspectionsPage__defaultOpt2 = 'all';
 let locationInspectionsPage__lastOpt;
 let locationInspectionsPage__lastOpt2;
 
-let locationInspectionsPage__stateSaveWebStorageKey = 'locationInspections';
+const locationInspectionsPage__stateSaveWebStorageKey = 'locationInspections';
 
 const locationInspectionsPage__columns = {
   action: {
