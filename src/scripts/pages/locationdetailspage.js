@@ -73,8 +73,6 @@ function locationDetailsPage__render($container, opt, id, query, model, auth, up
     <div class="form"></div>
   `);
 
-  console.log(locationInspectionsPage__lastOpt2 || locationInspectionsPage__defaultOpt2);
-
   function renderNavBar() {
     $container.find('.navbarContainer').html(`
       <div class="navbar">
@@ -97,7 +95,6 @@ function locationDetailsPage__render($container, opt, id, query, model, auth, up
 
   const definition = {
     betterSuccess({ auth, model, url }) {
-
       let data = model.toJSON();
       delete data.__CreatedOn;
       delete data.__ModifiedOn;

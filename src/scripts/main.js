@@ -122,9 +122,6 @@ $(function () {
       'lockers/:id(/)': 'routeLockerDetails',
       'lockers(/)': 'routeLockers',
 
-      'customers/:id(/)': 'routeCustomerDetails',
-      'customers(/)': 'routeCustomers',
-
       // ---
 
       'stations/:id(/)': 'routeStationDetails',
@@ -132,6 +129,11 @@ $(function () {
 
       'keyfobs/:id(/)': 'routeKeyfobDetails',
       'keyfobs(/)': 'routeKeyfobs',
+
+      // ---
+
+      'customers/:opt/:opt2/:id(/)': 'routeCustomerDetails',
+      'customers(/:opt)(/:opt2)(/)': 'routeCustomers',
 
       // ---
 
@@ -227,7 +229,7 @@ $(function () {
         }
 
         return locationDetailsPage__fetch(id, auth).then((model) => {
-          const breadcrumb = [{ name: 'Locker Locations', link: `#locations/${locationInspectionsPage__defaultOpt2}` }];
+          const breadcrumb = [{ name: 'Locker Locations', link: `#locations` }];
           switch (opt) {
             default:
               breadcrumb.push({ name: 'All', link: `#locations/${opt}` });
@@ -266,7 +268,7 @@ $(function () {
         }
 
         locationDetailsPage__fetch(id, auth).then((model) => {
-          const breadcrumb = [{ name: 'Locker Locations', link: `#locations/${locationInspectionsPage__defaultOpt2}` }];
+          const breadcrumb = [{ name: 'Locker Locations', link: `#locations` }];
           switch (opt) {
             default:
               breadcrumb.push({ name: 'All', link: `#locations/${opt}` });
@@ -297,7 +299,7 @@ $(function () {
 
         return locationDetailsPage__fetch(id, auth).then((model) => {
           return locationInspectionDetailsPage__fetch(id, id2, auth).then((model2) => {
-            const breadcrumb = [{ name: 'Locker Locations', link: `#locations/${locationInspectionsPage__defaultOpt2}` }];
+            const breadcrumb = [{ name: 'Locker Locations', link: `#locations` }];
             switch (opt) {
               default:
                 breadcrumb.push({ name: 'All', link: `#locations/${opt}` });
@@ -306,7 +308,7 @@ $(function () {
               { name: 'Inspections', link: `#locations/${opt}/${model.id}/inspections` });
             switch (opt2) {
               default:
-                breadcrumb.push({ name: 'All', link: `#locations/${opt}/${model.id}/${opt2}` });
+                breadcrumb.push({ name: 'All', link: `#locations/${opt}/${model.id}/inspections/${opt2}` });
             }
 
             const cleanupOptions = { dataSnapShot: JSON.stringify(model2.toJSON()) };
@@ -320,7 +322,7 @@ $(function () {
               documentTitle = moment(model2.escape('date')).format('YYYY/MM/DD');
             }
 
-            updatePageHeader(model.escape('site_name'), breadcrumb, { breadcrumbTitle, documentTitle});
+            updatePageHeader(model.escape('site_name'), breadcrumb, { breadcrumbTitle, documentTitle });
 
             locationInspectionDetailsPage__render($pageContainer, opt, id, opt2, id2, query, model2, auth, () => {
               cleanupOptions.dataSnapShot = JSON.stringify(model2.toJSON());
@@ -376,56 +378,6 @@ $(function () {
           if (model.id) {
             this.navigate(`lockers/${model.id}${linkQuery}`, { trigger: false, replace: true });
             updatePageHeader(model.escape('number'), breadcrumb, { ignoreFocus: true });
-          }
-        });
-      });
-    },
-
-    /* global renderCustomersPage clearCustomersState */
-    routeCustomers(query) {
-      return auth__checkLogin(auth).then((isLoggedIn) => {
-        if (!isLoggedIn) {
-          this.navigate(`login?${query__objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
-          return;
-        }
-
-        query = handleResetStateQuery(this, 'customers', query, () => {
-          clearCustomersState();
-        });
-
-        updatePageHeader('Customers');
-
-        return renderCustomersPage($pageContainer, query, auth);
-      });
-    },
-
-    /* global renderCustomerDetailsPage */
-    routeCustomerDetails(id, query) {
-      return auth__checkLogin(auth).then((isLoggedIn) => {
-        if (!isLoggedIn) {
-          this.navigate(`login?${query__objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
-          return;
-        }
-
-        query = handleResetStateQuery(this, `customers/${id}`, query);
-
-        const breadcrumb = [{ name: 'Customers', link: '#customers' }];
-
-        if (id === 'new') {
-          updatePageHeader('New Customer', breadcrumb, { breadcrumbTitle: 'New' });
-        } else {
-          updatePageHeader('', breadcrumb);
-        }
-
-        return renderCustomerDetailsPage($pageContainer, id, query, auth, (model) => {
-          if (model.id) {
-            let finalQuery = '';
-            if (query) {
-              finalQuery = `?${query}`;
-            }
-
-            this.navigate(`customers/${model.id}${finalQuery}`, { trigger: false, replace: true });
-            updatePageHeader([model.escape('first_name'), model.escape('last_name')].filter((val) => val).join(' '), breadcrumb, { ignoreFocus: true });
           }
         });
       });
@@ -525,6 +477,90 @@ $(function () {
             this.navigate(`keyfobs/${model.id}${finalQuery}`, { trigger: false, replace: true });
             updatePageHeader(model.escape('number'), breadcrumb, { ignoreFocus: true });
           }
+        });
+      });
+    },
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /* global customersPage__defaultOpt customersPage__defaultOpt2 customersPage__render */
+    routeCustomers(opt, opt2, query) {
+      if (!opt) {
+        this.navigate(`customers/${customersPage__defaultOpt}/${customersPage__defaultOpt2}`, { trigger: true, replace: true });
+        return;
+      }
+
+      if (!opt2) {
+        this.navigate(`customers/${opt}/${customersPage__defaultOpt2}`, { trigger: true, replace: true });
+        return;
+      }
+
+      return auth__checkLogin(auth).then((isLoggedIn) => {
+        if (!isLoggedIn) {
+          this.navigate(`login?${query__objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
+          return;
+        }
+
+        const breadcrumb = [];
+        switch (opt) {
+          case 'stations':
+            breadcrumb.push({ name: 'Station Customer Requests', link: `#customers/${opt}` });
+            break;
+
+          default:
+            breadcrumb.push({ name: 'Locker Customer Requests', link: `#customers/${opt}` });
+        }
+        let breadcrumbTitle, documentTitle;
+        switch (opt2) {
+          default:
+            breadcrumbTitle = 'All';
+            documentTitle = 'All Customer Request';
+        }
+
+        updatePageHeader('Customer Request', breadcrumb, { breadcrumbTitle, documentTitle });
+
+        customersPage__render($pageContainer, opt, opt2, query, auth);
+      });
+    },
+
+    /* global customerDetailsPage__fetch customerDetailsPage__render */
+    routeCustomerDetails(opt, opt2, id, query) {
+      return auth__checkLogin(auth).then((isLoggedIn) => {
+        if (!isLoggedIn) {
+          this.navigate(`login?${query__objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
+          return;
+        }
+
+        return customerDetailsPage__fetch(id, auth).then((model) => {
+          const breadcrumb = [];
+          switch (opt) {
+            case 'stations':
+              breadcrumb.push({ name: 'Station Customer Requests', link: `#customers/${opt}` });
+              break;
+
+            default:
+              breadcrumb.push({ name: 'Locker Customer Requests', link: `#customers/${opt}` });
+          }
+          switch (opt2) {
+            default:
+              breadcrumb.push({ name: 'All', link: `#customers/${opt}/${opt2}` });
+          }
+
+          const cleanupOptions = { dataSnapShot: JSON.stringify(model.toJSON()) };
+
+          if (model.isNew()) {
+            updatePageHeader('New Customer Request', breadcrumb);
+          } else {
+            updatePageHeader([model.escape('first_name'), model.escape('last_name')].join(' '), breadcrumb);
+          }
+
+          customerDetailsPage__render($pageContainer, opt, opt2, id, query, model, auth, () => {
+            cleanupOptions.dataSnapShot = JSON.stringify(model.toJSON());
+            this.navigate(`customers/${opt}/${opt2}/${model.id}`, { trigger: false, replace: true });
+            updatePageHeader([model.escape('first_name'), model.escape('last_name')].join(' '), breadcrumb);
+          });
+
+          return cleanupFunction(model, cleanupOptions);
         });
       });
     }

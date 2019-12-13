@@ -5,7 +5,8 @@
 const locationsPage__defaultOpt = 'all';
 
 let locationsPage__lastOpt;
-let locationsPage__stateSaveWebStorageKey = 'locations';
+
+const locationsPage__stateSaveWebStorageKey = 'locations';
 
 const locationsPage__columns = {
   action: {

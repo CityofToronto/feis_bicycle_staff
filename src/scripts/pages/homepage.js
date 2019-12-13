@@ -129,21 +129,7 @@ function homePage__render($container, query, auth) {
       <h3 aria-labelledby="stationsHeader">Stations</h3>
 
       <div class="list-group">
-        <a href="#registrations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-          <span class="badge badge-registrations">~</span>
-          All Active
-        </a>
-        <!--
-        <a href="#registrations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-          <span class="badge badge-registrations">~</span>
-          Waiting List
-        </a>
-        <a href="#registrations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-          <span class="badge badge-registrations">~</span>
-          Up for Inspection
-        </a>
-        -->
-        <a href="#registrations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+        <a href="#stations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
           <span class="badge badge-registrations">~</span>
           All
         </a>
@@ -158,11 +144,7 @@ function homePage__render($container, query, auth) {
       <h3 aria-labelledby="stationsHeader">Key Fobs</h3>
 
       <div class="list-group">
-        <a href="#registrations?${query__objectToString({ option: 'active', resetState: 'yes' })}" class="list-group-item">
-          <span class="badge badge-keyfobs-active">~</span>
-          All Active
-        </a>
-        <a href="#registrations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+        <a href="#keyfobs/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
           <span class="badge badge-keyfobs">~</span>
           All
         </a>
@@ -172,18 +154,6 @@ function homePage__render($container, query, auth) {
 
   ajaxes({
     url: `/* @echo C3DATA_KEYFOBS */?$select=id&$top=1000&$filter=__Status eq 'Active'`,
-    method: 'GET',
-    beforeSend(jqXHR) {
-      if (auth && auth.sId) {
-        jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
-      }
-    }
-  }).then(({ data }) => {
-    $stations.find('.badge-keyfobs-active').html(data.value.length !== 1000 ? data.value.length : '999+');
-  });
-
-  ajaxes({
-    url: `/* @echo C3DATA_KEYFOBS */?$select=id&$top=1000`,
     method: 'GET',
     beforeSend(jqXHR) {
       if (auth && auth.sId) {
@@ -203,36 +173,8 @@ function homePage__render($container, query, auth) {
   $stations.append(`
     <div class="col-sm-6 col-md-3">
       <h3 aria-labelledby="stationsHeader">Customer Requests</h3>
-
-      <div class="list-group">
-        <a href="#registrations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-          <span class="badge badge-registrations">~</span>
-          All Active
-        </a>
-        <!--
-        <a href="#registrations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-          <span class="badge badge-registrations">~</span>
-          New
-        </a>
-        <a href="#registrations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-          <span class="badge badge-registrations">~</span>
-          Waiting
-        </a>
-        <a href="#registrations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-          <span class="badge badge-registrations">~</span>
-          Assigned
-        </a>
-        <a href="#registrations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-          <span class="badge badge-registrations">~</span>
-          Expired
-        </a>
-        <a href="#registrations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-          <span class="badge badge-registrations">~</span>
-          Email Addresses
-        </a>
-        -->
-        <a href="#registrations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-          <span class="badge badge-registrations">~</span>
+        <a href="#customers/stations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+          <span class="badge badge-customers">~</span>
           All
         </a>
       </div>
@@ -246,17 +188,7 @@ function homePage__render($container, query, auth) {
       <h3 aria-labelledby="stationsHeader">Payments</h3>
 
       <div class="list-group">
-        <a href="#registrations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-          <span class="badge badge-registrations">~</span>
-          All Active
-        </a>
-        <!--
-        <a href="#registrations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-          <span class="badge badge-registrations">~</span>
-          By Year
-        </a>
-        -->
-        <a href="#registrations?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+        <a href="#payments/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
           <span class="badge badge-registrations">~</span>
           All
         </a>
