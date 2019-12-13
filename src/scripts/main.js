@@ -135,6 +135,9 @@ $(function () {
       'customers/:opt/:opt2/:id(/)': 'routeCustomerDetails',
       'customers(/:opt)(/:opt2)(/)': 'routeCustomers',
 
+      'payments/:opt/:opt2/:id(/)': 'routePaymentDetails',
+      'payments(/:opt)(/:opt2)(/)': 'routePayments',
+
       // ---
 
       'home(/)': 'routeHome',
@@ -514,10 +517,10 @@ $(function () {
         switch (opt2) {
           default:
             breadcrumbTitle = 'All';
-            documentTitle = 'All Customer Request';
+            documentTitle = 'All Customer Requests';
         }
 
-        updatePageHeader('Customer Request', breadcrumb, { breadcrumbTitle, documentTitle });
+        updatePageHeader('Customer Requests', breadcrumb, { breadcrumbTitle, documentTitle });
 
         customersPage__render($pageContainer, opt, opt2, query, auth);
       });
@@ -525,6 +528,87 @@ $(function () {
 
     /* global customerDetailsPage__fetch customerDetailsPage__render */
     routeCustomerDetails(opt, opt2, id, query) {
+      return auth__checkLogin(auth).then((isLoggedIn) => {
+        if (!isLoggedIn) {
+          this.navigate(`login?${query__objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
+          return;
+        }
+
+        return customerDetailsPage__fetch(id, auth).then((model) => {
+          const breadcrumb = [];
+          switch (opt) {
+            case 'stations':
+              breadcrumb.push({ name: 'Station Customer Requests', link: `#customers/${opt}` });
+              break;
+
+            default:
+              breadcrumb.push({ name: 'Locker Customer Requests', link: `#customers/${opt}` });
+          }
+          switch (opt2) {
+            default:
+              breadcrumb.push({ name: 'All', link: `#customers/${opt}/${opt2}` });
+          }
+
+          const cleanupOptions = { dataSnapShot: JSON.stringify(model.toJSON()) };
+
+          if (model.isNew()) {
+            updatePageHeader('New Customer Request', breadcrumb);
+          } else {
+            updatePageHeader([model.escape('first_name'), model.escape('last_name')].join(' '), breadcrumb);
+          }
+
+          customerDetailsPage__render($pageContainer, opt, opt2, id, query, model, auth, () => {
+            cleanupOptions.dataSnapShot = JSON.stringify(model.toJSON());
+            this.navigate(`customers/${opt}/${opt2}/${model.id}`, { trigger: false, replace: true });
+            updatePageHeader([model.escape('first_name'), model.escape('last_name')].join(' '), breadcrumb);
+          });
+
+          return cleanupFunction(model, cleanupOptions);
+        });
+      });
+    },
+
+    /* global paymentsPage__defaultOpt paymentsPage__defaultOpt2 paymentsPage__render */
+    routePayments(opt, opt2, query) {
+      if (!opt) {
+        this.navigate(`payments/${paymentsPage__defaultOpt}/${paymentsPage__defaultOpt2}`, { trigger: true, replace: true });
+        return;
+      }
+
+      if (!opt2) {
+        this.navigate(`customers/${opt}/${paymentsPage__defaultOpt2}`, { trigger: true, replace: true });
+        return;
+      }
+
+      return auth__checkLogin(auth).then((isLoggedIn) => {
+        if (!isLoggedIn) {
+          this.navigate(`login?${query__objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
+          return;
+        }
+
+        const breadcrumb = [];
+        switch (opt) {
+          case 'stations':
+            breadcrumb.push({ name: 'Station Payments', link: `#payments/${opt}` });
+            break;
+
+          default:
+            breadcrumb.push({ name: 'Locker Payments', link: `#payments/${opt}` });
+        }
+        let breadcrumbTitle, documentTitle;
+        switch (opt2) {
+          default:
+            breadcrumbTitle = 'All';
+            documentTitle = 'All Payments';
+        }
+
+        updatePageHeader('Payments', breadcrumb, { breadcrumbTitle, documentTitle });
+
+        paymentsPage__render($pageContainer, opt, opt2, query, auth);
+      });
+    },
+
+    routePaymentDetails(opt, opt2, id, query) {
       return auth__checkLogin(auth).then((isLoggedIn) => {
         if (!isLoggedIn) {
           this.navigate(`login?${query__objectToString({ redirect: Backbone.history.getFragment() })}`, { trigger: true });
