@@ -576,7 +576,7 @@ $(function () {
       }
 
       if (!opt2) {
-        this.navigate(`customers/${opt}/${paymentsPage__defaultOpt2}`, { trigger: true, replace: true });
+        this.navigate(`payments/${opt}/${paymentsPage__defaultOpt2}`, { trigger: true, replace: true });
         return;
       }
 
