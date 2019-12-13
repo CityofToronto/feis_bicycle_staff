@@ -21,8 +21,8 @@
     [ ] Key Fobs
     [ ] Key Fob Details
 [ ] Customer Requests
-    [ ] Customer Requests
-    [ ] Customer Request Details
+    [x] Customer Requests
+    [x] Customer Request Details
 [ ] Payments
     [ ] Payments
     [ ] Payment Details
