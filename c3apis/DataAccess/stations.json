@@ -1,9 +1,0 @@
-{
-  "name": "string",
-  "description": "string",
-  "civic_address": "string",
-  "municipality": "string",
-  "province": "string",
-  "postal_code": "string",
-  "capacity": 0
-}
