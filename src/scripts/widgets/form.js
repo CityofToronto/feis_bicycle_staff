@@ -438,9 +438,7 @@ function renderForm($container, definition, {
                 modal__showAlert(removeSuccessMessage);
                 Backbone.history.navigate(finalRemoveButtonFragment, { trigger: true });
               }, ({ jqXHR, errorThrown }) => {
-                renderAlert($container.find('form'), oData__getErrorMessage(jqXHR, errorThrown), {
-                  type: 'danger'
-                });
+                renderAlert($container.find('form'), oData__getErrorMessage(jqXHR, errorThrown), { bootstrayType: 'danger' });
 
                 if (auth) {
                   auth__checkLogin(auth, true).then((isLoggedIn) => {
