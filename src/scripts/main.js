@@ -3,8 +3,10 @@
 // Any resources from this project should be referenced using SRC_PATH preprocessor var
 // Ex: let myImage = '/*@echo SRC_PATH*//img/sample.jpg';
 
-/* global $ */
+/* global $ Backbone */
 /* global cot_app */
+/* global auth__init */
+/* global renderLoginButton */
 
 $(function () {
   const app = new cot_app('Bicycle Parking', {
@@ -39,4 +41,15 @@ $(function () {
       setTitleFocus = true;
     }
   })(app.setTitle);
+
+  // Add login and login button
+  const $loginButtonContainer = $('<div class="loginButtonContainer">').appendTo('.securesite');
+  const auth = auth__init({
+    app: 'bicycle_parking',
+    checkAccessUrl: '/* @echo C3CONFIG_ISAUTH_URL */',
+    url: '/* @echo C3AUTH_URL */',
+    webStorageKey: 'bicycle_parking_auth'
+  });
+  Backbone.history.start();
+  renderLoginButton($loginButtonContainer, auth);
 });
