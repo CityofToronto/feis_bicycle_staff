@@ -9,41 +9,6 @@ core.embeddedApp.createTasks(gulp, {
   deploymentPath: '',
   preprocessorContext: {
     local: {
-      C3AUTH_URL: 'https://config.cc.toronto.ca:49090/c3api_auth/v2/AuthService.svc/AuthSet',
-
-      C3DATA_REGISTRATIONS: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/registrations',
-      C3DATA_CUSTOMERS: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/customers',
-      C3DATA_SUBSCRIPTIONS: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/subscriptions',
-      C3DATA_PAYMENTS: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/payments',
-
-      C3DATA_LOCATIONS: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/locations',
-      C3DATA_LOCKERS: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/lockers',
-      C3DATA_STATIONS: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/stations',
-      C3DATA_KEYFOBS: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/keyfobs',
-
-      C3DATAMEDIA_LOCATIONS_STATUS_CHOICES: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/Media(\\\'locations_status_choices.json\\\')/$value',
-      C3DATAMEDIA_LOCKERS_STATUS_CHOICES: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/Media(\\\'lockers_status_choices.json\\\')/$value',
-      C3DATAMEDIA_STATIONS_STATUS_CHOICES: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/Media(\\\'stations_status_choices.json\\\')/$value',
-      C3DATAMEDIA_KEYFOBS_STATUS_CHOICES: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/Media(\\\'keyfobs_status_choices.json\\\')/$value',
-
-
-
-
-
-
-
-
-
-
-
-      C3DATA_ACTIVITYLOGS: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/activitylogs',
-      C3DATA_EMAILLOGS: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/emaillogs',
-      C3DATA_SETTINGS: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/Media',
-
-      C3DATAMEDIA_LOCKER_CHOICES: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/Media(\\\'locker_choices.json\\\')/$value',
-      C3DATAMEDIA_PROVINCE_CHOICES: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/Media(\\\'province_choices.json\\\')/$value',
-      C3DATAMEDIA_REGISTRATION_STATUS_CHOICES: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/Media(\\\'registration_status.json\\\')/$value',
-      C3DATAMEDIA_STATION_CHOICES: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/Media(\\\'station_choices.json\\\')/$value'
     },
     dev: {},
     qa: {},
