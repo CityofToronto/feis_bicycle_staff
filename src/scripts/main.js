@@ -608,6 +608,7 @@ $(function () {
       });
     },
 
+    /* global paymentDetailsPage__fetch paymentDetailsPage__render */
     routePaymentDetails(opt, opt2, id, query) {
       return auth__checkLogin(auth).then((isLoggedIn) => {
         if (!isLoggedIn) {
@@ -615,30 +616,30 @@ $(function () {
           return;
         }
 
-        return customerDetailsPage__fetch(id, auth).then((model) => {
+        return paymentDetailsPage__fetch(id, auth).then((model) => {
           const breadcrumb = [];
           switch (opt) {
             case 'stations':
-              breadcrumb.push({ name: 'Station Customer Requests', link: `#customers/${opt}` });
+              breadcrumb.push({ name: 'Station Payments', link: `#payments/${opt}` });
               break;
 
             default:
-              breadcrumb.push({ name: 'Locker Customer Requests', link: `#customers/${opt}` });
+              breadcrumb.push({ name: 'Locker Payments', link: `#payments/${opt}` });
           }
           switch (opt2) {
             default:
-              breadcrumb.push({ name: 'All', link: `#customers/${opt}/${opt2}` });
+              breadcrumb.push({ name: 'All', link: `#payments/${opt}/${opt2}` });
           }
 
           const cleanupOptions = { dataSnapShot: JSON.stringify(model.toJSON()) };
 
           if (model.isNew()) {
-            updatePageHeader('New Customer Request', breadcrumb);
+            updatePageHeader('New Payment', breadcrumb);
           } else {
             updatePageHeader([model.escape('first_name'), model.escape('last_name')].join(' '), breadcrumb);
           }
 
-          customerDetailsPage__render($pageContainer, opt, opt2, id, query, model, auth, () => {
+          paymentDetailsPage__render($pageContainer, opt, opt2, id, query, model, auth, () => {
             cleanupOptions.dataSnapShot = JSON.stringify(model.toJSON());
             this.navigate(`customers/${opt}/${opt2}/${model.id}`, { trigger: false, replace: true });
             updatePageHeader([model.escape('first_name'), model.escape('last_name')].join(' '), breadcrumb);

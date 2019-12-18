@@ -8,6 +8,12 @@ var common = require('bicycle_parking/common.js');
 
 // function afterCreate(content, request, uriInfo, response) { }
 
-// function afterUpdate(content, request, uriInfo, response) { }
+function afterUpdate(content, request, uriInfo, response) {
+  response.setStatusCode(500);
+  response.setContent('UPDATE REJECTED');
+}
 
-// function afterDelete(content, request, uriInfo, response) { }
+function afterDelete(content, request, uriInfo, response) {
+  response.setStatusCode(500);
+  response.setContent('DELETE REJECTED');
+}

@@ -1,146 +1,73 @@
-Bicycle Parking
-|
-+-- Registrations
-|   +-- Registration Details
-|   |   +-- § Contact
-|   |   |   +-- First Name
-|   |   |   +-- Last Name
-|   |   |   +-- Email Address
-|   |   |   +-- Primary Phone
-|   |   |   +-- Alternate Phone
-|   |   |   +-- Civic Address
-|   |   |   +-- Municipality
-|   |   |   +-- Province
-|   |   |   +-- Postal Code
-|   |   +-- § Request
-|   |   |   +-- Request Type
-|   |   |   +-- Locker Location Choice 1
-|   |   |   +-- Locker Location Choice 2
-|   |   |   +-- Locker Location Choice 3
-|   |   |   +-- Station Choice 1
-|   |   |   +-- Station Choice 2
-|   |   |   +-- Station Choice 3
-|   |   |   +-- Request Status
-|   |   +-- § Bicycles
-|   |   |   +-- Bicycles 1 Colour
-|   |   |   +-- Bicycles 1 Make
-|   |   |   +-- Bicycles 1 Model
-|   |   |   +-- Bicycles 2 Colour
-|   |   |   +-- Bicycles 2 Make
-|   |   |   +-- Bicycles 2 Model
-|   |   |   +-- Bicycles 3 Colour
-|   |   |   +-- Bicycles 3 Make
-|   |   |   +-- Bicycles 3 Model
-|   |   +-- § Meta
-|   |       +-- ID
-|   |       +-- Created On
-|   |       +-- Modified On
-|   |       +-- Modified By
-|   |       +-- Status
-|   +-- Notes
-|       +-- Note Details
-|           +-- § Details
-|           |   +-- Date
-|           |   +-- Note
-|           |   +-- Note Status
-|           +-- § Meta
-|               +-- ID
-|               +-- Created On
-|               +-- Modified On
-|               +-- Modified By
-|               +-- Status
-|
-+-- Customers
-|   +-- Customer Details
-|   |   +-- § Contact
-|   |   |   +-- First Name
-|   |   |   +-- Last Name
-|   |   |   +-- Email Address
-|   |   |   +-- Primary Phone
-|   |   |   +-- Alternate Phone
-|   |   |   +-- Civic Address
-|   |   |   +-- Municipality
-|   |   |   +-- Province
-|   |   |   +-- Postal Code
-|   |   +-- § Meta
-|   |       +-- ID
-|   |       +-- Created On
-|   |       +-- Modified On
-|   |       +-- Modified By
-|   |       +-- Status
-|   +-- Notes
-|       +-- Note Details
-|           +-- § Details
-|           |   +-- Date
-|           |   +-- Note
-|           |   +-- Note Status
-|           +-- § Meta
-|               +-- ID
-|               +-- Created On
-|               +-- Modified On
-|               +-- Modified By
-|               +-- Status
-|
-+-- Subscriptions
-|
-+-- Payments
-|
-+-- Locker Locations
-|   +-- Locker Location Details
-|   |   +-- Name
-|   |   +-- Description
-|   |   +-- Civic Address
-|   |   +-- Municipality
-|   |   +-- Province
-|   |   +-- Postal Code
-|   +-- Notes
-|   |   +-- Date
-|   |   +-- Note
-|   |   +-- Status
-|   +-- Staffs
-|   |   +-- First Name
-|   |   +-- Last Name
-|   |   +-- Email Address
-|   |   +-- Primary Phone
-|   |   +-- Alternate Phone
-|   +-- Inspections
-|   |   +-- Date
-|   |   +-- Staff
-|   |   |   +-- First Name
-|   |   |   +-- Last Name
-|   |   |   +-- Email Address
-|   |   |   +-- Primary Phone
-|   |   |   +-- Alternate Phone
-|   |   +-- Result
-|   +-- Lockers
-|
-+-- Lockers
-|   +-- Locker Details
-|   |   +-- Location
-|   |   +-- Number
-|   |   +-- Description
-|   +-- Staffs
-|   |   +-- First Name
-|   |   +-- Last Name
-|   |   +-- Email Address
-|   |   +-- Primary Phone
-|   |   +-- Alternate Phone
-|   +-- Inspections
-|       +-- Date
-|       +-- Staff
-|       |   +-- First Name
-|       |   +-- Last Name
-|       |   +-- Email Address
-|       |   +-- Primary Phone
-|       |   +-- Alternate Phone
-|       +-- Result
-|
-+-- Stations
-|
-+-- Station Key Fobs
-|
-+-- Activity Logs
-|
-+-- Email Logs
-|
-+-- Error Logs
+# READ ME
+
+## ROUTES
+
+```
+[ ] #home(/)
+[ ] #login(/)
+[ ] #logout(/)
+
+[ ] #locations(/:opt)(/)
+[ ] #locations/:opt/:id(/)
+[ ] #locations/:opt/:id/notes(/:opt2)(/)
+[ ] #locations/:opt/:id/inspections(/:opt2)(/)
+[ ] #locations/:opt/:id/lockers(/:opt2)(/)
+
+[ ] #location_notes(/:opt)(/)
+[ ] #location_notes/:opt/:id(/)
+
+[ ] #location_inspections(/:opt)(/)
+[ ] #location_inspections/:opt/:id(/)
+
+[ ] #lockers(/:opt)(/)
+[ ] #lockers/:opt/:id(/)
+[ ] #lockers/:opt/:id/notes(/:opt2)(/)
+[ ] #lockers/:opt/:id/inspections(/:opt2)(/)
+[ ] #lockers/:opt/:id/customers(/:opt2)(/)
+
+[ ] #lockers_notes(/:opt)(/)
+[ ] #lockers_notes/:opt/:id(/)
+
+[ ] #lockers_inspections(/:opt)(/)
+[ ] #lockers_inspections/:opt/:id(/)
+
+[ ] #stations(/:opt)(/)
+[ ] #stations/:opt/:id(/)
+[ ] #stations/:opt/:id/notes(/:opt2)(/)
+[ ] #stations/:opt/:id/inspections(/:opt2)(/)
+[ ] #stations/:opt/:id/keyfobs(/:opt2)(/)
+[ ] #stations/:opt/:id/customers(/:opt2)(/)
+
+[ ] #stations_notes(/:opt)(/)
+[ ] #stations_notes/:opt/:id(/)
+
+[ ] #stations_inspections(/:opt)(/)
+[ ] #stations_inspections/:opt/:id(/)
+
+[ ] #keyfobs(/:opt)(/)
+[ ] #keyfobs/:opt/:id(/)
+[ ] #keyfobs/:opt/:id/notes(/:opt2)(/)
+[ ] #keyfobs/:opt/:id/stations(/:opt2)(/)
+
+[ ] #keyfobs_notes(/:opt)(/)
+[ ] #keyfobs_notes/:opt/:id(/)
+
+[ ] #customers(/:opt)(/)
+[ ] #customers/:opt/:id(/)
+[ ] #customers/:opt/:id/notes(/:opt2)(/)
+[ ] #customers/:opt/:id/notifications(/:opt2)(/)
+[ ] #customers/:opt/:id/payments(/:opt2)(/)
+
+[ ] #customers_notes(/:opt)(/)
+[ ] #customers_notes/:opt/:id(/)
+
+[ ] #notifications(/:opt)(/)
+[ ] #notifications/:opt/:id(/)
+
+[ ] #payments(/:opt)(/)
+[ ] #payments/:opt/:id(/)
+[ ] #payments/:opt/:id/notes(/)
+
+[ ] #payment_notes(/:opt)(/)
+[ ] #payment_notes/:opt/:id(/)
+
