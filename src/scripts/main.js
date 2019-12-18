@@ -15,4 +15,28 @@ $(function () {
     searchcontext: 'INTRA'
   });
   app.setBreadcrumb([]).render();
+
+  // Enhance setTitle method
+  const $titleContainer = $('#app-header').find('h1').attr('tabindex', '-1');
+  let setTitleFocus = false;
+  app.setTitle = ((originalSetTitle) => function (title = app.name, options = {}) {
+    const {
+      documentTitle = title,
+      ignoreFocus = false
+    } = options;
+
+    originalSetTitle.call(this, title);
+
+    if (documentTitle !== this.name) {
+      document.title = `${documentTitle} - ${this.name}`;
+    } else {
+      document.title = `${this.name}`;
+    }
+
+    if (!ignoreFocus && setTitleFocus) {
+      $titleContainer.focus();
+    } else {
+      setTitleFocus = true;
+    }
+  })(app.setTitle);
 });
