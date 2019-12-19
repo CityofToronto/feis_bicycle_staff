@@ -5,7 +5,7 @@
 
 /* global $ Backbone */
 /* global cot_app */
-/* global auth__init */
+/* global auth__init Router */
 /* global renderLoginButton */
 
 $(function () {
@@ -42,7 +42,7 @@ $(function () {
     }
   })(app.setTitle);
 
-  // Add login and login button
+  // Add login and login related stuff
   const $loginButtonContainer = $('<div class="loginButtonContainer">').appendTo('.securesite');
   const auth = auth__init({
     app: 'bicycle_parking',
@@ -50,6 +50,46 @@ $(function () {
     url: '/* @echo C3AUTH_URL */',
     webStorageKey: 'bicycle_parking_auth'
   });
-  Backbone.history.start();
-  renderLoginButton($loginButtonContainer, auth);
+
+  // App routing
+  const $container = $('#feis_bicycle_staff_container');
+  const AppRouter = Router.extend({
+    defaultFragment: 'home',
+
+    routes: {
+
+      /* global renderLoginPage */
+      ['login(/)'](query) {
+        console.log(query);
+        return renderLoginPage(app, $container, router, auth, query);
+      },
+
+      /* global renderLogoutPage */
+      ['logout(/)'](query) {
+        return renderLogoutPage(app, $container, router, auth, query);
+      },
+
+      /* global renderHomePage */
+      ['home(/)'](query) {
+        return renderHomePage(app, $container, router, auth, query);
+      },
+
+      '*default': 'routeDefault'
+    }
+  });
+
+  const router = new AppRouter();
+  router.on('route', () => {
+    renderLoginButton($loginButtonContainer, auth);
+  });
+
+
+  Promise.resolve()
+    /* global renderLoadingPage */
+    .then(() => {
+      return renderLoadingPage(app, $container, router, auth);
+    })
+    .then(() => {
+      Backbone.history.start();
+    });
 });
