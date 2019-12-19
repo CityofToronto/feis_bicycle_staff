@@ -4,4 +4,14 @@
 // Any resources from this project should be referenced using SRC_PATH preprocessor var
 // Ex: background-image: url(/* @echo SRC_PATH*//img/sample.jpg)
 
+.securesite {
+  position: relative;
+
+  .loginButtonContainer {
+    position: absolute;
+    right: 58px;
+    top: 8px;
+  }
+}
+
 #bicycle_staff_container {}
