@@ -9,6 +9,9 @@ core.embeddedApp.createTasks(gulp, {
   deploymentPath: '',
   preprocessorContext: {
     local: {
+      C3AUTH_URL: 'https://config.cc.toronto.ca:49090/c3api_auth/v2/AuthService.svc/AuthSet',
+
+      C3CONFIG_ISAUTH_URL: 'https://config.cc.toronto.ca:49092/c3api_config/v2/ConfigService.svc/IsAuth',
     },
     dev: {},
     qa: {},
