@@ -60,9 +60,10 @@ function updateLocation(content, request, uriInfo, response) {
   const location = content.get('location').getAsString();
   const date = content.get('date').getAsString();
   const note = content.get('note').getAsString();
+  const status = content.get('__Status').getAsString();
 
   const select = encodeURIComponent('id,date,note');
-  const filter = encodeURIComponent(`location eq '${location}'`);
+  const filter = encodeURIComponent(`location eq '${location}' and __Status eq 'Active'`);
   const orderby = encodeURIComponent('date desc');
   const top = encodeURIComponent('2');
   ajax.request({
@@ -76,14 +77,22 @@ function updateLocation(content, request, uriInfo, response) {
     const value = json.value;
 
     if (value && value.length > 0) {
-      if (value[0] && value[0].id === id) {
-        value[0].date = date;
-        value[0].note = note;
-      } else if (value[1] && value[1].id === id) {
-        value[1].date = date;
-        value[1].note = note;
+      if (request.getMethod() === 'DELETE' || status !== 'Active') {
+        if (value[1] && value[1].id === id) {
+          value.splice(1, 1);
+        } else if (value[0] && value[0].id === id) {
+          value.splice(0, 1);
+        }
       } else {
-        value.push({ id, date, note });
+        if (value[0] && value[0].id === id) {
+          value[0].date = date;
+          value[0].note = note;
+        } else if (value[1] && value[1].id === id) {
+          value[1].date = date;
+          value[1].note = note;
+        } else {
+          value.push({ id, date, note });
+        }
       }
 
       value.sort((a, b) => {
@@ -108,15 +117,16 @@ function updateLocation(content, request, uriInfo, response) {
         }),
         headers: {
           Authorization: request.getHeader('Authorization'),
+          FromDataaccess: true,
           'Content-Type': 'application/json; charset=UTF-8',
-          'X-HTTP-Method-Override': 'PATCH'
+          // 'X-HTTP-Method-Override': 'PATCH'
         },
-        method: 'PUT',
+        method: 'PATCH',
         uri: `${common.DA_LOCATIONS_URL}('${location}')`
       }, function okFunction(okResponse) {
-        mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
+        // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
       }, function errorFunction(errorResponse) {
-        mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);
+        // mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);
       });
     }
   }, function errorFunction(errorResponse) {
