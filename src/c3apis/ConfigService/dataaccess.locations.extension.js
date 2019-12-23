@@ -14,6 +14,11 @@ function beforeContentParse(content, request, uriInfo, response) { // eslint-dis
 }
 
 function afterCreate(content, request, uriInfo, response) { // eslint-disable-line no-unused-vars
+  if (content.has('__Status')) {
+    content.remove('__Status');
+  }
+
+  content.addProperty('__Status', 'Active');
 }
 
 function afterUpdate(content, request, uriInfo, response) { // eslint-disable-line no-unused-vars
