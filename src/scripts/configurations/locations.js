@@ -10,6 +10,12 @@ const locations_datatable_columns = {
     searchable: false
   },
 
+  site_name: {
+    title: 'Name',
+    className: 'minWidth',
+    data: 'site_name'
+  },
+
   __CreatedOn: {
     title: 'Created On',
     className: 'minWidth',
@@ -49,7 +55,7 @@ const locations_datatable_columns = {
     className: 'statusWidth',
     data: '__Status',
     type: 'string',
-    searchaType: 'equals',
+    searchType: 'equals',
     choices: [{ text: 'Active' }, { text: 'Inactive' }],
     render(data) {
       return `<span class="label label-${data === 'Active' ? 'success' : data === 'Inactive' ? 'danger' : 'default'}" style="font-size: 90%;">${data}</span>`;

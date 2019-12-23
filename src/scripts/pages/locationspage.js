@@ -56,6 +56,9 @@ function renderLocationsPage(app, $container, router, auth, opt, query) {
               return `<a href="${href}" class="btn btn-default dblclick-target">Open</a>`;
             }
           }),
+
+          locations_datatable_columns.site_name,
+
           locations_datatable_columns.__CreatedOn,
           locations_datatable_columns.__ModifiedOn,
           locations_datatable_columns.__Owner,
