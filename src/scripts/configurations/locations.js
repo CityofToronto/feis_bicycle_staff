@@ -1,4 +1,5 @@
 /* global moment */
+/* global oData__escapeValue */
 
 /* exported locations_datatable_columns */
 const locations_datatable_columns = {
@@ -16,6 +17,110 @@ const locations_datatable_columns = {
     data: 'site_name'
   },
 
+  civic_address: {
+    title: 'Street Address',
+    className: 'minWidth',
+    data: 'civic_address'
+  },
+  municipality: {
+    title: 'City',
+    className: 'minWidth',
+    data: 'municipality'
+  },
+  province: {
+    title: 'Province',
+    className: 'minWidth',
+    data: 'province'
+  },
+  postal_code: {
+    title: 'Postal Code',
+    className: 'minWidth',
+    data: 'postal_code'
+  },
+
+  address: {
+    title: 'Address',
+    className: 'minWidth',
+    data: 'civic_address',
+    select: ['municipality', 'province', 'postal_code'],
+    type: 'function',
+    render(data, settings, row) {
+      const line1 = data;
+      const line2 = [row['municipality'], row['province'], row['postal_code']].filter((value) => value).join(' ');
+      return [line1, line2].filter((value) => value).join('<br>');
+    },
+    filter(column) {
+      let filterColumns = `concat(concat(province,' '),postal_code)`;
+      filterColumns = `concat(concat(municipality,' '),${filterColumns})`;
+      filterColumns = `concat(concat(civic_address,' '),${filterColumns})`;
+
+      return column.search.value
+        .split(' ')
+        .filter((value, index, array) => value && array.indexOf(value) === index)
+        .map((value) => `contains(tolower(${filterColumns}),'${oData__escapeValue(value.toLowerCase())}')`)
+        .join(' and ');
+    },
+    orderBy(order) {
+      let orderColumns = `concat(concat(province,' '),postal_code)`;
+      orderColumns = `concat(concat(municipality,' '),${orderColumns})`;
+      orderColumns = `concat(concat(civic_address,' '),${orderColumns})`;
+
+      return `tolower(${orderColumns}) ${order.dir}`;
+    }
+  },
+
+  primary_contact_first_name: {
+    title: 'First Name (Primary Contact)',
+    className: 'minWidth',
+    data: 'primary_contact_first_name'
+  },
+  primary_contact_last_name: {
+    title: 'Last Name (Primary Contact)',
+    className: 'minWidth',
+    data: 'primary_contact_last_name'
+  },
+  primary_contact_email: {
+    title: 'Email (Primary Contact)',
+    className: 'minWidth',
+    data: 'primary_contact_email'
+  },
+  primary_contact_primary_phone: {
+    title: 'Primary Phone (Primary Contact)',
+    className: 'minWidth',
+    data: 'primary_contact_primary_phone'
+  },
+  primary_contact_alternate_phone: {
+    title: 'Alternate Phone (Primary Contact)',
+    className: 'minWidth',
+    data: 'primary_contact_alternate_phone'
+  },
+
+  alternate_contact_first_name: {
+    title: 'First Name (Alternate Contact)',
+    className: 'minWidth',
+    data: 'alternate_contact_first_name'
+  },
+  alternate_contact_last_name: {
+    title: 'Last Name (Alternate Contact)',
+    className: 'minWidth',
+    data: 'alternate_contact_last_name'
+  },
+  alternate_contact_email: {
+    title: 'Email (Alternate Contact)',
+    className: 'minWidth',
+    data: 'alternate_contact_email'
+  },
+  alternate_contact_primary_phone: {
+    title: 'Primary Phone (Alternate Contact)',
+    className: 'minWidth',
+    data: 'alternate_contact_primary_phone'
+  },
+  alternate_contact_alternate_phone: {
+    title: 'Alternate Phone (Alternate Contact)',
+    className: 'minWidth',
+    data: 'alternate_contact_alternate_phone'
+  },
+
   __CreatedOn: {
     title: 'Created On',
     className: 'minWidth',
@@ -24,7 +129,7 @@ const locations_datatable_columns = {
     render(data) {
       const dataMoment = moment(data);
       if (dataMoment.isValid()) {
-        return dataMoment.format('YYYY/MM/DD');
+        return dataMoment.format('YYYY/MM/DD h:mm:ss A');
       } else {
         return '';
       }
@@ -38,7 +143,7 @@ const locations_datatable_columns = {
     render(data) {
       const dataMoment = moment(data);
       if (dataMoment.isValid()) {
-        return dataMoment.format('YYYY/MM/DD');
+        return dataMoment.format('YYYY/MM/DD h:mm:ss A');
       } else {
         return '';
       }
@@ -189,83 +294,5 @@ const location_form_sections = [
         ]
       }
     ]
-    // }, {
-    //   title: 'Related Information',
-    //   id: 'related',
-
-    //   rows: [
-    //     {
-    //       fields: [
-    //         {
-    //           title: 'Total Lockers',
-    //           bindTo: 'lockers_total',
-    //           htmlAttr: { readOnly: true }
-    //         },
-    //         {
-    //           title: 'Available Lockers',
-    //           bindTo: 'lockers_assigned',
-    //           htmlAttr: { readOnly: true }
-    //         },
-    //         {
-    //           title: 'Assigned Lockers',
-    //           bindTo: 'lockers_available',
-    //           htmlAttr: { readOnly: true }
-    //         }
-    //       ]
-    //     },
-    //     {
-    //       fields: [
-    //         {
-    //           type: 'html',
-    //           html: '<h4>Latest Inspection</h4>'
-    //         }
-    //       ]
-    //     },
-    //     {
-    //       fields: [
-    //         {
-    //           title: 'Date',
-    //           bindTo: 'latest_inspection_date',
-    //           htmlAttr: { readOnly: true },
-    //           className: 'col-sm-4',
-
-    //           postRender({ model, field }) {
-    //             if (moment(model.get(field.bindTo)).isValid()) {
-    //               $(`#${field.id}`).val(moment(model.get(field.bindTo)).format('YYYY/MM/DD'));
-    //             }
-    //           }
-    //         },
-    //         {
-    //           title: 'Result',
-    //           bindTo: 'latest_inspection_result',
-    //           htmlAttr: { readOnly: true },
-    //           className: 'col-sm-4'
-    //         }
-    //       ],
-    //     }, {
-    //       fields: [
-    //         {
-    //           title: 'Notes',
-    //           bindTo: 'latest_inspection_notes',
-    //           htmlAttr: { readOnly: true },
-    //           type: 'textarea',
-    //           rows: 5
-    //         }
-    //       ]
-    //     }
-    // ],
-
-    // postRender({ model, section }) {
-    //   const $section = $(`#${section.id}`);
-    //   const handler = () => {
-    //     if (model.isNew()) {
-    //       $section.addClass('hide');
-    //     } else {
-    //       $section.removeClass('hide');
-    //     }
-    //   };
-    //   model.on('change:id', handler);
-    //   handler();
-    // }
   }
 ];
