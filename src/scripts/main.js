@@ -9,6 +9,8 @@
 /* global renderLoginButton */
 
 $(function () {
+
+  // Using CoT App to finalize the c-frame
   const app = new cot_app('Bicycle Parking', {
     hasContentTop: false,
     hasContentBottom: false,
@@ -18,7 +20,7 @@ $(function () {
   });
   app.setBreadcrumb([]).render();
 
-  // Enhance setTitle method
+  // Enhance setTitle method to include document title and focus
   const $titleContainer = $('#app-header').find('h1').attr('tabindex', '-1');
   let setTitleFocus = false;
   app.setTitle = ((originalSetTitle) => function (title = app.name, options = {}) {
@@ -42,7 +44,7 @@ $(function () {
     }
   })(app.setTitle);
 
-  // Add login and login related stuff
+  // Add login related reference for login button and authentications
   const $loginButtonContainer = $('<div class="loginButtonContainer">').appendTo('.securesite');
   const auth = auth__init({
     app: 'bicycle_parking',
@@ -51,16 +53,38 @@ $(function () {
     webStorageKey: 'bicycle_parking_auth'
   });
 
-  // App routing
+  // Add routing for page rendering based on url hash values
   const $container = $('#feis_bicycle_staff_container');
   const AppRouter = Router.extend({
     defaultFragment: 'home',
 
     routes: {
+      /* global renderLocationNoteDetailsPage */
+      ['location_notes/:opt/:id(/)'](opt, id, query) {
+        return renderLocationNoteDetailsPage(app, $container, router, auth, opt, id, query);
+      },
+
+      /* global renderLocationNotesPage */
+      ['location_notes(/:opt)(/)'](opt, query) {
+        return renderLocationNotesPage(app, $container, router, auth, opt, query);
+      },
+
+      // ---
+
+      /* global renderLocationDetailsPage */
+      ['locations/:opt/:id(/)'](opt, id, query) {
+        return renderLocationDetailsPage(app, $container, router, auth, opt, id, query);
+      },
+
+      /* global renderLocationsPage */
+      ['locations(/:opt)(/)'](opt, query) {
+        return renderLocationsPage(app, $container, router, auth, opt, query);
+      },
+
+      // ---
 
       /* global renderLoginPage */
       ['login(/)'](query) {
-        console.log(query);
         return renderLoginPage(app, $container, router, auth, query);
       },
 
@@ -83,10 +107,10 @@ $(function () {
     renderLoginButton($loginButtonContainer, auth);
   });
 
-
+  // Load initial "loading" page then start routing
   Promise.resolve()
-    /* global renderLoadingPage */
     .then(() => {
+      /* global renderLoadingPage */
       return renderLoadingPage(app, $container, router, auth);
     })
     .then(() => {

@@ -4,18 +4,12 @@
 
 /* exported renderLoginPage */
 function renderLoginPage(app, $container, router, auth, query) {
-  console.log('RENDER LOGIN PAGE', app, $container, router, auth, query);
-
   return auth__checkLogin(auth).then((isLoggedIn) => {
-    console.log('IS LOGGED IN', isLoggedIn);
-
     if (isLoggedIn) {
       const redirect = query__stringToObject(query).redirect || router.defaultFragment;
       router.navigate(redirect, { trigger: true });
       return;
     }
-
-    console.log('TEST', $container);
 
     $container.html('<h2>Login Required</h2>');
 
@@ -46,8 +40,6 @@ function renderLoginPage(app, $container, router, auth, query) {
 
           return data;
         }, () => {
-          window.fv = formValidator;
-
           setTimeout(() => {
             formValidator.updateStatus('user', 'NOT_VALIDATED');
             formValidator.updateStatus('pwd', 'NOT_VALIDATED');
