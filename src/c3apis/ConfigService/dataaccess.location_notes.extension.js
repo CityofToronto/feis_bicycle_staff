@@ -11,28 +11,48 @@ function afterQuery(content, request, uriInfo, response) { // eslint-disable-lin
 }
 
 function beforeContentParse(content, request, uriInfo, response) { // eslint-disable-line no-unused-vars
-  if (!request.getHeader('FromDataaccess')) {
-    if (content.has('location__site_name')) {
-      content.remove('location__site_name');
-    }
-    const select = encodeURIComponent('id,site_name');
-    const filter = encodeURIComponent(`id eq '${content.get('location').getAsString()}'`);
+  const json = JSON.parse(content.toString());
+  const method = request.getMethod();
+
+  if (method === 'PUT') {
+    const select = encodeURIComponent('id,location');
+    const filter = encodeURIComponent(`id eq '${json.id}'`);
     ajax.request({
       headers: { Authorization: request.getHeader('Authorization') },
       method: 'GET',
-      uri: `${common.DA_LOCATIONS_URL}?$select=${select}&$filter=${filter}`
+      uri: `${common.DA_LOCATION_NOTES_URL}?$select=${select}&$filter=${filter}`
     }, function okFunction(okResponse) {
       // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
-      const json = JSON.parse(okResponse.body);
-      if (json.value && json.value.length > 0) {
-        content.addProperty('location__site_name', json.value[0].site_name);
+      const body = JSON.parse(okResponse.body);
+      if (body.value && body.value.length > 0 && body.value[0].location !== json.location) {
+        throw 'The entities location attribute cannot be updated.'
       }
     }, function errorFunction(errorResponse) {
       // mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);
     });
   }
 
-  if (request.getMethod() === 'POST') {
+  if (content.has('location__site_name')) {
+    content.remove('location__site_name');
+  }
+  const select = encodeURIComponent('id,site_name');
+  const filter = encodeURIComponent(`id eq '${json.location}'`);
+  ajax.request({
+    headers: { Authorization: request.getHeader('Authorization') },
+    method: 'GET',
+    uri: `${common.DA_LOCATIONS_URL}?$select=${select}&$filter=${filter}`
+  }, function okFunction(okResponse) {
+    // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
+    const body = JSON.parse(okResponse.body);
+    if (body.value && body.value.length > 0) {
+      content.addProperty('location__site_name', body.value[0].site_name);
+    }
+  }, function errorFunction(errorResponse) {
+    // mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);
+  });
+
+
+  if (method === 'POST') {
     if (content.has('__Status')) {
       content.remove('__Status');
     }
@@ -56,14 +76,11 @@ function afterDelete(content, request, uriInfo, response) { // eslint-disable-li
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function updateLocation(content, request, uriInfo, response) {
-  const id = content.get('id').getAsString();
-  const location = content.get('location').getAsString();
-  const date = content.get('date').getAsString();
-  const note = content.get('note').getAsString();
-  const status = content.get('__Status').getAsString();
+  const json = JSON.parse(content.toString());
+  const method = request.getMethod();
 
   const select = encodeURIComponent('id,date,note');
-  const filter = encodeURIComponent(`location eq '${location}' and __Status eq 'Active'`);
+  const filter = encodeURIComponent(`location eq '${json.location}' and __Status eq 'Active'`);
   const orderby = encodeURIComponent('date desc');
   const top = encodeURIComponent('2');
   ajax.request({
@@ -73,29 +90,28 @@ function updateLocation(content, request, uriInfo, response) {
   }, function okFunction(okResponse) {
     // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
 
-    const json = JSON.parse(okResponse.body);
-    const value = json.value;
+    const body = JSON.parse(okResponse.body);
 
-    if (value && value.length > 0) {
-      if (request.getMethod() === 'DELETE' || status !== 'Active') {
-        if (value[1] && value[1].id === id) {
-          value.splice(1, 1);
-        } else if (value[0] && value[0].id === id) {
-          value.splice(0, 1);
+    if (body.value && body.value.length > 0) {
+      if (method === 'DELETE' || json['__Status'] !== 'Active') {
+        if (body.value[1] && body.value[1].id === json.id) {
+          body.value.splice(1, 1);
+        } else if (body.value[0] && body.value[0].id === json.id) {
+          body.value.splice(0, 1);
         }
       } else {
-        if (value[0] && value[0].id === id) {
-          value[0].date = date;
-          value[0].note = note;
-        } else if (value[1] && value[1].id === id) {
-          value[1].date = date;
-          value[1].note = note;
+        if (body.value[0] && body.value[0].id === json.id) {
+          body.value[0].date = json.date;
+          body.value[0].note = json.note;
+        } else if (body.value[1] && body.value[1].id === json.id) {
+          body.value[1].date = json.date;
+          body.value[1].note = json.note;
         } else {
-          value.push({ id, date, note });
+          body.value.push({ id: json.id, date: json.data, note: json.note });
         }
       }
 
-      value.sort((a, b) => {
+      body.value.sort((a, b) => {
         const a_date = new Date(a.date).getDate();
         const b_date = new Date(b.date).getDate();
         if (a_date > b_date) {
@@ -107,22 +123,20 @@ function updateLocation(content, request, uriInfo, response) {
         return 0;
       });
 
-      // mailClient.send('VALUE', JSON.stringify(value), ['jngo2@toronto.ca']);
-
       ajax.request({
         data: JSON.stringify({
-          latest_note: id,
-          latest_note__date: value[0].date,
-          latest_note__note: value[0].note
+          latest_note: body.value[0].id,
+          latest_note__date: body.value[0].date,
+          latest_note__note: body.value[0].note
         }),
         headers: {
           Authorization: request.getHeader('Authorization'),
-          FromDataaccess: true,
           'Content-Type': 'application/json; charset=UTF-8',
-          // 'X-HTTP-Method-Override': 'PATCH'
+          FromDataaccess: true,
+          'X-HTTP-Method-Override': 'PATCH'
         },
-        method: 'PATCH',
-        uri: `${common.DA_LOCATIONS_URL}('${location}')`
+        method: 'POST',
+        uri: `${common.DA_LOCATIONS_URL}('${json.location}')`
       }, function okFunction(okResponse) {
         // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
       }, function errorFunction(errorResponse) {

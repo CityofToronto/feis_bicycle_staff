@@ -13,7 +13,7 @@ function renderLocationDetailsPage(app, $container, router, auth, opt, id, query
       return;
     }
 
-    const breadcrumbs = [{ name: app.name, link: '#home' }, { name: 'Locker Locations', link: '#locations' }];
+    const breadcrumbs = [{ name: app.name, link: '#home' }, { name: 'Locations', link: '#locations' }];
     switch (opt) {
       default:
         breadcrumbs.push({ name: 'All', link: `#locations/all` });
@@ -116,18 +116,18 @@ function renderLocationDetailsPage(app, $container, router, auth, opt, id, query
           auth,
           url: '/* @echo C3DATA_LOCATIONS_URL */',
 
-          saveButtonLabel: (model) => model.isNew() ? 'Create Locker Location' : 'Update Locker Location',
+          saveButtonLabel: (model) => model.isNew() ? 'Create cker Location' : 'Update Location',
 
           cancelButtonLabel: 'Cancel',
           cancelButtonFragment: `locations/${opt}`,
 
-          removeButtonLabel: 'Remove Locker Location',
+          removeButtonLabel: 'Remove Location',
           removePromptValue: 'DELETE'
         });
       }).then(() => {
         if (id === 'new') {
-          app.setBreadcrumb(breadcrumbs.concat({ name: 'New Locker Location' }), true);
-          app.setTitle('New Locker Location');
+          app.setBreadcrumb(breadcrumbs.concat({ name: 'New Location' }), true);
+          app.setTitle('New Location');
         } else {
           app.setBreadcrumb(breadcrumbs.concat({ name: data.site_name }), true);
           app.setTitle(data.site_name);

@@ -29,7 +29,7 @@ function renderLocationNotesPage(app, $container, router, auth, opt, query) {
 
     const views = [
       {
-        title: 'All',
+        title: 'All Location Notes',
         fragment: `location_notes/all?${query__objectToString({ resetState: 'yes' })}`
       }
     ];
