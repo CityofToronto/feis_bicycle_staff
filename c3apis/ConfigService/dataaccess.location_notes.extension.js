@@ -18,9 +18,7 @@ function beforeContentParse(content, request, uriInfo, response) {
     content.remove('location__site_name');
   }
   ajax.request({
-    headers: {
-      Authorization: request.getHeader('Authorization')
-    },
+    headers: { Authorization: request.getHeader('Authorization') },
     method: 'GET',
     uri: common.DA_LOCATIONS_URL + '?$select=id,site_name&$filter=' + encodeURIComponent('id eq \'' + content.get('location').getAsString() + '\'')
   }, function okFunction(okResponse) {
