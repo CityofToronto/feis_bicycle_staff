@@ -31,10 +31,12 @@ function afterUpdate(content, request, uriInfo, response) {// eslint-disable-lin
 
 function afterDelete(content, request, uriInfo, response) {
   // eslint-disable-line no-unused-vars
+  var select = encodeURIComponent('id');
+  var filter = encodeURIComponent('location eq \'' + content.get('id').getAsString() + '\'');
   ajax.request({
     headers: { Authorization: request.getHeader('Authorization') },
     method: 'GET',
-    uri: common.DA_LOCATION_NOTES_URL + '?$select=id&$filter=' + encodeURIComponent('location eq \'' + content.get('id').getAsString() + '\'')
+    uri: common.DA_LOCATION_NOTES_URL + '?$select=' + select + '&$filter=' + filter
   }, function okFunction(okResponse) {
     // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
     var json = JSON.parse(okResponse.body);
