@@ -59,6 +59,18 @@ $(function () {
     defaultFragment: 'home',
 
     routes: {
+      /* global renderLocationNoteDetailsPage */
+      ['location_notes/:opt/:id(/)'](opt, id, query) {
+        return renderLocationNoteDetailsPage(app, $container, router, auth, opt, id, query);
+      },
+
+      /* global renderLocationNotesPage */
+      ['location_notes(/:opt)(/)'](opt, query) {
+        return renderLocationNotesPage(app, $container, router, auth, opt, query);
+      },
+
+      // ---
+
       /* global renderLocationDetailsPage */
       ['locations/:opt/:id(/)'](opt, id, query) {
         return renderLocationDetailsPage(app, $container, router, auth, opt, id, query);

@@ -2,7 +2,7 @@
 /* global oData__escapeValue */
 
 /* exported locations_datatable_columns */
-const locations_datatable_columns = {
+const locations_datatable_columns = () => ({
   action: {
     title: 'Action',
     className: 'excludeFromButtons openButtonWidth',
@@ -166,10 +166,10 @@ const locations_datatable_columns = {
       return `<span class="label label-${data === 'Active' ? 'success' : data === 'Inactive' ? 'danger' : 'default'}" style="font-size: 90%;">${data}</span>`;
     }
   }
-};
+});
 
 /* exported location_form_sections */
-const location_form_sections = [
+const location_form_sections = () => [
   {
     title: 'Details',
 

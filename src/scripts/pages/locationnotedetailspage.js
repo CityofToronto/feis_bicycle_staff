@@ -1,11 +1,11 @@
-/* global $ Backbone */
+/* global $ Backbone moment */
 /* global ajaxes auth__checkLogin fixButtonLinks modal__showConfirm query__objectToString query__stringToObject
    renderAlert toSnapShot */
 /* global renderForm */
-/* global location_form_sections */
+/* global location_note_form_sections */
 
-/* exported renderLocationDetailsPage */
-function renderLocationDetailsPage(app, $container, router, auth, opt, id, query) {
+/* exported renderLocationNoteDetailsPage */
+function renderLocationNoteDetailsPage(app, $container, router, auth, opt, id, query) {
   return auth__checkLogin(auth).then((isLoggedIn) => {
     if (!isLoggedIn) {
       const query = query__objectToString({ redirect: Backbone.history.getFragment() });
@@ -13,15 +13,15 @@ function renderLocationDetailsPage(app, $container, router, auth, opt, id, query
       return;
     }
 
-    const breadcrumbs = [{ name: app.name, link: '#home' }, { name: 'Locker Locations', link: '#locations' }];
+    const breadcrumbs = [{ name: app.name, link: '#home' }, { name: 'Locker Location Notes', link: '#location_notes' }];
     switch (opt) {
       default:
-        breadcrumbs.push({ name: 'All', link: `#locations/all` });
+        breadcrumbs.push({ name: 'All', link: `#location_notes/all` });
     }
 
     const {
-      redirectTo = 'Locations',
-      redirectToFragment = `locations/${opt}`
+      redirectTo = 'Location Notes',
+      redirectToFragment = `location_notes/${opt}`
     } = query__stringToObject(query);
     $container.html(`<p><a href="#${redirectToFragment}">Back to ${redirectTo}</a></p>`);
 
@@ -35,7 +35,7 @@ function renderLocationDetailsPage(app, $container, router, auth, opt, id, query
           },
           contentType: 'application/json; charset=utf-8',
           method: 'GET',
-          url: `/* @echo C3DATA_LOCATIONS_URL */('${id}')`
+          url: `/* @echo C3DATA_LOCATION_NOTES_URL */('${id}')`
         });
       }
 
@@ -47,22 +47,8 @@ function renderLocationDetailsPage(app, $container, router, auth, opt, id, query
           <div class="navbar">
             <ul class="nav nav-tabs">
               <li class="nav-item active" role="presentation">
-                <a href="#locations/${opt}/${finalId}" class="nav-link">Location</a>
+                <a href="#location_notes/${opt}/${finalId}" class="nav-link">Location Note</a>
               </li>
-
-              <!--
-              <li class="nav-item" role="presentation">
-                <a href="#locations/${opt}/${finalId}/inspections/all" class="nav-link">Notes</a>
-              </li>
-
-              <li class="nav-item" role="presentation">
-                <a href="#locations/${opt}/${finalId}/inspections/all" class="nav-link">Inspections</a>
-              </li>
-
-              <li class="nav-item" role="presentation">
-                <a href="#locations/${opt}/${finalId}/inspections/all" class="nav-link">Lockers</a>
-              </li>
-              -->
             </ul>
           </div>
         `);
@@ -91,7 +77,7 @@ function renderLocationDetailsPage(app, $container, router, auth, opt, id, query
             snapShot = toSnapShot(data);
             renderNavBar(data.id);
 
-            router.navigate(`locations/${opt}/${data.id}`, { trigger: false, replace: true });
+            router.navigate(`location_notes/${opt}/${data.id}`, { trigger: false, replace: true });
             app.setBreadcrumb(breadcrumbs.concat({ name: data.site_name }), true);
             app.setTitle(data.site_name);
 
@@ -99,13 +85,12 @@ function renderLocationDetailsPage(app, $container, router, auth, opt, id, query
           });
         },
 
-        sections: location_form_sections()
+        sections: location_note_form_sections(auth)
       };
 
       const Model = Backbone.Model.extend({
         defaults: {
-          municipality: 'Toronto',
-          province: 'Ontario',
+          date: moment().format('YYYY/MM/DD')
         }
       });
       const model = new Model(data);
@@ -114,22 +99,22 @@ function renderLocationDetailsPage(app, $container, router, auth, opt, id, query
       return Promise.resolve().then(() => {
         return renderForm($('<div></div>').appendTo($container), definition, model, {
           auth,
-          url: '/* @echo C3DATA_LOCATIONS_URL */',
+          url: '/* @echo C3DATA_LOCATION_NOTES_URL */',
 
-          saveButtonLabel: (model) => model.isNew() ? 'Create Locker Location' : 'Update Locker Location',
+          saveButtonLabel: (model) => model.isNew() ? 'Create Locker Location Note' : 'Update Locker Location Note',
 
           cancelButtonLabel: 'Cancel',
-          cancelButtonFragment: `locations/${opt}`,
+          cancelButtonFragment: `location_notes/${opt}`,
 
           removeButtonLabel: 'Remove Locker Location',
           removePromptValue: 'DELETE'
         });
       }).then(() => {
         if (id === 'new') {
-          app.setBreadcrumb(breadcrumbs.concat({ name: 'New Locker Location' }), true);
-          app.setTitle('New Locker Location');
+          app.setBreadcrumb(breadcrumbs.concat({ name: 'New Locker Location Note' }), true);
+          app.setTitle('New Locker Location Note');
         } else {
-          app.setBreadcrumb(breadcrumbs.concat({ name: data.site_name }), true);
+          app.setBreadcrumb(breadcrumbs.concat({ name: data.date }), true);
           app.setTitle(data.site_name);
         }
 

@@ -1,13 +1,13 @@
 /* global Backbone */
 /* global auth__checkLogin query__objectToString query__stringToObject */
 /* global renderDatatable */
-/* global locations_datatable_columns */
+/* global location_notes_datatable_columns */
 
-/* exported renderLocationsPage */
-function renderLocationsPage(app, $container, router, auth, opt, query) {
+/* exported renderLocationNotesPage */
+function renderLocationNotesPage(app, $container, router, auth, opt, query) {
   if (opt == null) {
     const query = query__objectToString({ resetState: 'yes' });
-    router.navigate(`locations/all?${query}`, { trigger: true, replace: true });
+    router.navigate(`location_notes/all?${query}`, { trigger: true, replace: true });
     return;
   }
 
@@ -25,12 +25,12 @@ function renderLocationsPage(app, $container, router, auth, opt, query) {
     } = query__stringToObject(query);
     $container.html(`<p><a href="#${redirectToFragment}">Back to ${redirectTo}</a></p>`);
 
-    const breadcrumbs = [{ name: app.name, link: '#home' }, { name: 'Locker Locations', link: '#locations' }];
+    const breadcrumbs = [{ name: app.name, link: '#home' }, { name: 'Locker Location Notes', link: '#location_notes' }];
 
     const views = [
       {
         title: 'All',
-        fragment: `locations/all?${query__objectToString({ resetState: 'yes' })}`
+        fragment: `location_notes/all?${query__objectToString({ resetState: 'yes' })}`
       }
     ];
 
@@ -42,25 +42,26 @@ function renderLocationsPage(app, $container, router, auth, opt, query) {
 
     let stateSaveWebStorageKey;
 
-    const datatable_columns = locations_datatable_columns(auth);
+    const datatable_columns = location_notes_datatable_columns();
 
     switch (opt) {
       default:
         breadcrumbs.push({ name: 'All' });
-        $container.append('<h2>All Locations</h2>');
+        $container.append('<h2>All Notes</h2>');
         views[0].isCurrent = true;
-        stateSaveWebStorageKey = `locations__${opt}`;
+        stateSaveWebStorageKey = `location_notes__${opt}`;
 
         definition.columns.push(
           Object.assign({}, datatable_columns.action, {
             render(data) {
-              const href = `#locations/${opt}/${data}?${query__objectToString({ resetState: 'yes' })}`;
+              const href = `#location_notes/${opt}/${data}?${query__objectToString({ resetState: 'yes' })}`;
               return `<a href="${href}" class="btn btn-default dblclick-target">Open</a>`;
             }
           }),
 
-          datatable_columns.site_name,
-          datatable_columns.address,
+          datatable_columns.location__site_name,
+          datatable_columns.date,
+          datatable_columns.note,
 
           datatable_columns.__CreatedOn,
           datatable_columns.__ModifiedOn,
@@ -80,10 +81,10 @@ function renderLocationsPage(app, $container, router, auth, opt, query) {
     return Promise.resolve().then(() => {
       return renderDatatable($container, definition, {
         auth,
-        url: '/* @echo C3DATA_LOCATIONS_URL */',
+        url: '/* @echo C3DATA_LOCATION_NOTES_URL */',
 
-        newButtonLabel: 'New Locker Location',
-        newButtonFragment: `locations/${opt}/new`,
+        newButtonLabel: 'New Locker Location Note',
+        newButtonFragment: `location_notes/${opt}/new`,
 
         stateSaveWebStorageKey,
 
@@ -91,7 +92,7 @@ function renderLocationsPage(app, $container, router, auth, opt, query) {
       });
     }).then(() => {
       app.setBreadcrumb(breadcrumbs, true);
-      app.setTitle('Locker Locations');
+      app.setTitle('Locker Location Notes');
     }, (error) => {
       console.error(error); // eslint-disable-line no-console
     });

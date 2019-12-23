@@ -59,7 +59,7 @@
     "includeMultiSelect": true,
     "includeMap": false,
     "includeFullCalendar": false,
-    "includeDatePicker": false,
+    "includeDatePicker": true,
     "includeLogin": false,
     "includeRangePicker": false,
     "includeMoment": true,
