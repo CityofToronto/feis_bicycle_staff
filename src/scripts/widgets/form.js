@@ -107,7 +107,7 @@ function renderForm($container, definition, model, options = {}) {
   };
 
   definition.removeCore = definition.removeCore || function (id, url, { auth }) {
-    ajaxes({
+    return ajaxes({
       url: `${url}('${id}')`,
       method: 'DELETE',
       beforeSend(jqXHR) {
