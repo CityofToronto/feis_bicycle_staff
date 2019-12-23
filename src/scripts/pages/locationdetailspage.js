@@ -50,9 +50,19 @@ function renderLocationDetailsPage(app, $container, router, auth, opt, id, query
                 <a href="#locations/${opt}/${finalId}" class="nav-link">Location</a>
               </li>
 
-              <li class="nav-item" role="presentation" class="disabled">
+              <!--
+              <li class="nav-item" role="presentation">
+                <a href="#locations/${opt}/${finalId}/inspections/all" class="nav-link">Notes</a>
+              </li>
+
+              <li class="nav-item" role="presentation">
                 <a href="#locations/${opt}/${finalId}/inspections/all" class="nav-link">Inspections</a>
               </li>
+
+              <li class="nav-item" role="presentation">
+                <a href="#locations/${opt}/${finalId}/inspections/all" class="nav-link">Lockers</a>
+              </li>
+              -->
             </ul>
           </div>
         `);
@@ -92,8 +102,14 @@ function renderLocationDetailsPage(app, $container, router, auth, opt, id, query
         sections: location_form_sections
       };
 
-      const model = new Backbone.Model(data);
-      let snapShot = toSnapShot(data);
+      const Model = Backbone.Model.extend({
+        defaults: {
+          municipality: 'Toronto',
+          province: 'Ontario',
+        }
+      });
+      const model = new Model(data);
+      let snapShot = toSnapShot(model.toJSON());
 
       return Promise.resolve().then(() => {
         return renderForm($('<div></div>').appendTo($container), definition, model, {
