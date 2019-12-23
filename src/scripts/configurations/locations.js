@@ -121,6 +121,34 @@ const locations_datatable_columns = () => ({
     data: 'alternate_contact_alternate_phone'
   },
 
+  latest_note__date: {
+    title: 'Latest Note Date',
+    className: 'minWidth',
+    data: 'latest_note__date',
+    type: 'date',
+    render(data) {
+      const dataMoment = moment(data);
+      if (dataMoment.isValid()) {
+        return dataMoment.format('YYYY/MM/DD h:mm:ss A');
+      } else {
+        return '';
+      }
+    }
+  },
+  latest_note__note: {
+    title: 'Latest Note',
+    className: 'minWidth',
+    data: 'latest_note__note',
+    type: 'date',
+    render(data) {
+      if (data) {
+        return data.replace(/(?:\r\n|\r|\n)/g, '<br>');
+      } else {
+        return '';
+      }
+    }
+  },
+
   __CreatedOn: {
     title: 'Created On',
     className: 'minWidth',

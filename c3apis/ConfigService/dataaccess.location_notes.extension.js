@@ -114,15 +114,16 @@ function updateLocation(content, request, uriInfo, response) {
         }),
         headers: {
           Authorization: request.getHeader('Authorization'),
-          'Content-Type': 'application/json; charset=UTF-8',
-          'X-HTTP-Method-Override': 'PATCH'
+          FromDataaccess: true,
+          'Content-Type': 'application/json; charset=UTF-8'
+          // 'X-HTTP-Method-Override': 'PATCH'
         },
-        method: 'PUT',
+        method: 'PATCH',
         uri: common.DA_LOCATIONS_URL + '(\'' + location + '\')'
       }, function okFunction(okResponse) {
-        mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
+        // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
       }, function errorFunction(errorResponse) {
-        mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);
+        // mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);
       });
     }
   }, function errorFunction(errorResponse) {
