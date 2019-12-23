@@ -1,30 +1,238 @@
 /* global Backbone */
-/* global auth__checkLogin query__objectToString */
+/* global auth__checkLogin fixButtonLinks query__objectToString */
 
 /* exported renderHomePage */
 function renderHomePage(app, $container, router, auth) {
+
+  // Login is required
   return auth__checkLogin(auth).then((isLoggedIn) => {
+
+    // Redirect to the login page
     if (!isLoggedIn) {
       const query = query__objectToString({ redirect: Backbone.history.getFragment() });
       router.navigate(`login?${query}`, { trigger: true });
       return;
     }
 
+    // Render content
     $container.html(`
-      <h2>Home Page</h2>
+      <h2>Entities</h2>
 
       <div class="row">
-        <div class="col-sm-10">
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sit amet efficitur neque. Sed finibus placerat metus, a sagittis lectus. Proin id lacus non tortor posuere convallis et ut magna. Proin aliquet ultrices mauris. Nunc convallis fringilla nulla, sit amet viverra leo iaculis sed. Donec gravida est ut purus tempor, eget tincidunt mi cursus. Aliquam rutrum hendrerit pulvinar. Sed varius aliquet ante eget suscipit. Vestibulum euismod tortor nisl, eu hendrerit lectus blandit tempus. Aenean mattis elementum metus ut accumsan. Duis non dolor non dolor gravida aliquet. Curabitur tempor tincidunt consectetur. Nulla commodo urna vitae felis egestas feugiat. Mauris ultrices nisl porta, sodales sapien in, sagittis velit.</p>
+        <div class="col-sm-4">
+          <h3>Locations</h3>
 
-          <p>Nunc sed facilisis tellus. Nam a mauris eget sapien malesuada feugiat sed ac erat. Sed a vulputate risus. Phasellus in erat a libero aliquet venenatis. Vivamus et nunc sit amet nulla finibus semper. Nulla ultrices est ut est vestibulum euismod. Duis lobortis venenatis efficitur. Quisque molestie sapien tellus, vitae malesuada enim placerat id. Aliquam feugiat nunc at blandit malesuada.</p>
+          <div class="list-group">
+            <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+              <span class="badge badge-locations-all"></span>
+              All
+            </a>
+          </div>
+        </div>
 
-          <p>Fusce vel venenatis augue, id congue felis. Pellentesque posuere iaculis purus, vel lacinia nunc finibus et. Quisque dignissim erat vitae velit convallis ultrices. Maecenas tempus, massa sit amet efficitur pellentesque, nibh tortor blandit tortor, sit amet viverra sem nisi sit amet velit. Morbi ornare augue id nisl ornare vehicula. Sed et ligula sed mauris ornare lacinia. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed commodo in ligula ut pellentesque. Donec aliquam cursus felis tempus euismod.</p>
+        <div class="col-sm-4">
+          <h3>Location Notes</h3>
+
+          <div class="list-group">
+            <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+              <span class="badge badge-locations-all"></span>
+              All
+            </a>
+          </div>
+        </div>
+
+        <div class="col-sm-4">
+          <h3>Location Inspections</h3>
+
+          <div class="list-group">
+            <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+              <span class="badge badge-locations-all"></span>
+              All
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-4">
+          <h3>Lockers</h3>
+
+          <div class="list-group">
+            <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+              <span class="badge badge-locations-all"></span>
+              All
+            </a>
+          </div>
+        </div>
+
+        <div class="col-sm-4">
+          <h3>Locker Notes</h3>
+
+          <div class="list-group">
+            <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+              <span class="badge badge-locations-all"></span>
+              All
+            </a>
+          </div>
+        </div>
+
+        <div class="col-sm-4">
+          <h3>Locker Inspections</h3>
+
+          <div class="list-group">
+            <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+              <span class="badge badge-locations-all"></span>
+              All
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-4">
+          <h3>Stations</h3>
+
+          <div class="list-group">
+            <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+              <span class="badge badge-locations-all"></span>
+              All
+            </a>
+          </div>
+        </div>
+
+        <div class="col-sm-4">
+          <h3>Station Notes</h3>
+
+          <div class="list-group">
+            <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+              <span class="badge badge-locations-all"></span>
+              All
+            </a>
+          </div>
+        </div>
+
+        <div class="col-sm-4">
+          <h3>Station Inspections</h3>
+
+          <div class="list-group">
+            <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+              <span class="badge badge-locations-all"></span>
+              All
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-4">
+          <h3>Key Fobs</h3>
+
+          <div class="list-group">
+            <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+              <span class="badge badge-locations-all"></span>
+              All
+            </a>
+          </div>
+        </div>
+
+        <div class="col-sm-4">
+          <h3>Key Fob Notes</h3>
+
+          <div class="list-group">
+            <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+              <span class="badge badge-locations-all"></span>
+              All
+            </a>
+          </div>
+        </div>
+
+        <div class="col-sm-4">
+          <h3>Key Fob Inspections</h3>
+
+          <div class="list-group">
+            <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+              <span class="badge badge-locations-all"></span>
+              All
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-4">
+          <h3>Customers</h3>
+
+          <div class="list-group">
+            <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+              <span class="badge badge-locations-all"></span>
+              All
+            </a>
+          </div>
+        </div>
+
+        <div class="col-sm-4">
+          <h3>Customer Notes</h3>
+
+          <div class="list-group">
+            <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+              <span class="badge badge-locations-all"></span>
+              All
+            </a>
+          </div>
+        </div>
+
+        <div class="col-sm-4">
+          <h3>Customer Notifications</h3>
+
+          <div class="list-group">
+            <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+              <span class="badge badge-locations-all"></span>
+              All
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-4">
+          <h3>Payments</h3>
+
+          <div class="list-group">
+            <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+              <span class="badge badge-locations-all"></span>
+              All
+            </a>
+          </div>
+        </div>
+
+        <div class="col-sm-4">
+          <h3>Payment Notes</h3>
+
+          <div class="list-group">
+            <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+              <span class="badge badge-locations-all"></span>
+              All
+            </a>
+          </div>
+        </div>
+
+        <div class="col-sm-4">
+          <h3>Payment Notifications</h3>
+
+          <div class="list-group">
+            <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+              <span class="badge badge-locations-all"></span>
+              All
+            </a>
+          </div>
         </div>
       </div>
     `);
 
-    app.setBreadcrumb([{ name: app.name, link: '#home' }, { name: 'Login' }], true);
-    app.setTitle(app.name, { documentTitle: `Login - ${app.name}` });
+    fixButtonLinks($container)
+
+    // Set title and breadcrumb
+    app.setBreadcrumb([{ name: app.name }], true);
+    app.setTitle(app.name);
   });
 }

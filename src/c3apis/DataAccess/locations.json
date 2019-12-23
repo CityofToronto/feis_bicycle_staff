@@ -1,0 +1,17 @@
+{
+  "site_name": "string",
+  "civic_address": "string",
+  "municipality": "string",
+  "province": "string",
+  "postal_code": "string",
+  "primary_contact_first_name": "string",
+  "primary_contact_last_name": "string",
+  "primary_contact_email": "email@domain.ca",
+  "primary_contact_primary_phone": "416-555-5555",
+  "primary_contact_alternate_phone": "416-555-5555",
+  "alternate_contact_first_name": "string",
+  "alternate_contact_last_name": "string",
+  "alternate_contact_email": "email@domain.ca",
+  "alternate_contact_primary_phone": "416-555-5555",
+  "alternate_contact_alternate_phone": "416-555-5555"
+}
