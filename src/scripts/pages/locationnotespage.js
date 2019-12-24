@@ -29,7 +29,7 @@ function renderLocationNotesPage(app, $container, router, auth, opt, query) {
 
     const views = [
       {
-        title: 'All',
+        title: 'All Location Notes',
         fragment: `location_notes/all?${query__objectToString({ resetState: 'yes' })}`
       }
     ];
@@ -47,7 +47,7 @@ function renderLocationNotesPage(app, $container, router, auth, opt, query) {
     switch (opt) {
       default:
         breadcrumbs.push({ name: 'All' });
-        $container.append('<h2>All Notes</h2>');
+        $container.append('<h2>All Location Notes</h2>');
         views[0].isCurrent = true;
         stateSaveWebStorageKey = `location_notes__${opt}`;
 
@@ -83,7 +83,7 @@ function renderLocationNotesPage(app, $container, router, auth, opt, query) {
         auth,
         url: '/* @echo C3DATA_LOCATION_NOTES_URL */',
 
-        newButtonLabel: 'New Locker Location Note',
+        newButtonLabel: 'New Location Note',
         newButtonFragment: `location_notes/${opt}/new`,
 
         stateSaveWebStorageKey,
@@ -92,7 +92,7 @@ function renderLocationNotesPage(app, $container, router, auth, opt, query) {
       });
     }).then(() => {
       app.setBreadcrumb(breadcrumbs, true);
-      app.setTitle('Locker Location Notes');
+      app.setTitle('Location Notes');
     }, (error) => {
       console.error(error); // eslint-disable-line no-console
     });
