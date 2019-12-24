@@ -25,7 +25,7 @@ function renderLocationNotesPage(app, $container, router, auth, opt, query) {
     } = query__stringToObject(query);
     $container.html(`<p><a href="#${redirectToFragment}">Back to ${redirectTo}</a></p>`);
 
-    const breadcrumbs = [{ name: app.name, link: '#home' }, { name: 'Locker Location Notes', link: '#location_notes' }];
+    const breadcrumbs = [{ name: app.name, link: '#home' }, { name: 'Location Notes', link: '#location_notes' }];
 
     const views = [
       {
