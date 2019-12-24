@@ -25,11 +25,11 @@ function renderLocationsPage(app, $container, router, auth, opt, query) {
     } = query__stringToObject(query);
     $container.html(`<p><a href="#${redirectToFragment}">Back to ${redirectTo}</a></p>`);
 
-    const breadcrumbs = [{ name: app.name, link: '#home' }, { name: 'Locker Locations', link: '#locations' }];
+    const breadcrumbs = [{ name: app.name, link: '#home' }, { name: 'Locations', link: '#locations' }];
 
     const views = [
       {
-        title: 'All',
+        title: 'All Locations',
         fragment: `locations/all?${query__objectToString({ resetState: 'yes' })}`
       }
     ];
@@ -85,7 +85,7 @@ function renderLocationsPage(app, $container, router, auth, opt, query) {
         auth,
         url: '/* @echo C3DATA_LOCATIONS_URL */',
 
-        newButtonLabel: 'New Locker Location',
+        newButtonLabel: 'New Location',
         newButtonFragment: `locations/${opt}/new`,
 
         stateSaveWebStorageKey,
@@ -94,7 +94,7 @@ function renderLocationsPage(app, $container, router, auth, opt, query) {
       });
     }).then(() => {
       app.setBreadcrumb(breadcrumbs, true);
-      app.setTitle('Locker Locations');
+      app.setTitle('Locations');
     }, (error) => {
       console.error(error); // eslint-disable-line no-console
     });

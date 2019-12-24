@@ -36,12 +36,12 @@ function afterDelete(content, request, uriInfo, response) {
   ajax.request({
     headers: { Authorization: request.getHeader('Authorization') },
     method: 'GET',
-    uri: common.DA_LOCATION_NOTES_URL + '?$select=' + select + '&$filter=' + filter
+    uri: common.DA_LOCATION_NOTES_URL + '?$select=' + select + '&$filter=' + filter + '&$top=1'
   }, function okFunction(okResponse) {
     // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
     var json = JSON.parse(okResponse.body);
     if (json.value && json.value.length > 0) {
-      throw 'Cannot this delete entity';
+      throw 'This entity cannot be deleted.';
     }
   }, function errorFunction(errorResponse) {
     // mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);
