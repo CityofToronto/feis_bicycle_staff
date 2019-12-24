@@ -13,7 +13,7 @@ function renderLocationNoteDetailsPage(app, $container, router, auth, opt, id, q
       return;
     }
 
-    const breadcrumbs = [{ name: app.name, link: '#home' }, { name: 'Locker Location Notes', link: '#location_notes' }];
+    const breadcrumbs = [{ name: app.name, link: '#home' }, { name: 'Location Notes', link: '#location_notes' }];
     switch (opt) {
       default:
         breadcrumbs.push({ name: 'All', link: `#location_notes/all` });
@@ -101,18 +101,18 @@ function renderLocationNoteDetailsPage(app, $container, router, auth, opt, id, q
           auth,
           url: '/* @echo C3DATA_LOCATION_NOTES_URL */',
 
-          saveButtonLabel: (model) => model.isNew() ? 'Create Locker Location Note' : 'Update Locker Location Note',
+          saveButtonLabel: (model) => model.isNew() ? 'Create Location Note' : 'Update Location Note',
 
           cancelButtonLabel: 'Cancel',
           cancelButtonFragment: `location_notes/${opt}`,
 
-          removeButtonLabel: 'Remove Locker Location',
+          removeButtonLabel: 'Remove Location Note',
           removePromptValue: 'DELETE'
         });
       }).then(() => {
         if (id === 'new') {
-          app.setBreadcrumb(breadcrumbs.concat({ name: 'New Locker Location Note' }), true);
-          app.setTitle('New Locker Location Note');
+          app.setBreadcrumb(breadcrumbs.concat({ name: 'New Location Note' }), true);
+          app.setTitle('New Location Note');
         } else {
           app.setBreadcrumb(breadcrumbs.concat({ name: data.date }), true);
           app.setTitle(data.site_name);

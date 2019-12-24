@@ -129,7 +129,7 @@ const locations_datatable_columns = () => ({
     render(data) {
       const dataMoment = moment(data);
       if (dataMoment.isValid()) {
-        return dataMoment.format('YYYY/MM/DD h:mm:ss A');
+        return dataMoment.format('YYYY/MM/DD');
       } else {
         return '';
       }
@@ -157,7 +157,7 @@ const locations_datatable_columns = () => ({
     render(data) {
       const dataMoment = moment(data);
       if (dataMoment.isValid()) {
-        return dataMoment.format('YYYY/MM/DD h:mm:ss A');
+        return dataMoment.format('YYYY/MM/DD h:mm A');
       } else {
         return '';
       }
@@ -171,7 +171,7 @@ const locations_datatable_columns = () => ({
     render(data) {
       const dataMoment = moment(data);
       if (dataMoment.isValid()) {
-        return dataMoment.format('YYYY/MM/DD h:mm:ss A');
+        return dataMoment.format('YYYY/MM/DD h:mm A');
       } else {
         return '';
       }
