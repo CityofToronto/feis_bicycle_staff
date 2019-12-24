@@ -1,4 +1,4 @@
-/* global moment */
+/* global $ moment */
 
 /* exported location_notes_datatable_columns */
 const location_notes_datatable_columns = () => ({
@@ -56,7 +56,7 @@ const location_notes_datatable_columns = () => ({
     render(data) {
       const dataMoment = moment(data);
       if (dataMoment.isValid()) {
-        return dataMoment.format('YYYY/MM/DD h:mm:ss A');
+        return dataMoment.format('YYYY/MM/DD h:mm A');
       } else {
         return '';
       }
@@ -70,7 +70,7 @@ const location_notes_datatable_columns = () => ({
     render(data) {
       const dataMoment = moment(data);
       if (dataMoment.isValid()) {
-        return dataMoment.format('YYYY/MM/DD h:mm:ss A');
+        return dataMoment.format('YYYY/MM/DD h:mm A');
       } else {
         return '';
       }
@@ -121,21 +121,62 @@ const location_note_form_sections = (auth) => [
             },
             choicesMap(data) {
               if (data && data.value) {
-                return data.value.map((item) => {
+                return data.value.sort((a, b) => {
+                  const a_site_name = a.site_name.toLowerCase();
+                  const b_site_name = b.site_name.toLowerCase();
+                  if (a_site_name > b_site_name) {
+                    return 1;
+                  }
+                  if (a_site_name < b_site_name) {
+                    return -1;
+                  }
+                  return 0;
+                }).map((item) => {
                   return {
                     text: item.site_name,
                     value: item.id
                   }
                 });
               }
-
-              return []
+              return [];
+            },
+            postRender({ model, field }) {
+              function displayHandler() {
+                if (model.isNew()) {
+                  $(`#${field.id}Element`).removeClass('hide');
+                } else {
+                  $(`#${field.id}Element`).addClass('hide');
+                }
+              }
+              displayHandler();
+              model.on(`change:${model.idAttribute}`, displayHandler);
             }
           },
-      //   ]
-      // },
-      // {
-      //   fields: [
+          {
+            title: 'Locker Location',
+            bindTo: 'location__site_name',
+            required: true,
+            className: 'col-sm-8',
+            type: 'text',
+            htmlAttr: { readonly: true },
+            postRender({ model, field }) {
+              function valueHandler() {
+                $(`#${field.id}`).val(model.get(field.bindTo));
+              }
+              valueHandler();
+              model.on(`change:${field.bindTo}`, valueHandler);
+
+              function displayHandler() {
+                if (model.isNew()) {
+                  $(`#${field.id}Element`).addClass('hide');
+                } else {
+                  $(`#${field.id}Element`).removeClass('hide');
+                }
+              }
+              displayHandler();
+              model.on(`change:${model.idAttribute}`, displayHandler);
+            }
+          },
           {
             title: 'Date',
             bindTo: 'date',
