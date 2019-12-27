@@ -36,6 +36,7 @@ core.embeddedApp.createTasks(gulp, {
       C3DATA_PAYMENT_NOTES_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/payment_notes',
       C3DATA_PAYMENT_NOTIFICATIONS_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/payment_inspections',
 
+      C3DATAMEDIA_LOCATION_INSPECTION_CHOICES: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/Media(\\\'location_inspection_choices.json\\\')/$value',
       C3DATAMEDIA_PROVINCE_CHOICES: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/Media(\\\'province_choices.json\\\')/$value'
     },
     dev: {},
