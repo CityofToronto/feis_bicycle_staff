@@ -12,5 +12,9 @@
   "parserOptions": {
     "ecmaVersion": 2018
   },
-  "rules": {}
+  "rules": {
+    "arrow-parens": "warn",
+    "no-console": "warn",
+    "semi": "warn"
+  }
 }

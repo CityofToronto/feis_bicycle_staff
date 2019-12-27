@@ -78,8 +78,8 @@ function renderLocationNoteDetailsPage(app, $container, router, auth, opt, id, q
             renderNavBar(data.id);
 
             router.navigate(`location_notes/${opt}/${data.id}`, { trigger: false, replace: true });
-            app.setBreadcrumb(breadcrumbs.concat({ name: data.site_name }), true);
-            app.setTitle(data.site_name);
+            app.setBreadcrumb(breadcrumbs.concat({ name: data.date }), true);
+            app.setTitle(`${data.date} Note`);
 
             return { data, textStatus, jqXHR };
           });
@@ -90,7 +90,7 @@ function renderLocationNoteDetailsPage(app, $container, router, auth, opt, id, q
 
       const Model = Backbone.Model.extend({
         defaults: {
-          date: moment().format('YYYY/MM/DD')
+          date: moment().format('YYYY/MM/DD h:mm A')
         }
       });
       const model = new Model(data);
@@ -115,7 +115,7 @@ function renderLocationNoteDetailsPage(app, $container, router, auth, opt, id, q
           app.setTitle('New Location Note');
         } else {
           app.setBreadcrumb(breadcrumbs.concat({ name: data.date }), true);
-          app.setTitle(data.site_name);
+          app.setTitle(`${data.date} Note`);
         }
 
         return () => {

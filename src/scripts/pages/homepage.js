@@ -45,7 +45,7 @@ function renderHomePage(app, $container, router, auth) {
           <h3>Location Inspections</h3>
 
           <div class="list-group">
-            <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+            <a href="#location_inspections/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
               <span class="badge badge-locations-all"></span>
               All
             </a>

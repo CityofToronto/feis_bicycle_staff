@@ -1,7 +1,7 @@
 /* global moment */
 
-/* exported location_notes_datatable_columns */
-const location_notes_datatable_columns = () => ({
+/* exported location_inspections_datatable_columns */
+const location_inspections_datatable_columns = () => ({
   action: {
     title: 'Action',
     className: 'excludeFromButtons openButtonWidth',
@@ -23,10 +23,19 @@ const location_notes_datatable_columns = () => ({
     render(data) {
       const dataMoment = moment(data);
       if (dataMoment.isValid()) {
-        return dataMoment.format('YYYY/MM/DD h:mm A');
+        return dataMoment.format('YYYY/MM/DD');
       } else {
         return '';
       }
+    }
+  },
+  result: {
+    title: 'Result',
+    className: 'minWidth',
+    data: 'result',
+    choices: [{ text: 'Unknown' }, { text: 'OK' }, { text: 'Problems' }],
+    render(data) {
+      return `<span class="label label-${data === 'OK' ? 'success' : data === 'Problems' ? 'danger' : 'default'}" style="font-size: 90%;">${data}</span>`;
     }
   },
   note: {
@@ -95,8 +104,8 @@ const location_notes_datatable_columns = () => ({
   }
 });
 
-/* exported location_note_form_sections */
-const location_note_form_sections = (auth) => [
+/* exported location_inspection_form_sections */
+const location_inspection_form_sections = (auth) => [
   {
     title: 'Details',
 
@@ -154,6 +163,15 @@ const location_note_form_sections = (auth) => [
             options: {
               format: 'YYYY/MM/DD h:mm A'
             }
+          },
+          {
+            title: 'Result',
+            bindTo: 'result',
+            required: true,
+            className: 'col-sm-4',
+            type: 'radio',
+            choices: [{ text: 'Unknown' }, { text: 'OK' }, { text: 'Problems' }],
+            orientation: 'horizontal'
           }
         ]
       },
