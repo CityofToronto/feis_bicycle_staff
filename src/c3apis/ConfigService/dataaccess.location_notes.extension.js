@@ -11,139 +11,174 @@ function afterQuery(content, request, uriInfo, response) { // eslint-disable-lin
 }
 
 function beforeContentParse(content, request, uriInfo, response) { // eslint-disable-line no-unused-vars
-  const json = JSON.parse(content.toString());
-  const method = request.getMethod();
-
-  if (method === 'PUT') {
-    const select = encodeURIComponent('id,location');
-    const filter = encodeURIComponent(`id eq '${json.id}'`);
-    ajax.request({
-      headers: { Authorization: request.getHeader('Authorization') },
-      method: 'GET',
-      uri: `${common.DA_LOCATION_NOTES_URL}?$select=${select}&$filter=${filter}`
-    }, function okFunction(okResponse) {
-      // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
-      const body = JSON.parse(okResponse.body);
-      if (body.value && body.value.length > 0 && body.value[0].location !== json.location) {
-        throw 'The entities location attribute cannot be updated.'
-      }
-    }, function errorFunction(errorResponse) {
-      // mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);
-    });
+  if (common.SSJS_DISABLED) {
+    return;
   }
 
-  if (content.has('location__site_name')) {
-    content.remove('location__site_name');
-  }
-  const select = encodeURIComponent('id,site_name');
-  const filter = encodeURIComponent(`id eq '${json.location}'`);
-  ajax.request({
-    headers: { Authorization: request.getHeader('Authorization') },
-    method: 'GET',
-    uri: `${common.DA_LOCATIONS_URL}?$select=${select}&$filter=${filter}`
-  }, function okFunction(okResponse) {
-    // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
-    const body = JSON.parse(okResponse.body);
-    if (body.value && body.value.length > 0) {
-      content.addProperty('location__site_name', body.value[0].site_name);
-    }
-  }, function errorFunction(errorResponse) {
-    // mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);
-  });
+  cleanupLocation(content, request);
 
+  setLocationSiteName(content, request);
 
-  if (method === 'POST') {
-    if (content.has('__Status')) {
-      content.remove('__Status');
-    }
-
-    content.addProperty('__Status', 'Active');
-  }
+  setStatus(content, request);
 }
 
 function afterCreate(content, request, uriInfo, response) { // eslint-disable-line no-unused-vars
-  updateLocation(content, request, uriInfo, response);
+  if (common.SSJS_DISABLED) {
+    return;
+  }
+
+  updateLocation(content, request);
 }
 
 function afterUpdate(content, request, uriInfo, response) { // eslint-disable-line no-unused-vars
-  updateLocation(content, request, uriInfo, response);
+  if (common.SSJS_DISABLED) {
+    return;
+  }
+
+  updateLocation(content, request);
 }
 
 function afterDelete(content, request, uriInfo, response) { // eslint-disable-line no-unused-vars
-  updateLocation(content, request, uriInfo, response);
+  if (common.SSJS_DISABLED) {
+    return;
+  }
+
+  updateLocation(content, request);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function updateLocation(content, request, uriInfo, response) {
-  const json = JSON.parse(content.toString());
-  const method = request.getMethod();
+function setLocationSiteName(content, request) {
+  if (content.has('location__site_name')) {
+    content.remove('location__site_name');
+  }
 
+  const select = encodeURIComponent('site_name');
+
+  ajax.request({
+    headers: { Authorization: request.getHeader('Authorization') },
+    method: 'GET',
+    uri: `${common.DA_LOCATIONS_URL}('${content.get('location').getAsString()}')?$select=${select}`
+  }, function okFunction(okResponse) {
+    const body = JSON.parse(okResponse.body);
+    content.addProperty('location__site_name', body.site_name);
+
+    // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
+  }, function errorFunction(errorResponse) { // eslint-disable-line no-unused-vars
+    // mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);
+  });
+}
+
+function setStatus(content, request) {
+  if (request.getMethod() !== 'POST') {
+    return;
+  }
+
+  if (content.has('__Status')) {
+    content.remove('__Status');
+  }
+
+  content.addProperty('__Status', 'Active');
+}
+
+function cleanupLocation(content, request) {
+  if (request.getMethod() !== 'PUT') {
+    return;
+  }
+
+  const select = encodeURIComponent('location');
+  ajax.request({
+    headers: { Authorization: request.getHeader('Authorization') },
+    method: 'GET',
+    uri: `${common.DA_LOCATION_NOTES_URL}('${content.get('id').getAsString()}')?$select=${select}`
+  }, function okFunction(okResponse) {
+    const body = JSON.parse(okResponse.body);
+    if (body.location !== content.get('location').getAsString()) {
+      updateLocation(content, request, { 'location': body.location, '__Status': 'Inactive' });
+    }
+
+    // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
+  }, function errorFunction(errorResponse) { // eslint-disable-line no-unused-vars
+    // mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);
+  });
+}
+
+function updateLocation(content, request, {
+  id = content.get('id').getAsString(),
+  location = content.get('location').getAsString(),
+  date = content.get('date').getAsString(),
+  note = content.get('note').getAsString(),
+  __Status: status = content.get('__Status').getAsString()
+} = {}) {
   const select = encodeURIComponent('id,date,note');
-  const filter = encodeURIComponent(`location eq '${json.location}' and __Status eq 'Active'`);
+  const filter = encodeURIComponent(`location eq '${location}' and __Status eq 'Active'`);
   const orderby = encodeURIComponent('date desc');
   const top = encodeURIComponent('2');
+
   ajax.request({
     headers: { Authorization: request.getHeader('Authorization') },
     method: 'GET',
     uri: `${common.DA_LOCATION_NOTES_URL}?$select=${select}&$filter=${filter}&$orderby=${orderby}&$top=${top}`
   }, function okFunction(okResponse) {
-    // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
-
     const body = JSON.parse(okResponse.body);
-
-    if (body.value && body.value.length > 0) {
-      if (method === 'DELETE' || json['__Status'] !== 'Active') {
-        if (body.value[1] && body.value[1].id === json.id) {
-          body.value.splice(1, 1);
-        } else if (body.value[0] && body.value[0].id === json.id) {
-          body.value.splice(0, 1);
-        }
-      } else {
-        if (body.value[0] && body.value[0].id === json.id) {
-          body.value[0].date = json.date;
-          body.value[0].note = json.note;
-        } else if (body.value[1] && body.value[1].id === json.id) {
-          body.value[1].date = json.date;
-          body.value[1].note = json.note;
-        } else {
-          body.value.push({ id: json.id, date: json.data, note: json.note });
-        }
+    if (request.getMethod() === 'DELETE' || status !== 'Active') {
+      if (body.value[1] && body.value[1].id === id) {
+        body.value.splice(1, 1);
+      } else if (body.value[0] && body.value[0].id === id) {
+        body.value.splice(0, 1);
       }
-
-      body.value.sort((a, b) => {
-        const a_date = new Date(a.date).getDate();
-        const b_date = new Date(b.date).getDate();
-        if (a_date > b_date) {
-          return -1;
-        }
-        if (a_date < b_date) {
-          return 1;
-        }
-        return 0;
-      });
-
-      ajax.request({
-        data: JSON.stringify({
-          latest_note: body.value[0].id,
-          latest_note__date: body.value[0].date,
-          latest_note__note: body.value[0].note
-        }),
-        headers: {
-          Authorization: request.getHeader('Authorization'),
-          'Content-Type': 'application/json; charset=UTF-8',
-          FromDataaccess: true,
-          'X-HTTP-Method-Override': 'PATCH'
-        },
-        method: 'POST',
-        uri: `${common.DA_LOCATIONS_URL}('${json.location}')`
-      }, function okFunction(okResponse) {
-        // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
-      }, function errorFunction(errorResponse) {
-        // mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);
-      });
+    } else {
+      if (body.value[1] && body.value[1].id === id) {
+        body.value[1].date = date;
+        body.value[1].note = note;
+      } else if (body.value[1] && body.value[0].id === id) {
+        body.value[0].date = date;
+        body.value[0].note = note;
+      } else {
+        body.value.push({ id, date, note });
+      }
     }
-  }, function errorFunction(errorResponse) {
+
+    body.value.sort((a, b) => {
+      const a_date = new Date(a.date).getDate();
+      const b_date = new Date(b.date).getDate();
+      if (a_date > b_date) {
+        return -1;
+      }
+      if (a_date < b_date) {
+        return 1;
+      }
+      return 0;
+    });
+
+    const data = {};
+    if (body.value.length > 0) {
+      data.latest_note = body.value[0].id;
+      data.latest_note__date = body.value[0].date;
+      data.latest_note__note = body.value[0].note;
+    } else {
+      data.latest_note = null;
+      data.latest_note__date = null;
+      data.latest_note__note = null;
+    }
+    ajax.request({
+      data: JSON.stringify(data),
+      headers: {
+        Authorization: request.getHeader('Authorization'),
+        'Content-Type': 'application/json; charset=UTF-8',
+        'X-HTTP-Method-Override': 'PATCH'
+      },
+      method: 'POST',
+      uri: `${common.DA_LOCATIONS_URL}('${location}')`
+
+    }, function okFunction(okResponse) { // eslint-disable-line no-unused-vars
+      // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
+    }, function errorFunction(errorResponse) { // eslint-disable-line no-unused-vars
+      // mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);
+    });
+
+    // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
+  }, function errorFunction(errorResponse) { // eslint-disable-line no-unused-vars
     // mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);
   });
 }

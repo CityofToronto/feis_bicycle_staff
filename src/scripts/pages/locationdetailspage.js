@@ -116,7 +116,7 @@ function renderLocationDetailsPage(app, $container, router, auth, opt, id, query
           auth,
           url: '/* @echo C3DATA_LOCATIONS_URL */',
 
-          saveButtonLabel: (model) => model.isNew() ? 'Create cker Location' : 'Update Location',
+          saveButtonLabel: (model) => model.isNew() ? 'Create Location' : 'Update Location',
 
           cancelButtonLabel: 'Cancel',
           cancelButtonFragment: `locations/${opt}`,
@@ -149,7 +149,7 @@ function renderLocationDetailsPage(app, $container, router, auth, opt, id, query
       renderAlert($container, '<p>An error occured while fetching data.</p>', {
         bootstrayType: 'danger',
         position: 'bottom'
-      })
+      });
 
       console.error(error); // eslint-disable-line no-console
     });

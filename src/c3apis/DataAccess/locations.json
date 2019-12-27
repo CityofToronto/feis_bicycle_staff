@@ -1,9 +1,9 @@
 {
   "site_name": "string",
   "civic_address": "string",
-  "municipality": "string",
-  "province": "string",
-  "postal_code": "string",
+  "municipality": "Toronto",
+  "province": "Ontario",
+  "postal_code": "M4B 1B5",
   "primary_contact_first_name": "string",
   "primary_contact_last_name": "string",
   "primary_contact_email": "email@domain.ca",
@@ -13,5 +13,12 @@
   "alternate_contact_last_name": "string",
   "alternate_contact_email": "email@domain.ca",
   "alternate_contact_primary_phone": "416-555-5555",
-  "alternate_contact_alternate_phone": "416-555-5555"
+  "alternate_contact_alternate_phone": "416-555-5555",
+  "latest_note": "string",
+  "latest_note__date": "2019-12-23T00:00:00.000-05:00",
+  "latest_note__note": "string",
+  "latest_inspection": "string",
+  "latest_inspection__date": "2019-12-23T00:00:00.000-05:00",
+  "latest_inspection__result": "OK",
+  "latest_inspection__note": "string"
 }

@@ -1,13 +1,13 @@
 /* global Backbone */
 /* global auth__checkLogin query__objectToString query__stringToObject */
 /* global renderDatatable */
-/* global location_notes_datatable_columns */
+/* global location_inspections_datatable_columns */
 
 /* exported renderLocationInspectionsPage */
 function renderLocationInspectionsPage(app, $container, router, auth, opt, query) {
   if (opt == null) {
     const query = query__objectToString({ resetState: 'yes' });
-    router.navigate(`location_notes/all?${query}`, { trigger: true, replace: true });
+    router.navigate(`location_inspections/all?${query}`, { trigger: true, replace: true });
     return;
   }
 
@@ -25,12 +25,12 @@ function renderLocationInspectionsPage(app, $container, router, auth, opt, query
     } = query__stringToObject(query);
     $container.html(`<p><a href="#${redirectToFragment}">Back to ${redirectTo}</a></p>`);
 
-    const breadcrumbs = [{ name: app.name, link: '#home' }, { name: 'Locker Location Notes', link: '#location_notes' }];
+    const breadcrumbs = [{ name: app.name, link: '#home' }, { name: 'Location Inspections', link: '#location_notes' }];
 
     const views = [
       {
-        title: 'All Location Notes',
-        fragment: `location_notes/all?${query__objectToString({ resetState: 'yes' })}`
+        title: 'All Location Inspections',
+        fragment: `location_inspections/all?${query__objectToString({ resetState: 'yes' })}`
       }
     ];
 
@@ -42,25 +42,25 @@ function renderLocationInspectionsPage(app, $container, router, auth, opt, query
 
     let stateSaveWebStorageKey;
 
-    const datatable_columns = location_notes_datatable_columns();
+    const datatable_columns = location_inspections_datatable_columns();
 
     switch (opt) {
       default:
         breadcrumbs.push({ name: 'All' });
-        $container.append('<h2>All Location Notes</h2>');
+        $container.append('<h2>All Location Inspections</h2>');
         views[0].isCurrent = true;
-        stateSaveWebStorageKey = `location_notes__${opt}`;
+        stateSaveWebStorageKey = `location_inspections__${opt}`;
 
         definition.columns.push(
           Object.assign({}, datatable_columns.action, {
             render(data) {
-              const href = `#location_notes/${opt}/${data}?${query__objectToString({ resetState: 'yes' })}`;
+              const href = `#location_inspections/${opt}/${data}?${query__objectToString({ resetState: 'yes' })}`;
               return `<a href="${href}" class="btn btn-default dblclick-target">Open</a>`;
             }
           }),
 
-          datatable_columns.location__site_name,
           datatable_columns.date,
+          datatable_columns.result,
           datatable_columns.note,
 
           datatable_columns.__CreatedOn,
@@ -69,7 +69,7 @@ function renderLocationInspectionsPage(app, $container, router, auth, opt, query
           datatable_columns.__Status
         );
 
-        definition.order.push([1, 'asc']);
+        definition.order.push([1, 'desc']);
 
         definition.searchCols[definition.columns.length - 1] = { search: 'Active' };
     }
@@ -81,10 +81,10 @@ function renderLocationInspectionsPage(app, $container, router, auth, opt, query
     return Promise.resolve().then(() => {
       return renderDatatable($container, definition, {
         auth,
-        url: '/* @echo C3DATA_LOCATION_NOTES_URL */',
+        url: '/* @echo C3DATA_LOCATION_INSPECTIONS_URL */',
 
-        newButtonLabel: 'New Location Note',
-        newButtonFragment: `location_notes/${opt}/new`,
+        newButtonLabel: 'New Location Inspection',
+        newButtonFragment: `location_inspections/${opt}/new`,
 
         stateSaveWebStorageKey,
 
@@ -92,7 +92,7 @@ function renderLocationInspectionsPage(app, $container, router, auth, opt, query
       });
     }).then(() => {
       app.setBreadcrumb(breadcrumbs, true);
-      app.setTitle('Location Notes');
+      app.setTitle('Location Inspections');
     }, (error) => {
       console.error(error); // eslint-disable-line no-console
     });

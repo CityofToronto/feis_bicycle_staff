@@ -14,13 +14,11 @@ function afterQuery(content, request, uriInfo, response) {// eslint-disable-line
 
 function beforeContentParse(content, request, uriInfo, response) {
   // eslint-disable-line no-unused-vars
-  if (request.getMethod() === 'POST') {
-    if (content.has('__Status')) {
-      content.remove('__Status');
-    }
-
-    content.addProperty('__Status', 'Active');
+  if (common.SSJS_DISABLED) {
+    return;
   }
+
+  setStatus(content, request);
 }
 
 function afterCreate(content, request, uriInfo, response) {// eslint-disable-line no-unused-vars
@@ -31,19 +29,66 @@ function afterUpdate(content, request, uriInfo, response) {// eslint-disable-lin
 
 function afterDelete(content, request, uriInfo, response) {
   // eslint-disable-line no-unused-vars
-  var select = encodeURIComponent('id');
+  if (common.SSJS_DISABLED) {
+    return;
+  }
+
+  assertLocationNotes(content, request);
+  assertLocationInspections(content, request);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function setStatus(content, request) {
+  if (request.getMethod() !== 'POST') {
+    return;
+  }
+
+  if (content.has('__Status')) {
+    content.remove('__Status');
+  }
+
+  content.addProperty('__Status', 'Active');
+}
+
+function assertLocationNotes(content, request) {
   var filter = encodeURIComponent('location eq \'' + content.get('id').getAsString() + '\'');
+  var select = encodeURIComponent('id');
+  var top = encodeURIComponent('1');
+
   ajax.request({
     headers: { Authorization: request.getHeader('Authorization') },
     method: 'GET',
-    uri: common.DA_LOCATION_NOTES_URL + '?$select=' + select + '&$filter=' + filter + '&$top=1'
+    uri: common.DA_LOCATION_NOTES_URL + '?$filter=' + filter + '&$select=' + select + '&$top=' + top
   }, function okFunction(okResponse) {
-    // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
-    var json = JSON.parse(okResponse.body);
-    if (json.value && json.value.length > 0) {
+    var body = JSON.parse(okResponse.body);
+    if (body.value && body.value.length > 0) {
       throw 'This entity cannot be deleted.';
     }
-  }, function errorFunction(errorResponse) {
+
+    // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
+  }, function errorFunction(errorResponse) {// eslint-disable-line no-unused-vars
+    // mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);
+  });
+}
+
+function assertLocationInspections(content, request) {
+  var filter = encodeURIComponent('location eq \'' + content.get('id').getAsString() + '\'');
+  var select = encodeURIComponent('id');
+  var top = encodeURIComponent('1');
+
+  ajax.request({
+    headers: { Authorization: request.getHeader('Authorization') },
+    method: 'GET',
+    uri: common.DA_LOCATION_INSPECTIONS_URL + '?$filter=' + filter + '&$select=' + select + '&$top=' + top
+  }, function okFunction(okResponse) {
+    var body = JSON.parse(okResponse.body);
+    if (body.value && body.value.length > 0) {
+      throw 'This entity cannot be deleted.';
+    }
+
+    // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
+  }, function errorFunction(errorResponse) {// eslint-disable-line no-unused-vars
     // mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);
   });
 }

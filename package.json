@@ -75,9 +75,9 @@
     "c3api-build": "gulp c3api_build",
     "c3api-build-minify": "gulp c3api_build_minify",
     "c3api-config": "gulp c3api_config",
-    "c3api-config-item": "gulp c3api_config --suffix dataaccess.location_notes.extension.js",
+    "c3api-config-item": "gulp c3api_config --suffix dataaccess.location_inspections.extension.js",
     "c3api-dataaccess": "gulp c3api_dataaccess",
-    "c3api-dataaccess-item": "gulp c3api_dataaccess --localPath c3apis/DataAccess/location_inspections.json",
+    "c3api-dataaccess-item": "gulp c3api_dataaccess --localPath c3apis/DataAccess/location_notes.json",
     "c3api-media": "gulp c3api_dataaccess_media"
   }
 }

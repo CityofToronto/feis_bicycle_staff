@@ -2,7 +2,7 @@
 /* global ajaxes auth__checkLogin fixButtonLinks modal__showConfirm query__objectToString query__stringToObject
    renderAlert toSnapShot */
 /* global renderForm */
-/* global location_note_form_sections */
+/* global location_inspection_form_sections */
 
 /* exported renderLocationInspectionDetailsPage */
 function renderLocationInspectionDetailsPage(app, $container, router, auth, opt, id, query) {
@@ -13,15 +13,15 @@ function renderLocationInspectionDetailsPage(app, $container, router, auth, opt,
       return;
     }
 
-    const breadcrumbs = [{ name: app.name, link: '#home' }, { name: 'Location Notes', link: '#location_notes' }];
+    const breadcrumbs = [{ name: app.name, link: '#home' }, { name: 'Location Inspections', link: '#location_inspections' }];
     switch (opt) {
       default:
-        breadcrumbs.push({ name: 'All', link: `#location_notes/all` });
+        breadcrumbs.push({ name: 'All', link: `#location_inspections/all` });
     }
 
     const {
-      redirectTo = 'Location Notes',
-      redirectToFragment = `location_notes/${opt}`
+      redirectTo = 'Location Inspections',
+      redirectToFragment = `location_inspections/${opt}`
     } = query__stringToObject(query);
     $container.html(`<p><a href="#${redirectToFragment}">Back to ${redirectTo}</a></p>`);
 
@@ -35,7 +35,7 @@ function renderLocationInspectionDetailsPage(app, $container, router, auth, opt,
           },
           contentType: 'application/json; charset=utf-8',
           method: 'GET',
-          url: `/* @echo C3DATA_LOCATION_NOTES_URL */('${id}')`
+          url: `/* @echo C3DATA_LOCATION_INSPECTIONS_URL */('${id}')`
         });
       }
 
@@ -47,7 +47,7 @@ function renderLocationInspectionDetailsPage(app, $container, router, auth, opt,
           <div class="navbar">
             <ul class="nav nav-tabs">
               <li class="nav-item active" role="presentation">
-                <a href="#location_notes/${opt}/${finalId}" class="nav-link">Location Note</a>
+                <a href="#location_notes/${opt}/${finalId}" class="nav-link">Location Inspection</a>
               </li>
             </ul>
           </div>
@@ -77,20 +77,21 @@ function renderLocationInspectionDetailsPage(app, $container, router, auth, opt,
             snapShot = toSnapShot(data);
             renderNavBar(data.id);
 
-            router.navigate(`location_notes/${opt}/${data.id}`, { trigger: false, replace: true });
+            router.navigate(`location_inspections/${opt}/${data.id}`, { trigger: false, replace: true });
             app.setBreadcrumb(breadcrumbs.concat({ name: data.site_name }), true);
-            app.setTitle(data.site_name);
+            app.setTitle(`${data.date} Inspection`);
 
             return { data, textStatus, jqXHR };
           });
         },
 
-        sections: location_note_form_sections(auth)
+        sections: location_inspection_form_sections(auth)
       };
 
       const Model = Backbone.Model.extend({
         defaults: {
-          date: moment().format('YYYY/MM/DD')
+          date: moment().format('YYYY/MM/DD h:mm A'),
+          result: 'OK'
         }
       });
       const model = new Model(data);
@@ -99,23 +100,23 @@ function renderLocationInspectionDetailsPage(app, $container, router, auth, opt,
       return Promise.resolve().then(() => {
         return renderForm($('<div></div>').appendTo($container), definition, model, {
           auth,
-          url: '/* @echo C3DATA_LOCATION_NOTES_URL */',
+          url: '/* @echo C3DATA_LOCATION_INSPECTIONS_URL */',
 
-          saveButtonLabel: (model) => model.isNew() ? 'Create Location Note' : 'Update Location Note',
+          saveButtonLabel: (model) => model.isNew() ? 'Create Location Inspection' : 'Update Location Inspection',
 
           cancelButtonLabel: 'Cancel',
-          cancelButtonFragment: `location_notes/${opt}`,
+          cancelButtonFragment: `location_inspections/${opt}`,
 
-          removeButtonLabel: 'Remove Location Note',
+          removeButtonLabel: 'Remove Location Inspection',
           removePromptValue: 'DELETE'
         });
       }).then(() => {
         if (id === 'new') {
-          app.setBreadcrumb(breadcrumbs.concat({ name: 'New Location Note' }), true);
-          app.setTitle('New Location Note');
+          app.setBreadcrumb(breadcrumbs.concat({ name: 'New Location Inspection' }), true);
+          app.setTitle('New Location Inspection');
         } else {
           app.setBreadcrumb(breadcrumbs.concat({ name: data.date }), true);
-          app.setTitle(data.site_name);
+          app.setTitle(`${data.date} Inspection`);
         }
 
         return () => {

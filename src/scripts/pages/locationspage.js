@@ -62,8 +62,9 @@ function renderLocationsPage(app, $container, router, auth, opt, query) {
           datatable_columns.site_name,
           datatable_columns.address,
 
-          datatable_columns.latest_note__date,
           datatable_columns.latest_note__note,
+
+          datatable_columns.latest_inspection__result,
 
           datatable_columns.__CreatedOn,
           datatable_columns.__ModifiedOn,

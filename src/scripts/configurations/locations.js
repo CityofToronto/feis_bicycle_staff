@@ -12,7 +12,7 @@ const locations_datatable_columns = () => ({
   },
 
   site_name: {
-    title: 'Name',
+    title: 'Site Name',
     className: 'minWidth',
     data: 'site_name'
   },
@@ -129,7 +129,7 @@ const locations_datatable_columns = () => ({
     render(data) {
       const dataMoment = moment(data);
       if (dataMoment.isValid()) {
-        return dataMoment.format('YYYY/MM/DD');
+        return dataMoment.format('YYYY/MM/DD h:mm A');
       } else {
         return '';
       }
@@ -139,7 +139,42 @@ const locations_datatable_columns = () => ({
     title: 'Latest Note',
     className: 'minWidth',
     data: 'latest_note__note',
+    render(data) {
+      if (data) {
+        return data.replace(/(?:\r\n|\r|\n)/g, '<br>');
+      } else {
+        return '';
+      }
+    }
+  },
+
+  latest_inspection__date: {
+    title: 'Latest Inspection Date',
+    className: 'minWidth',
+    data: 'latest_inspection__date',
     type: 'date',
+    render(data) {
+      const dataMoment = moment(data);
+      if (dataMoment.isValid()) {
+        return dataMoment.format('YYYY/MM/DD h:mm A');
+      } else {
+        return '';
+      }
+    }
+  },
+  latest_inspection__result: {
+    title: 'Latest Inspection Result',
+    className: 'minWidth',
+    data: 'latest_inspection__result',
+    choices: [{ text: 'Unknown' }, { text: 'OK' }, { text: 'Problems' }],
+    render(data) {
+      return `<span class="label label-${data === 'OK' ? 'success' : data === 'Problems' ? 'danger' : 'default'}" style="font-size: 90%;">${data}</span>`;
+    }
+  },
+  latest_inspection__note: {
+    title: 'Latest Inspection Note',
+    className: 'minWidth',
+    data: 'latest_inspection__note',
     render(data) {
       if (data) {
         return data.replace(/(?:\r\n|\r|\n)/g, '<br>');
