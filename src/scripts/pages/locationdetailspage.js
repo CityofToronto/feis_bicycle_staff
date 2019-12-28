@@ -50,7 +50,6 @@ function renderLocationDetailsPage(app, $container, router, auth, opt, id, query
                 <a href="#locations/${opt}/${finalId}" class="nav-link">Location</a>
               </li>
 
-              <!--
               <li class="nav-item" role="presentation">
                 <a href="#locations/${opt}/${finalId}/inspections/all" class="nav-link">Notes</a>
               </li>
@@ -59,6 +58,7 @@ function renderLocationDetailsPage(app, $container, router, auth, opt, id, query
                 <a href="#locations/${opt}/${finalId}/inspections/all" class="nav-link">Inspections</a>
               </li>
 
+              <!--
               <li class="nav-item" role="presentation">
                 <a href="#locations/${opt}/${finalId}/inspections/all" class="nav-link">Lockers</a>
               </li>
