@@ -64,7 +64,7 @@ function renderLocationNotesPage(app, $container, router, auth, opt, query) {
           location_notes_datatable_columns.__Status
         );
 
-        definition.order.push([1, 'asc']);
+        definition.order.push([2, 'desc']);
 
         definition.searchCols[definition.columns.length - 1] = { search: 'Active' };
     }

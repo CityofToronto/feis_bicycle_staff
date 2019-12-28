@@ -140,8 +140,8 @@ function updateLocation(content, request, {
     }
 
     body.value.sort((a, b) => {
-      const a_date = new Date(a.date).getDate();
-      const b_date = new Date(b.date).getDate();
+      const a_date = new Date(a.date).getTime();
+      const b_date = new Date(b.date).getTime();
       if (a_date > b_date) {
         return -1;
       }

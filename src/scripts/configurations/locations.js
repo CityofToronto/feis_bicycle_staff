@@ -191,7 +191,11 @@ const locations_datatable_columns = {
       url: '/* @echo C3DATAMEDIA_LOCATION_INSPECTION_CHOICES */'
     },
     render(data) {
-      return `<span class="label label-${data === 'OK' ? 'success' : data === 'Problems' ? 'danger' : 'default'}" style="font-size: 90%;">${data}</span>`;
+      if (data) {
+        return `<span class="label label-${data === 'OK' ? 'success' : data === 'Problems' ? 'danger' : 'default'}" style="font-size: 90%;">${data}</span>`;
+      }
+
+      return '';
     }
   }),
   latest_inspection__note: {
@@ -254,131 +258,112 @@ const locations_datatable_columns = {
   }
 };
 
-/* exported location_form_sections */
-const location_form_sections = () => [
-  {
-    title: 'Details',
+/* exported locations_form_fields */
+const locations_form_fields = {
+  site_name: {
+    title: 'Site Name',
+    bindTo: 'site_name',
+    required: true
+  },
 
-    rows: [
-      {
-        fields: [
-          {
-            title: 'Site Name',
-            bindTo: 'site_name',
-            required: true,
-            className: 'col-sm-8'
-          }
-        ]
+  civic_address: {
+    title: 'Street Address',
+    bindTo: 'civic_address'
+  },
+  municipality: {
+    title: 'City',
+    bindTo: 'municipality'
+  },
+  province: (auth) => ({
+    title: 'Province',
+    bindTo: 'province',
+    type: 'dropdown',
+    choices: {
+      beforeSend(jqXHR) {
+        if (auth && auth.sId) {
+          jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+        }
       },
-      {
-        fields: [
-          {
-            title: 'Street Address',
-            bindTo: 'civic_address',
-            className: 'col-sm-8'
-          }
-        ]
-      },
-      {
-        fields: [
-          {
-            title: 'City',
-            bindTo: 'municipality'
-          },
-          {
-            title: 'Province',
-            bindTo: 'province',
-            type: 'dropdown',
-            choices: '/* @echo C3DATAMEDIA_PROVINCE_CHOICES */'
-          },
-          {
-            title: 'Postal Code',
-            bindTo: 'postal_code',
-            validationtype: 'PostalCode'
-          }
-        ]
-      }
-    ]
-  }, {
-    title: 'Contacts',
+      contentType: 'application/json; charset=utf-8',
+      method: 'GET',
+      url: '/* @echo C3DATAMEDIA_PROVINCE_CHOICES */'
+    },
+  }),
+  postal_code: {
+    title: 'Postal Code',
+    bindTo: 'postal_code'
+  },
 
-    rows: [
-      {
-        fields: [
-          {
-            type: 'html',
-            html: '<h4>Primary Contact</h4>'
-          }
-        ]
-      },
-      {
-        fields: [
-          {
-            title: 'First Name',
-            bindTo: 'primary_contact_first_name',
-            className: 'col-sm-4'
-          },
-          {
-            title: 'Last Name',
-            bindTo: 'primary_contact_last_name',
-            className: 'col-sm-4'
-          }
-        ]
-      },
-      {
-        fields: [
-          {
-            title: 'Email',
-            bindTo: 'primary_contact_email'
-          },
-          {
-            title: 'Primary Phone',
-            bindTo: 'primary_contact_primary_phone'
-          },
-          {
-            title: 'Alternate Phone',
-            bindTo: 'primary_contact_alternate_phone'
-          }
-        ]
-      },
-      {
-        fields: [
-          {
-            type: 'html',
-            html: '<h4>Alternate Contact</h4>'
-          }
-        ]
-      },
-      {
-        fields: [
-          {
-            title: 'First Name',
-            bindTo: 'alternate_contact_first_name',
-            className: 'col-sm-4'
-          },
-          {
-            title: 'Last Name',
-            bindTo: 'alternate_contact_last_name',
-            className: 'col-sm-4'
-          }
-        ]
-      },
-      {
-        fields: [
-          {
-            title: 'Email',
-            bindTo: 'alternate_contact_email'
-          },
-          {
-            title: 'Primary Phone',
-            bindTo: 'alternate_contact_primary_phone'
-          },
-          {
-            title: 'Alternate Phone',
-            bindTo: 'alternate_contact_alternate_phone'
-          }
-        ]
-      }
-    ]
+  primary_contact_first_name: {
+    title: 'First Name (Primary Contact)',
+    bindTo: 'primary_contact_first_name'
+  },
+  primary_contact_last_name: {
+    title: 'Last Name (Primary Contact)',
+    bindTo: 'primary_contact_last_name'
+  },
+  primary_contact_email: {
+    title: 'Email (Primary Contact)',
+    bindTo: 'primary_contact_email'
+  },
+  primary_contact_primary_phone: {
+    title: 'Primary Phone (Primary Contact)',
+    bindTo: 'primary_contact_primary_phone'
+  },
+  primary_contact_alternate_phone: {
+    title: 'Alternate Phone (Primary Contact)',
+    bindTo: 'primary_contact_alternate_phone'
+  },
+
+  alternate_contact_first_name: {
+    title: 'First Name (Alternate Contact)',
+    bindTo: 'alternate_contact_first_name'
+  },
+  alternate_contact_last_name: {
+    title: 'Last Name (Alternate Contact)',
+    bindTo: 'alternate_contact_last_name'
+  },
+  alternate_contact_email: {
+    title: 'Email (Alternate Contact)',
+    bindTo: 'alternate_contact_email'
+  },
+  alternate_contact_primary_phone: {
+    title: 'Primary Phone (Alternate Contact)',
+    bindTo: 'alternate_contact_primary_phone'
+  },
+  alternate_contact_alternate_phone: {
+    title: 'Alternate Phone (Alternate Contact)',
+    bindTo: 'alternate_contact_alternate_phone'
+  },
+
+  latest_note__date: {
+    title: 'Latest Note Date',
+    bindTo: 'latest_note__date',
+    htmlAttr: { readonly: true }
+  },
+  latest_note__note: {
+    title: 'Latest Note',
+    bindTo: 'latest_note__note',
+    type: 'textarea',
+    rows: 5,
+    htmlAttr: { readonly: true }
+  },
+
+  latest_inspection__date: {
+    title: 'Latest Inspection Date',
+    bindTo: 'latest_inspection__date',
+    htmlAttr: { readonly: true }
+  },
+  latest_inspection__result: {
+    title: 'Latest Inspection Result',
+    bindTo: 'latest_inspection__result',
+    htmlAttr: { readonly: true }
+  },
+  latest_inspection__note: {
+    title: 'Latest Inspection Note',
+    bindTo: 'latest_inspection__note',
+    type: 'textarea',
+    rows: 5,
+    htmlAttr: { readonly: true }
   }
-];
+};

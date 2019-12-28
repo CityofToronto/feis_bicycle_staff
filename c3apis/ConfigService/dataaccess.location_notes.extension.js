@@ -152,8 +152,8 @@ function updateLocation(content, request) {
     }
 
     body.value.sort(function (a, b) {
-      var a_date = new Date(a.date).getDate();
-      var b_date = new Date(b.date).getDate();
+      var a_date = new Date(a.date).getTime();
+      var b_date = new Date(b.date).getTime();
       if (a_date > b_date) {
         return -1;
       }

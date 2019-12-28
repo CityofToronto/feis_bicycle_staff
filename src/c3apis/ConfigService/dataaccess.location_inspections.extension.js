@@ -110,7 +110,7 @@ function updateLocation(content, request, {
   result = content.get('result').getAsString(),
   __Status: status = content.get('__Status').getAsString()
 } = {}) {
-  const select = encodeURIComponent('id,date,note');
+  const select = encodeURIComponent('id,date,note,result');
   const filter = encodeURIComponent(`location eq '${location}' and __Status eq 'Active'`);
   const orderby = encodeURIComponent('date desc');
   const top = encodeURIComponent('2');
@@ -142,8 +142,8 @@ function updateLocation(content, request, {
     }
 
     body.value.sort((a, b) => {
-      const a_date = new Date(a.date).getDate();
-      const b_date = new Date(b.date).getDate();
+      const a_date = new Date(a.date).getTime();
+      const b_date = new Date(b.date).getTime();
       if (a_date > b_date) {
         return -1;
       }
@@ -174,7 +174,6 @@ function updateLocation(content, request, {
       },
       method: 'POST',
       uri: `${common.DA_LOCATIONS_URL}('${location}')`
-
     }, function okFunction(okResponse) { // eslint-disable-line no-unused-vars
       // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
     }, function errorFunction(errorResponse) { // eslint-disable-line no-unused-vars

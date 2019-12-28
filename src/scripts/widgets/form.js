@@ -160,28 +160,40 @@ function renderForm($container, definition, model, options = {}) {
           fields: [
             {
               title: 'Created On',
-              bindTo: '__CreatedOn',
+              // bindTo: '__CreatedOn',
               required: true,
               htmlAttr: { readOnly: true },
 
               postRender({ field }) {
-                model.on(`change:${field.bindTo}`, () => {
-                  $(`#${field.id}`).val(moment(model.get(field.bindTo)).format('YYYY/MM/DD h:mm A'));
-                });
-                $(`#${field.id}`).val(moment(model.get(field.bindTo)).format('YYYY/MM/DD h:mm A'));
+                function handler() {
+                  const momentDate = moment(model.get('__CreatedOn'));
+                  if (momentDate.isValid()) {
+                    $(`#${field.id}`).val(momentDate.format('YYYY/MM/DD h:mm A'));
+                  } else {
+                    $(`#${field.id}`).val('');
+                  }
+                }
+                model.on(`change:__CreatedOn`, handler);
+                handler();
               }
             },
             {
               title: 'Modified On',
-              bindTo: '__ModifiedOn',
+              // bindTo: '__ModifiedOn',
               required: true,
               htmlAttr: { readOnly: true },
 
               postRender({ field }) {
-                model.on(`change:${field.bindTo}`, () => {
-                  $(`#${field.id}`).val(moment(model.get(field.bindTo)).format('YYYY/MM/DD h:mm A'));
-                });
-                $(`#${field.id}`).val(moment(model.get(field.bindTo)).format('YYYY/MM/DD h:mm A'));
+                function handler() {
+                  const momentDate = moment(model.get('__ModifiedOn'));
+                  if (momentDate.isValid()) {
+                    $(`#${field.id}`).val(momentDate.format('YYYY/MM/DD h:mm A'));
+                  } else {
+                    $(`#${field.id}`).val('');
+                  }
+                }
+                model.on(`change:__ModifiedOn`, handler);
+                handler();
               }
             },
             {
@@ -209,7 +221,7 @@ function renderForm($container, definition, model, options = {}) {
             $section.removeClass('hide');
           }
         };
-        model.on('change:id', handler);
+        model.on(`change:${model.idAttribute}`, handler);
         handler();
       }
     });
