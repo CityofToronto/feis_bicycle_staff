@@ -42,8 +42,6 @@ function renderLocationInspectionsPage(app, $container, router, auth, opt, query
 
     let stateSaveWebStorageKey;
 
-    const datatable_columns = location_inspections_datatable_columns();
-
     switch (opt) {
       default:
         breadcrumbs.push({ name: 'All' });
@@ -52,21 +50,20 @@ function renderLocationInspectionsPage(app, $container, router, auth, opt, query
         stateSaveWebStorageKey = `location_inspections__${opt}`;
 
         definition.columns.push(
-          Object.assign({}, datatable_columns.action, {
-            render(data) {
-              const href = `#location_inspections/${opt}/${data}?${query__objectToString({ resetState: 'yes' })}`;
-              return `<a href="${href}" class="btn btn-default dblclick-target">Open</a>`;
-            }
-          }),
+          location_inspections_datatable_columns.action(`location_inspections/${opt}`),
 
-          datatable_columns.date,
-          datatable_columns.result,
-          datatable_columns.note,
+          location_inspections_datatable_columns.location__site_name,
 
-          datatable_columns.__CreatedOn,
-          datatable_columns.__ModifiedOn,
-          datatable_columns.__Owner,
-          datatable_columns.__Status
+          location_inspections_datatable_columns.date,
+
+          location_inspections_datatable_columns.result(auth),
+
+          location_inspections_datatable_columns.note,
+
+          location_inspections_datatable_columns.__CreatedOn,
+          location_inspections_datatable_columns.__ModifiedOn,
+          location_inspections_datatable_columns.__Owner,
+          location_inspections_datatable_columns.__Status
         );
 
         definition.order.push([1, 'desc']);

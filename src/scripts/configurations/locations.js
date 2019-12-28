@@ -1,15 +1,19 @@
 /* global moment */
-/* global oData__escapeValue */
+/* global oData__escapeValue query__objectToString */
 
 /* exported locations_datatable_columns */
-const locations_datatable_columns = () => ({
-  action: {
+const locations_datatable_columns = {
+  action: (fragmentPrefix) => ({
     title: 'Action',
     className: 'excludeFromButtons openButtonWidth',
     data: 'id',
     orderable: false,
+    render(data) {
+      const href = `#${fragmentPrefix}/${data}?${query__objectToString({ resetState: 'yes' })}`;
+      return `<a href="${href}" class="btn btn-default dblclick-target">Open</a>`;
+    },
     searchable: false
-  },
+  }),
 
   site_name: {
     title: 'Site Name',
@@ -27,11 +31,21 @@ const locations_datatable_columns = () => ({
     className: 'minWidth',
     data: 'municipality'
   },
-  province: {
+  province: (auth) => ({
     title: 'Province',
     className: 'minWidth',
-    data: 'province'
-  },
+    data: 'province',
+    choices: {
+      beforeSend(jqXHR) {
+        if (auth && auth.sId) {
+          jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+        }
+      },
+      contentType: 'application/json; charset=utf-8',
+      method: 'GET',
+      url: '/* @echo C3DATAMEDIA_PROVINCE_CHOICES */'
+    },
+  }),
   postal_code: {
     title: 'Postal Code',
     className: 'minWidth',
@@ -137,7 +151,7 @@ const locations_datatable_columns = () => ({
   },
   latest_note__note: {
     title: 'Latest Note',
-    className: 'minWidth',
+    className: 'minWidthLarge',
     data: 'latest_note__note',
     render(data) {
       if (data) {
@@ -162,18 +176,27 @@ const locations_datatable_columns = () => ({
       }
     }
   },
-  latest_inspection__result: {
+  latest_inspection__result: (auth) => ({
     title: 'Latest Inspection Result',
     className: 'minWidth',
     data: 'latest_inspection__result',
-    choices: [{ text: 'Unknown' }, { text: 'OK' }, { text: 'Problems' }],
+    choices: {
+      beforeSend(jqXHR) {
+        if (auth && auth.sId) {
+          jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+        }
+      },
+      contentType: 'application/json; charset=utf-8',
+      method: 'GET',
+      url: '/* @echo C3DATAMEDIA_LOCATION_INSPECTION_CHOICES */'
+    },
     render(data) {
       return `<span class="label label-${data === 'OK' ? 'success' : data === 'Problems' ? 'danger' : 'default'}" style="font-size: 90%;">${data}</span>`;
     }
-  },
+  }),
   latest_inspection__note: {
     title: 'Latest Inspection Note',
-    className: 'minWidth',
+    className: 'minWidthLarge',
     data: 'latest_inspection__note',
     render(data) {
       if (data) {
@@ -229,7 +252,7 @@ const locations_datatable_columns = () => ({
       return `<span class="label label-${data === 'Active' ? 'success' : data === 'Inactive' ? 'danger' : 'default'}" style="font-size: 90%;">${data}</span>`;
     }
   }
-});
+};
 
 /* exported location_form_sections */
 const location_form_sections = () => [

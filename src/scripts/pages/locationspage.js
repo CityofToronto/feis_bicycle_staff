@@ -42,8 +42,6 @@ function renderLocationsPage(app, $container, router, auth, opt, query) {
 
     let stateSaveWebStorageKey;
 
-    const datatable_columns = locations_datatable_columns(auth);
-
     switch (opt) {
       default:
         breadcrumbs.push({ name: 'All' });
@@ -52,24 +50,38 @@ function renderLocationsPage(app, $container, router, auth, opt, query) {
         stateSaveWebStorageKey = `locations__${opt}`;
 
         definition.columns.push(
-          Object.assign({}, datatable_columns.action, {
-            render(data) {
-              const href = `#locations/${opt}/${data}?${query__objectToString({ resetState: 'yes' })}`;
-              return `<a href="${href}" class="btn btn-default dblclick-target">Open</a>`;
-            }
-          }),
+          locations_datatable_columns.action(`locations/${opt}`),
 
-          datatable_columns.site_name,
-          datatable_columns.address,
+          locations_datatable_columns.site_name,
 
-          datatable_columns.latest_note__note,
+          locations_datatable_columns.civic_address,
+          locations_datatable_columns.municipality,
+          locations_datatable_columns.province(auth),
+          locations_datatable_columns.postal_code,
 
-          datatable_columns.latest_inspection__result,
+          locations_datatable_columns.primary_contact_first_name,
+          locations_datatable_columns.primary_contact_last_name,
+          locations_datatable_columns.primary_contact_email,
+          locations_datatable_columns.primary_contact_primary_phone,
+          locations_datatable_columns.primary_contact_alternate_phone,
 
-          datatable_columns.__CreatedOn,
-          datatable_columns.__ModifiedOn,
-          datatable_columns.__Owner,
-          datatable_columns.__Status
+          locations_datatable_columns.alternate_contact_first_name,
+          locations_datatable_columns.alternate_contact_last_name,
+          locations_datatable_columns.alternate_contact_email,
+          locations_datatable_columns.alternate_contact_primary_phone,
+          locations_datatable_columns.alternate_contact_alternate_phone,
+
+          locations_datatable_columns.latest_note__date,
+          locations_datatable_columns.latest_note__note,
+
+          locations_datatable_columns.latest_inspection__date,
+          locations_datatable_columns.latest_inspection__result(auth),
+          locations_datatable_columns.latest_inspection__note,
+
+          locations_datatable_columns.__CreatedOn,
+          locations_datatable_columns.__ModifiedOn,
+          locations_datatable_columns.__Owner,
+          locations_datatable_columns.__Status
         );
 
         definition.order.push([1, 'asc']);

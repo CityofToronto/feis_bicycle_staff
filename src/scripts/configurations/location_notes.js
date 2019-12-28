@@ -1,20 +1,32 @@
 /* global moment */
+/* global query__objectToString */
 
 /* exported location_notes_datatable_columns */
-const location_notes_datatable_columns = () => ({
-  action: {
+const location_notes_datatable_columns = {
+  action: (fragmentPrefix) => ({
     title: 'Action',
     className: 'excludeFromButtons openButtonWidth',
     data: 'id',
     orderable: false,
+    render(data) {
+      const href = `#${fragmentPrefix}/${data}?${query__objectToString({ resetState: 'yes' })}`;
+      return `<a href="${href}" class="btn btn-default dblclick-target">Open</a>`;
+    },
     searchable: false
-  },
+  }),
 
   location: {
     title: 'Locker Location',
     className: 'minWidth',
     data: 'location'
   },
+
+  location__site_name: {
+    title: 'Locker Location',
+    className: 'minWidth',
+    data: 'location__site_name'
+  },
+
   date: {
     title: 'Date',
     className: 'minWidth',
@@ -29,6 +41,7 @@ const location_notes_datatable_columns = () => ({
       }
     }
   },
+
   note: {
     title: 'Note',
     className: 'minWidthLarge',
@@ -40,12 +53,6 @@ const location_notes_datatable_columns = () => ({
         return '';
       }
     }
-  },
-
-  location__site_name: {
-    title: 'Locker Location',
-    className: 'minWidth',
-    data: 'location__site_name'
   },
 
   __CreatedOn: {
@@ -93,7 +100,7 @@ const location_notes_datatable_columns = () => ({
       return `<span class="label label-${data === 'Active' ? 'success' : data === 'Inactive' ? 'danger' : 'default'}" style="font-size: 90%;">${data}</span>`;
     }
   }
-});
+};
 
 /* exported location_note_form_sections */
 const location_note_form_sections = (auth) => [
