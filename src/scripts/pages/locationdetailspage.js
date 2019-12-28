@@ -1,8 +1,8 @@
-/* global $ Backbone */
+/* global $ Backbone moment */
 /* global ajaxes auth__checkLogin fixButtonLinks modal__showConfirm query__objectToString query__stringToObject
    renderAlert toSnapShot */
 /* global renderForm */
-/* global location_form_sections */
+/* global locations_form_fields */
 
 /* exported renderLocationDetailsPage */
 function renderLocationDetailsPage(app, $container, router, auth, opt, id, query) {
@@ -72,9 +72,29 @@ function renderLocationDetailsPage(app, $container, router, auth, opt, id, query
         renderNavBar(id);
       }
 
+      const momentLatestNoteDate = moment(data.latest_note__date);
+      if (momentLatestNoteDate.isValid()) {
+        data.latest_note__date = momentLatestNoteDate.format('YYYY/MM/DD h:mm A');
+      }
+
+      const momentLatestInspectionDate = moment(data.latest_inspection__date);
+      if (momentLatestInspectionDate.isValid()) {
+        data.moment_latest_inspection__date = momentLatestInspectionDate.format('YYYY/MM/DD h:mm A');
+      }
+
       const definition = {
         successCore(data, options = {}) {
           const { auth, id, url } = options;
+
+          const momentLatestNoteDate = moment(data.latest_note__date, 'YYYY/MM/DD h:mm A');
+          if (momentLatestNoteDate.isValid()) {
+            data.latest_note__date = momentLatestNoteDate.format();
+          }
+
+          const momentLatestInspectionDate = moment(data.latest_inspection__date, 'YYYY/MM/DD h:mm A');
+          if (momentLatestInspectionDate.isValid()) {
+            data.moment_latest_inspection__date = momentLatestInspectionDate.format();
+          }
 
           return ajaxes({
             url: `${url}${id ? `('${id}')` : ''}`,
@@ -88,6 +108,16 @@ function renderLocationDetailsPage(app, $container, router, auth, opt, id, query
               }
             }
           }).then(({ data, textStatus, jqXHR }) => {
+            const momentLatestNoteDate = moment(data.latest_note__date);
+            if (momentLatestNoteDate.isValid()) {
+              data.latest_note__date = momentLatestNoteDate.format('YYYY/MM/DD h:mm A');
+            }
+
+            const momentLatestInspectionDate = moment(data.latest_inspection__date);
+            if (momentLatestInspectionDate.isValid()) {
+              data.moment_latest_inspection__date = momentLatestInspectionDate.format('YYYY/MM/DD h:mm A');
+            }
+
             snapShot = toSnapShot(data);
             renderNavBar(data.id);
 
@@ -99,7 +129,137 @@ function renderLocationDetailsPage(app, $container, router, auth, opt, id, query
           });
         },
 
-        sections: location_form_sections()
+        // sections: location_form_sections()
+        sections: [
+          {
+            title: 'Details',
+
+            rows: [
+              {
+                fields: [
+                  Object.assign({}, locations_form_fields.site_name, { className: 'col-sm-8' })
+                ]
+              },
+              {
+                fields: [
+                  Object.assign({}, locations_form_fields.civic_address, { className: 'col-sm-8' })
+                ]
+              },
+              {
+                fields: [
+                  locations_form_fields.municipality,
+                  locations_form_fields.province(auth),
+                  locations_form_fields.postal_code
+                ]
+              }
+            ]
+          },
+          {
+            title: 'Contacts',
+
+            rows: [
+              {
+                fields: [
+                  {
+                    type: 'html',
+                    html: '<h4>Primary Contact</h4>'
+                  }
+                ]
+              },
+              {
+                fields: [
+                  Object.assign({}, locations_form_fields.primary_contact_first_name, { title: 'First Name', className: 'col-sm-4' }),
+                  Object.assign({}, locations_form_fields.primary_contact_last_name, { title: 'Last Name', className: 'col-sm-4' })
+                ]
+              },
+              {
+                fields: [
+                  Object.assign({}, locations_form_fields.primary_contact_email, { title: 'Email' }),
+                  Object.assign({}, locations_form_fields.primary_contact_primary_phone, { title: 'Primary Phone' }),
+                  Object.assign({}, locations_form_fields.primary_contact_alternate_phone, { title: 'Alternate Phone' })
+                ]
+              },
+              {
+                fields: [
+                  {
+                    type: 'html',
+                    html: '<h4>Alternate Contact</h4>'
+                  }
+                ]
+              },
+              {
+                fields: [
+                  Object.assign({}, locations_form_fields.alternate_contact_first_name, { title: 'First Name', className: 'col-sm-4' }),
+                  Object.assign({}, locations_form_fields.alternate_contact_last_name, { title: 'Last Name', className: 'col-sm-4' })
+                ]
+              },
+              {
+                fields: [
+                  Object.assign({}, locations_form_fields.alternate_contact_email, { title: 'Email' }),
+                  Object.assign({}, locations_form_fields.alternate_contact_primary_phone, { title: 'Primary Phone' }),
+                  Object.assign({}, locations_form_fields.alternate_contact_alternate_phone, { title: 'Alternate Phone' })
+                ]
+              }
+            ]
+          },
+          {
+            title: 'Latest Note',
+            id: 'latest_note',
+            postRender({ model, section }) {
+              function handler() {
+                if (model.isNew()) {
+                  $(`#${section.id}`).hide();
+                } else {
+                  $(`#${section.id}`).show();
+                }
+              }
+              handler();
+              model.on(`change:${model.idAttribute}`, handler);
+            },
+
+            rows: [
+              {
+                fields: [
+                  Object.assign({}, locations_form_fields.latest_note__date, { title: 'Date', className: 'col-sm-4' })
+                ]
+              },
+              {
+                fields: [
+                  Object.assign({}, locations_form_fields.latest_note__note, { title: 'Note' })
+                ]
+              }
+            ]
+          },
+          {
+            title: 'Latest Inspection',
+            id: 'latest_inspection',
+            postRender({ model, section }) {
+              function handler() {
+                if (model.isNew()) {
+                  $(`#${section.id}`).hide();
+                } else {
+                  $(`#${section.id}`).show();
+                }
+              }
+              handler();
+              model.on(`change:${model.idAttribute}`, handler);
+            },
+
+            rows: [
+              {
+                fields: [
+                  Object.assign({}, locations_form_fields.latest_inspection__date, { title: 'Date', className: 'col-sm-4' }),
+                  Object.assign({}, locations_form_fields.latest_inspection__result, { title: 'Result', className: 'col-sm-4' })
+                ]
+              },
+              {
+                fields: [
+                  Object.assign({}, locations_form_fields.latest_inspection__note, { title: 'Note' })
+                ]
+              }
+            ]
+          }
+        ]
       };
 
       const Model = Backbone.Model.extend({

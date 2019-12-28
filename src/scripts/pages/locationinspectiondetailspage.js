@@ -58,9 +58,19 @@ function renderLocationInspectionDetailsPage(app, $container, router, auth, opt,
         renderNavBar(id);
       }
 
+      const momentDate = moment(data.date);
+      if (momentDate.isValid()) {
+        data.date = momentDate.format('YYYY/MM/DD h:mm A');
+      }
+
       const definition = {
         successCore(data, options = {}) {
           const { auth, id, url } = options;
+
+          const momentDate = moment(data.date, 'YYYY/MM/DD h:mm A');
+          if (momentDate.isValid()) {
+            data.date = momentDate.format();
+          }
 
           return ajaxes({
             url: `${url}${id ? `('${id}')` : ''}`,
@@ -74,6 +84,11 @@ function renderLocationInspectionDetailsPage(app, $container, router, auth, opt,
               }
             }
           }).then(({ data, textStatus, jqXHR }) => {
+            const momentDate = moment(data.date);
+            if (momentDate.isValid()) {
+              data.date = momentDate.format('YYYY/MM/DD h:mm A');
+            }
+
             snapShot = toSnapShot(data);
             renderNavBar(data.id);
 

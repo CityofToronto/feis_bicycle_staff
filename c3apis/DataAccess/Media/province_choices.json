@@ -1,41 +1,54 @@
 [
   {
-    "text": "Alberta"
+    "text": "Alberta",
+    "value": "Alberta"
   },
   {
-    "text": "British Columbia"
+    "text": "British Columbia",
+    "value": "British Columbia"
   },
   {
-    "text": "Manitoba"
+    "text": "Manitoba",
+    "value": "Manitoba"
   },
   {
-    "text": "New Brunswick"
+    "text": "New Brunswick",
+    "value": "New Brunswick"
   },
   {
-    "text": "Newfoundland and Labrador"
+    "text": "Newfoundland and Labrador",
+    "value": "Newfoundland and Labrador"
   },
   {
-    "text": "Northwest Territories"
+    "text": "Northwest Territories",
+    "value": "Northwest Territories"
   },
   {
-    "text": "Nova Scotia"
+    "text": "Nova Scotia",
+    "value": "Nova Scotia"
   },
   {
-    "text": "Nunavut"
+    "text": "Nunavut",
+    "value": "Nunavut"
   },
   {
-    "text": "Ontario"
+    "text": "Ontario",
+    "value": "Ontario"
   },
   {
-    "text": "Prince Edward Island"
+    "text": "Prince Edward Island",
+    "value": "Prince Edward Island"
   },
   {
-    "text": "Quebec"
+    "text": "Quebec",
+    "value": "Quebec"
   },
   {
-    "text": "Saskatchewan"
+    "text": "Saskatchewan",
+    "value": "Saskatchewan"
   },
   {
-    "text": "Yukon"
+    "text": "Yukon",
+    "value": "Yukon"
   }
 ]

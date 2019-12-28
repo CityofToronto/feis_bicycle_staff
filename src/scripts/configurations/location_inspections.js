@@ -1,20 +1,32 @@
 /* global moment */
+/* global query__objectToString */
 
 /* exported location_inspections_datatable_columns */
-const location_inspections_datatable_columns = () => ({
-  action: {
+const location_inspections_datatable_columns = {
+  action: (fragmentPrefix) => ({
     title: 'Action',
     className: 'excludeFromButtons openButtonWidth',
     data: 'id',
     orderable: false,
+    render(data) {
+      const href = `#${fragmentPrefix}/${data}?${query__objectToString({ resetState: 'yes' })}`;
+      return `<a href="${href}" class="btn btn-default dblclick-target">Open</a>`;
+    },
     searchable: false
-  },
+  }),
 
   location: {
     title: 'Locker Location',
     className: 'minWidth',
     data: 'location'
   },
+
+  location__site_name: {
+    title: 'Locker Location',
+    className: 'minWidth',
+    data: 'location__site_name'
+  },
+
   date: {
     title: 'Date',
     className: 'minWidth',
@@ -23,21 +35,32 @@ const location_inspections_datatable_columns = () => ({
     render(data) {
       const dataMoment = moment(data);
       if (dataMoment.isValid()) {
-        return dataMoment.format('YYYY/MM/DD');
+        return dataMoment.format('YYYY/MM/DD h:mm A');
       } else {
         return '';
       }
     }
   },
-  result: {
+
+  result: (auth) => ({
     title: 'Result',
     className: 'minWidth',
     data: 'result',
-    choices: [{ text: 'Unknown' }, { text: 'OK' }, { text: 'Problems' }],
+    choices: {
+      beforeSend(jqXHR) {
+        if (auth && auth.sId) {
+          jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+        }
+      },
+      contentType: 'application/json; charset=utf-8',
+      method: 'GET',
+      url: '/* @echo C3DATAMEDIA_LOCATION_INSPECTION_CHOICES */'
+    },
     render(data) {
       return `<span class="label label-${data === 'OK' ? 'success' : data === 'Problems' ? 'danger' : 'default'}" style="font-size: 90%;">${data}</span>`;
     }
-  },
+  }),
+
   note: {
     title: 'Note',
     className: 'minWidthLarge',
@@ -49,12 +72,6 @@ const location_inspections_datatable_columns = () => ({
         return '';
       }
     }
-  },
-
-  location__site_name: {
-    title: 'Locker Location',
-    className: 'minWidth',
-    data: 'location__site_name'
   },
 
   __CreatedOn: {
@@ -102,7 +119,7 @@ const location_inspections_datatable_columns = () => ({
       return `<span class="label label-${data === 'Active' ? 'success' : data === 'Inactive' ? 'danger' : 'default'}" style="font-size: 90%;">${data}</span>`;
     }
   }
-});
+};
 
 /* exported location_inspection_form_sections */
 const location_inspection_form_sections = (auth) => [

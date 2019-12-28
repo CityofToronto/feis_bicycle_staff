@@ -42,8 +42,6 @@ function renderLocationNotesPage(app, $container, router, auth, opt, query) {
 
     let stateSaveWebStorageKey;
 
-    const datatable_columns = location_notes_datatable_columns();
-
     switch (opt) {
       default:
         breadcrumbs.push({ name: 'All' });
@@ -52,24 +50,21 @@ function renderLocationNotesPage(app, $container, router, auth, opt, query) {
         stateSaveWebStorageKey = `location_notes__${opt}`;
 
         definition.columns.push(
-          Object.assign({}, datatable_columns.action, {
-            render(data) {
-              const href = `#location_notes/${opt}/${data}?${query__objectToString({ resetState: 'yes' })}`;
-              return `<a href="${href}" class="btn btn-default dblclick-target">Open</a>`;
-            }
-          }),
+          location_notes_datatable_columns.action(`location_notes/${opt}`),
 
-          datatable_columns.location__site_name,
-          datatable_columns.date,
-          datatable_columns.note,
+          location_notes_datatable_columns.location__site_name,
 
-          datatable_columns.__CreatedOn,
-          datatable_columns.__ModifiedOn,
-          datatable_columns.__Owner,
-          datatable_columns.__Status
+          location_notes_datatable_columns.date,
+
+          location_notes_datatable_columns.note,
+
+          location_notes_datatable_columns.__CreatedOn,
+          location_notes_datatable_columns.__ModifiedOn,
+          location_notes_datatable_columns.__Owner,
+          location_notes_datatable_columns.__Status
         );
 
-        definition.order.push([1, 'asc']);
+        definition.order.push([2, 'desc']);
 
         definition.searchCols[definition.columns.length - 1] = { search: 'Active' };
     }

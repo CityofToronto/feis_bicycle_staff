@@ -2,7 +2,7 @@
 /* global ajaxes auth__checkLogin fixButtonLinks modal__showConfirm query__objectToString query__stringToObject
    renderAlert toSnapShot */
 /* global renderForm */
-/* global location_note_form_sections */
+/* global location_notes_form_fields */
 
 /* exported renderLocationNoteDetailsPage */
 function renderLocationNoteDetailsPage(app, $container, router, auth, opt, id, query) {
@@ -58,9 +58,19 @@ function renderLocationNoteDetailsPage(app, $container, router, auth, opt, id, q
         renderNavBar(id);
       }
 
+      const momentDate = moment(data.date);
+      if (momentDate.isValid()) {
+        data.date = momentDate.format('YYYY/MM/DD h:mm A');
+      }
+
       const definition = {
         successCore(data, options = {}) {
           const { auth, id, url } = options;
+
+          const momentDate = moment(data.date, 'YYYY/MM/DD h:mm A');
+          if (momentDate.isValid()) {
+            data.date = momentDate.format();
+          }
 
           return ajaxes({
             url: `${url}${id ? `('${id}')` : ''}`,
@@ -74,6 +84,11 @@ function renderLocationNoteDetailsPage(app, $container, router, auth, opt, id, q
               }
             }
           }).then(({ data, textStatus, jqXHR }) => {
+            const momentDate = moment(data.date);
+            if (momentDate.isValid()) {
+              data.date = momentDate.format('YYYY/MM/DD h:mm A');
+            }
+
             snapShot = toSnapShot(data);
             renderNavBar(data.id);
 
@@ -85,7 +100,29 @@ function renderLocationNoteDetailsPage(app, $container, router, auth, opt, id, q
           });
         },
 
-        sections: location_note_form_sections(auth)
+        sections: [
+          {
+            title: 'Details',
+
+            rows: [
+              {
+                fields: [
+                  Object.assign({}, location_notes_form_fields.location(auth), { className: 'col-sm-8' })
+                ]
+              },
+              {
+                fields: [
+                  Object.assign({}, location_notes_form_fields.date, { className: 'col-sm-4' })
+                ]
+              },
+              {
+                fields: [
+                  location_notes_form_fields.note
+                ]
+              }
+            ]
+          }
+        ]
       };
 
       const Model = Backbone.Model.extend({
