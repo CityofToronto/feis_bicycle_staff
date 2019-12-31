@@ -114,7 +114,6 @@ function cleanupLocation(content, request) {
   }
 
   const previousVersion = getPreviousVersion(content, request);
-
   if (previousVersion.location !== content.get('location').getAsString()) {
     updateLocation(content, request, { location: previousVersion.location, __Status: 'Inactive' });
   }
@@ -122,11 +121,11 @@ function cleanupLocation(content, request) {
 
 function updateLocation(content, request, {
   location = content.get('location').getAsString(),
-  __Status: status = content.get('__Status').getAsString()
+  __Status = content.get('__Status').getAsString()
 } = {}) {
-  const select = encodeURIComponent('id');
+  const select = 'id';
   const filter = encodeURIComponent(`location eq '${location}' and __Status eq 'Active'`);
-  const top = encodeURIComponent('999');
+  const top = 999;
 
   ajax.request({
     headers: { Authorization: request.getHeader('Authorization') },
@@ -146,8 +145,8 @@ function updateLocation(content, request, {
       if (previousVersion.location !== location ) {
         lockers_total++;
       }
-      if (previousVersion.__Status !== status ) {
-        if (status === 'Active') {
+      if (previousVersion.__Status !== __Status ) {
+        if (__Status === 'Active') {
           lockers_total++;
         } else {
           lockers_total--;

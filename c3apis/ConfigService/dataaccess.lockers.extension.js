@@ -120,7 +120,6 @@ function cleanupLocation(content, request) {
   }
 
   var previousVersion = getPreviousVersion(content, request);
-
   if (previousVersion.location !== content.get('location').getAsString()) {
     updateLocation(content, request, { location: previousVersion.location, __Status: 'Inactive' });
   }
@@ -131,11 +130,11 @@ function updateLocation(content, request) {
       _ref$location = _ref.location,
       location = _ref$location === undefined ? content.get('location').getAsString() : _ref$location,
       _ref$__Status = _ref.__Status,
-      status = _ref$__Status === undefined ? content.get('__Status').getAsString() : _ref$__Status;
+      __Status = _ref$__Status === undefined ? content.get('__Status').getAsString() : _ref$__Status;
 
-  var select = encodeURIComponent('id');
+  var select = 'id';
   var filter = encodeURIComponent('location eq \'' + location + '\' and __Status eq \'Active\'');
-  var top = encodeURIComponent('999');
+  var top = 999;
 
   ajax.request({
     headers: { Authorization: request.getHeader('Authorization') },
@@ -155,8 +154,8 @@ function updateLocation(content, request) {
       if (previousVersion.location !== location) {
         lockers_total++;
       }
-      if (previousVersion.__Status !== status) {
-        if (status === 'Active') {
+      if (previousVersion.__Status !== __Status) {
+        if (__Status === 'Active') {
           lockers_total++;
         } else {
           lockers_total--;
