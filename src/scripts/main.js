@@ -67,6 +67,39 @@ $(function () {
     },
 
     routes: {
+
+      // ['locations/:opt/:id/inspections/:opt2/:id2(/)'](opt, id, opt2, id2, query) { // eslint-disable-line no-unused-vars
+      //   /* global renderLocationDetailsInspectionDetailsPage */
+      //   return renderLocationDetailsInspectionDetailsPage(app, $container, router, auth, opt, id, opt2, id2, query);
+      // },
+
+      // ['locations/:opt/:id/inspections(/:opt2)(/)'](opt, id, opt2, query) { // eslint-disable-line no-unused-vars
+      //   /* global renderLocationDetailsInspectionsPage */
+      //   return renderLocationDetailsInspectionsPage(app, $container, router, auth, opt, id, opt2, query);
+      // },
+
+      // ['locations/:opt/:id/notes/:opt2/:id2(/)'](opt, id, opt2, id2, query) { // eslint-disable-line no-unused-vars
+      //   /* global renderLocationDetailsNoteDetailsPage */
+      //   return renderLocationDetailsNoteDetailsPage(app, $container, router, auth, opt, id, opt2, id2, query);
+      // },
+
+      // ['locations/:opt/:id/notes(/:opt2)(/)'](opt, id, opt2, query) {
+      //   /* global renderLocationDetailsNotesPage */
+      //   return renderLocationDetailsNotesPage(app, $container, router, auth, opt, id, opt2, query);
+      // },
+
+      ['lockers/:opt/:id(/)'](opt, id, query) {
+        /* global renderLockerDetailsPage */
+        return renderLockerDetailsPage(app, $container, router, auth, opt, id, query);
+      },
+
+      ['lockers(/:opt)(/)'](opt, query) {
+        /* global renderLockersPage */
+        return renderLockersPage(app, $container, router, auth, opt, query);
+      },
+
+      // ---
+
       ['location_inspections/:opt/:id(/)'](opt, id, query) {
         /* global renderLocationInspectionDetailsPage */
         return renderLocationInspectionDetailsPage(app, $container, router, auth, opt, id, query);

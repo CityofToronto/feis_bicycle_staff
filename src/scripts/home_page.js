@@ -50,7 +50,7 @@ function renderHomePage(app, $container, router, auth) {
           <h3>Lockers</h3>
 
           <div class="list-group">
-            <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+            <a href="#lockers/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
               <span class="badge badge-locations-all"></span>
               All
             </a>
@@ -61,7 +61,7 @@ function renderHomePage(app, $container, router, auth) {
           <h3>Locker Notes</h3>
 
           <div class="list-group">
-            <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+            <a href="#locker_notes/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
               <span class="badge badge-locations-all"></span>
               All
             </a>
@@ -72,7 +72,7 @@ function renderHomePage(app, $container, router, auth) {
           <h3>Locker Inspections</h3>
 
           <div class="list-group">
-            <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+            <a href="#locker_inspections/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
               <span class="badge badge-locations-all"></span>
               All
             </a>

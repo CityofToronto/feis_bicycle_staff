@@ -116,14 +116,14 @@ function updateLocation(content, request) {
       location = _ref$location === undefined ? content.get('location').getAsString() : _ref$location,
       _ref$date = _ref.date,
       date = _ref$date === undefined ? content.get('date').getAsString() : _ref$date,
-      _ref$note = _ref.note,
-      note = _ref$note === undefined ? content.get('note').getAsString() : _ref$note,
       _ref$result = _ref.result,
       result = _ref$result === undefined ? content.get('result').getAsString() : _ref$result,
+      _ref$note = _ref.note,
+      note = _ref$note === undefined ? content.get('note').getAsString() : _ref$note,
       _ref$__Status = _ref.__Status,
       status = _ref$__Status === undefined ? content.get('__Status').getAsString() : _ref$__Status;
 
-  var select = encodeURIComponent('id,date,note,result');
+  var select = encodeURIComponent('id,date,result,note');
   var filter = encodeURIComponent('location eq \'' + location + '\' and __Status eq \'Active\'');
   var orderby = encodeURIComponent('date desc');
   var top = encodeURIComponent('2');
@@ -150,7 +150,7 @@ function updateLocation(content, request) {
         body.value[0].note = note;
         body.value[0].result = result;
       } else {
-        body.value.push({ id: id, date: date, note: note, result: result });
+        body.value.push({ id: id, date: date, result: result, note: note });
       }
     }
 

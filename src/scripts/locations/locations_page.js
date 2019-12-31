@@ -135,6 +135,12 @@ const renderLocationsPage__columns = {
     data: 'alternate_contact_alternate_phone'
   },
 
+  lockers_total: {
+    title: 'Total Lockers',
+    className: 'minWidth',
+    data: 'lockers_total'
+  },
+
   latest_note__date: {
     title: 'Latest Note Date',
     className: 'minWidth',
@@ -284,6 +290,7 @@ const renderLocationsPage__views = {
           // renderLocationsPage__columns.alternate_contact_email,
           // renderLocationsPage__columns.alternate_contact_primary_phone,
           // renderLocationsPage__columns.alternate_contact_alternate_phone,
+          renderLocationsPage__columns.lockers_total,
 
           renderLocationsPage__columns.latest_note__date,
           renderLocationsPage__columns.latest_note__note,
