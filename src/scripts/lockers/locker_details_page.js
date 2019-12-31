@@ -158,7 +158,7 @@ function renderLockerDetailsPage(app, $container, router, auth, opt, id, query) 
         <div class="navbar">
           <ul class="nav nav-tabs">
             <li class="nav-item active" role="presentation">
-              <a href="#${renderLockersPage__views[opt].fragment}/${id}" class="nav-link">Location</a>
+              <a href="#${renderLockersPage__views[opt].fragment}/${id}" class="nav-link">Locker</a>
             </li>
           </ul>
         </div>
@@ -220,11 +220,11 @@ function renderLockerDetailsPage(app, $container, router, auth, opt, id, query) 
               { name: app.name, link: '#home' },
               { name: 'Lockers', link: '#lockers' },
               { name: renderLockersPage__views[opt].breadcrumb, link: `#${renderLockersPage__views[opt].fragment}` },
-              { name: data.number, link: `#${renderLockersPage__views[opt].fragment}/${data.id}` }
+              { name: `${data.location__site_name} - ${data.number}`, link: `#${renderLockersPage__views[opt].fragment}/${data.id}` }
             ];
             app.setBreadcrumb(breadcrumbs, true);
 
-            app.setTitle(data.number);
+            app.setTitle(`${data.location__site_name} - ${data.number}`);
 
             return { data, textStatus, jqXHR };
           }).catch((error) => {
@@ -335,11 +335,11 @@ function renderLockerDetailsPage(app, $container, router, auth, opt, id, query) 
             { name: app.name, link: '#home' },
             { name: 'Lockers', link: `#${renderLockersPage__views.all.fragment}` },
             { name: renderLockersPage__views[opt].breadcrumb, link: `#${renderLockersPage__views[opt].fragment}` },
-            { name: data.number, link: `#${renderLockersPage__views[opt].fragment}/${data.id}` }
+            { name: `${data.location__site_name} - ${data.number}`, link: `#${renderLockersPage__views[opt].fragment}/${data.id}` }
           ];
           app.setBreadcrumb(breadcrumbs, true);
 
-          app.setTitle(data.number);
+          app.setTitle(`${data.location__site_name} - ${data.number}`);
         }
 
         return () => {
