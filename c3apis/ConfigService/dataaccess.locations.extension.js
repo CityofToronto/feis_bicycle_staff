@@ -18,6 +18,7 @@ function beforeContentParse(content, request, uriInfo, response) {
     return;
   }
 
+  setLockersTotal(content, request);
   setStatus(content, request);
 }
 
@@ -38,6 +39,18 @@ function afterDelete(content, request, uriInfo, response) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function setLockersTotal(content, request) {
+  if (request.getMethod() !== 'POST') {
+    return;
+  }
+
+  if (content.has('lockers_total')) {
+    content.remove('lockers_total');
+  }
+
+  content.addProperty('lockers_total', 0);
+}
 
 function setStatus(content, request) {
   if (request.getMethod() !== 'POST') {
