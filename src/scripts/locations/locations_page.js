@@ -339,7 +339,7 @@ function renderLocationsPage(app, $container, router, auth, opt, query) {
     $container.html(`<p><a href="#${redirectToFragment}">Back to ${redirectTo}</a></p>`);
     $container.append(`<h2>${renderLocationsPage__views[opt].title}</h2>`);
 
-    const definition = renderLocationsPage__views[opt].definition(auth);
+    const definition = renderLocationsPage__views[opt].definition(auth, opt);
 
     const views = Object.keys(renderLocationsPage__views).map((key) => ({
       title: renderLocationsPage__views[key].title,

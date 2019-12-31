@@ -2,22 +2,22 @@
 /* global ajaxes auth__checkLogin fixButtonLinks modal__showConfirm query__objectToString query__stringToObject
    renderAlert toSnapShot */
 /* global renderForm */
-/* global renderLocationsPage__views renderLocationDetailsNotesPage__views
-   renderLocationDetailsNotesPage__currentView renderLocationNoteDetailsPage_fields
+/* global renderLocationsPage__views renderLocationDetailsInspectionsPage__views
+   renderLocationDetailsNotesPage__currentView renderLocationInspectionDetailsPage_fields
    renderLocationDetailsInspectionsPage__currentView */
 
 
-/* exported renderLocationDetailsNoteDetailsPage */
-function renderLocationDetailsNoteDetailsPage(app, $container, router, auth, opt1, id1, opt2, id2, query) {
+/* exported renderLocationDetailsInspectionDetailsPage */
+function renderLocationDetailsInspectionDetailsPage(app, $container, router, auth, opt1, id1, opt2, id2, query) {
   if (!(opt1 in renderLocationsPage__views)) {
     const query = query__objectToString({ resetState: 'yes' });
     router.navigate(`${renderLocationsPage__views.all.fragment}/${id1}/${opt2}/${id2}?${query}`, { trigger: true, replace: true });
     return;
   }
 
-  if (!(opt2 in renderLocationDetailsNotesPage__views)) {
+  if (!(opt2 in renderLocationDetailsInspectionsPage__views)) {
     const query = query__objectToString({ resetState: 'yes' });
-    router.navigate(`${renderLocationDetailsNotesPage__views.all.fragment(opt1, id1)}/${id2}?${query}`, { trigger: true, replace: true });
+    router.navigate(`${renderLocationDetailsInspectionsPage__views.all.fragment(opt1, id1)}/${id2}?${query}`, { trigger: true, replace: true });
     return;
   }
 
@@ -42,17 +42,17 @@ function renderLocationDetailsNoteDetailsPage(app, $container, router, auth, opt
             <a href="#${renderLocationsPage__views[opt1].fragment}/${id1}" class="nav-link">Location</a>
           </li>
 
-          <li class="nav-item active" role="presentation">
+          <li class="nav-item" role="presentation">
             <a href="#${renderLocationsPage__views[opt1].fragment}/${id1}/notes/${renderLocationDetailsNotesPage__currentView}" class="nav-link">Notes</a>
           </li>
 
-          <li class="nav-item" role="presentation">
+          <li class="nav-item active" role="presentation">
             <a href="#${renderLocationsPage__views[opt1].fragment}/${id1}/inspections/${renderLocationDetailsInspectionsPage__currentView}" class="nav-link">Inspections</a>
           </li>
 
           <!--
           <li class="nav-item" role="presentation">
-            <a href="#locations/${opt1}/${id1}/inspections/all" class="nav-link">Lockers</a>
+            <a href="#${renderLocationsPage__views[opt1].fragment}/${id1}/inspections/all" class="nav-link">Lockers</a>
           </li>
           -->
         </ul>
@@ -84,7 +84,7 @@ function renderLocationDetailsNoteDetailsPage(app, $container, router, auth, opt
           },
           contentType: 'application/json; charset=utf-8',
           method: 'GET',
-          url: `/* @echo C3DATA_LOCATION_NOTES_URL */('${id2}')`
+          url: `/* @echo C3DATA_LOCATION_INSPECTIONS_URL */('${id2}')`
         });
       }
 
@@ -93,7 +93,8 @@ function renderLocationDetailsNoteDetailsPage(app, $container, router, auth, opt
       const Model = Backbone.Model.extend({
         defaults: {
           date: moment().format('YYYY/MM/DD h:mm A'),
-          location: id1
+          location: id1,
+          result: 'OK'
         }
       });
       const model = new Model(data);
@@ -122,18 +123,17 @@ function renderLocationDetailsNoteDetailsPage(app, $container, router, auth, opt
             }
           }).then(({ data, textStatus, jqXHR }) => {
             snapShot = toSnapShot(data);
-            // renderNavBar(data.id);
 
-            router.navigate(`${renderLocationDetailsNotesPage__views[opt2].fragment(opt1, id1)}/${data.id}`, { trigger: false, replace: true });
+            router.navigate(`${renderLocationDetailsInspectionsPage__views[opt2].fragment(opt1, id1)}/${data.id}`, { trigger: false, replace: true });
 
             const breadcrumbs = [
               { name: app.name, link: '#home' },
               { name: 'Locations', link: `#${renderLocationsPage__views.all.fragment}` },
               { name: renderLocationsPage__views[opt1].breadcrumb, link: `#${renderLocationsPage__views[opt1].fragment}` },
               { name: data.site_name, link: `#${renderLocationsPage__views[opt1].fragment}/${data.id}` },
-              { name: 'Notes', link: `#${renderLocationDetailsNotesPage__views.all.fragment(opt1, id1)}` },
-              { name: renderLocationDetailsNotesPage__views[opt2].breadcrumb, link: `#${renderLocationDetailsNotesPage__views[opt2].fragment(opt1, id1)}` },
-              { name: data.date, link: `#${renderLocationDetailsNotesPage__views[opt2].fragment(opt1, id1)}/${data.id}` }
+              { name: 'Inspections', link: `#${renderLocationDetailsInspectionsPage__views.all.fragment(opt1, id1)}` },
+              { name: renderLocationDetailsInspectionsPage__views[opt2].breadcrumb, link: `#${renderLocationDetailsInspectionsPage__views[opt2].fragment(opt1, id1)}` },
+              { name: data.date, link: `#${renderLocationDetailsInspectionsPage__views[opt2].fragment(opt1, id1)}/${data.id}` }
             ];
             app.setBreadcrumb(breadcrumbs, true);
 
@@ -153,12 +153,13 @@ function renderLocationDetailsNoteDetailsPage(app, $container, router, auth, opt
             rows: [
               {
                 fields: [
-                  Object.assign({}, renderLocationNoteDetailsPage_fields.date, { className: 'col-sm-4' })
+                  Object.assign({}, renderLocationInspectionDetailsPage_fields.date, { className: 'col-sm-4' }),
+                  Object.assign({}, renderLocationInspectionDetailsPage_fields.result, { className: 'col-sm-4' })
                 ]
               },
               {
                 fields: [
-                  renderLocationNoteDetailsPage_fields.note
+                  renderLocationInspectionDetailsPage_fields.note
                 ]
               }
             ]
@@ -169,14 +170,14 @@ function renderLocationDetailsNoteDetailsPage(app, $container, router, auth, opt
       return Promise.resolve().then(() => {
         return renderForm($('<div></div>').appendTo($container), definition, model, {
           auth,
-          url: '/* @echo C3DATA_LOCATION_NOTES_URL */',
+          url: '/* @echo C3DATA_LOCATION_INSPECTIONS_URL */',
 
-          saveButtonLabel: (model) => model.isNew() ? 'Create Note' : 'Update Note',
+          saveButtonLabel: (model) => model.isNew() ? 'Create Inspection' : 'Update Inspection',
 
           cancelButtonLabel: 'Cancel',
-          cancelButtonFragment: renderLocationDetailsNotesPage__views[opt2].fragment(opt1, id1),
+          cancelButtonFragment: renderLocationDetailsInspectionsPage__views[opt2].fragment(opt1, id1),
 
-          removeButtonLabel: 'Remove Note',
+          removeButtonLabel: 'Remove Inspection',
           removePromptValue: 'DELETE'
         });
       }).then(() => {
@@ -186,8 +187,8 @@ function renderLocationDetailsNoteDetailsPage(app, $container, router, auth, opt
             { name: 'Locations', link: `#${renderLocationsPage__views.all.fragment}` },
             { name: renderLocationsPage__views[opt1].breadcrumb, link: `#${renderLocationsPage__views[opt1].fragment}` },
             { name: site_name, link: `#${renderLocationsPage__views[opt1].fragment}/${id1}` },
-            { name: 'Notes', link: `#${renderLocationDetailsNotesPage__views.all.fragment(opt1, id1)}` },
-            { name: renderLocationDetailsNotesPage__views[opt2].breadcrumb, link: `#${renderLocationDetailsNotesPage__views[opt2].fragment(opt1, id1)}` },
+            { name: 'Inspections', link: `#${renderLocationDetailsInspectionsPage__views.all.fragment(opt1, id1)}` },
+            { name: renderLocationDetailsInspectionsPage__views[opt2].breadcrumb, link: `#${renderLocationDetailsInspectionsPage__views[opt2].fragment(opt1, id1)}` },
             { name: 'New' }
           ];
           app.setBreadcrumb(breadcrumbs, true);
@@ -199,9 +200,9 @@ function renderLocationDetailsNoteDetailsPage(app, $container, router, auth, opt
             { name: 'Locations', link: `#${renderLocationsPage__views.all.fragment}` },
             { name: renderLocationsPage__views[opt1].breadcrumb, link: `#${renderLocationsPage__views[opt1].fragment}` },
             { name: site_name, link: `#${renderLocationsPage__views[opt1].fragment}/${id1}` },
-            { name: 'Notes', link: `#${renderLocationDetailsNotesPage__views.all.fragment(opt1, id1)}` },
-            { name: renderLocationDetailsNotesPage__views[opt2].breadcrumb, link: `#${renderLocationDetailsNotesPage__views[opt2].fragment(opt1, id1)}` },
-            { name: data.date, link: `#${renderLocationDetailsNotesPage__views[opt2].fragment(opt1, id1)}/${data.id}` }
+            { name: 'Inspections', link: `#${renderLocationDetailsInspectionsPage__views.all.fragment(opt1, id1)}` },
+            { name: renderLocationDetailsInspectionsPage__views[opt2].breadcrumb, link: `#${renderLocationDetailsInspectionsPage__views[opt2].fragment(opt1, id1)}` },
+            { name: data.date, link: `#${renderLocationDetailsInspectionsPage__views[opt2].fragment(opt1, id1)}/${data.id}` }
           ];
           app.setBreadcrumb(breadcrumbs, true);
 

@@ -2,7 +2,8 @@
 /* global ajaxes auth__checkLogin fixButtonLinks modal__showConfirm query__objectToString query__stringToObject
    renderAlert toSnapShot */
 /* global renderForm */
-/* global renderLocationsPage__views renderLocationDetailsNotesPage__currentView:writable */
+/* global renderLocationsPage__views renderLocationDetailsNotesPage__currentView renderLocationDetailsNotesPage__resetState
+   renderLocationDetailsInspectionsPage__resetState renderLocationDetailsInspectionsPage__currentView */
 
 const renderLocationDetailsPage_fields = {
   site_name: {
@@ -178,9 +179,8 @@ function renderLocationDetailsPage(app, $container, router, auth, opt, id, query
     } = query__stringToObject(query);
 
     if (resetState === 'yes') {
-      if (renderLocationDetailsNotesPage__currentView != null) {
-        renderLocationDetailsNotesPage__currentView = null;
-      }
+      renderLocationDetailsNotesPage__resetState(opt, id);
+      renderLocationDetailsInspectionsPage__resetState(opt, id);
     }
 
     $container.html(`<p><a href="#${redirectToFragment}">Back to ${redirectTo}</a></p>`);
@@ -198,13 +198,13 @@ function renderLocationDetailsPage(app, $container, router, auth, opt, id, query
               <a href="#${renderLocationsPage__views[opt].fragment}/${id}/notes/${renderLocationDetailsNotesPage__currentView}" class="nav-link">Notes</a>
             </li>
 
-            <!--
             <li class="nav-item" role="presentation">
-              <a href="#${renderLocationsPage__views[opt].fragment}/${id}/inspections/all" class="nav-link">Inspections</a>
+              <a href="#${renderLocationsPage__views[opt].fragment}/${id}/inspections/${renderLocationDetailsInspectionsPage__currentView}" class="nav-link">Inspections</a>
             </li>
 
+            <!--
             <li class="nav-item" role="presentation">
-              <a href="#${renderLocationsPage__views[opt].fragment}/${id}/inspections/all" class="nav-link">Lockers</a>
+              <a href="#${renderLocationsPage__views[opt].fragment}/${id}/lockers/all" class="nav-link">Lockers</a>
             </li>
             -->
           </ul>

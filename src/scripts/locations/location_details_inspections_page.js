@@ -2,31 +2,33 @@
 /* global ajaxes auth__checkLogin fixButtonLinks query__objectToString query__stringToObject
    renderAlert */
 /* global renderDatatable */
-/* global renderLocationNotesPage__columns renderLocationsPage__views renderLocationDetailsInspectionsPage__resetState
-   renderLocationDetailsInspectionsPage__currentView */
+/* global renderLocationInspectionsPage__columns renderLocationsPage__views renderLocationDetailsNotesPage__resetState
+   renderLocationDetailsNotesPage__currentView */
 
-const renderLocationDetailsNotesPage__views = {
+const renderLocationDetailsInspectionsPage__views = {
   all: {
     breadcrumb: 'All',
 
-    title: 'All Notes',
-    fragment: (opt, id) => `${renderLocationsPage__views[opt].fragment}/${id}/notes/all`,
+    title: 'All Inspections',
+    fragment: (opt, id) => `${renderLocationsPage__views[opt].fragment}/${id}/inspections/all`,
 
     definition: (auth, opt, id) => {
       const definition = {
         columns: [
-          renderLocationNotesPage__columns.action(renderLocationDetailsNotesPage__views.all.fragment(opt, id)),
+          renderLocationInspectionsPage__columns.action(renderLocationDetailsInspectionsPage__views.all.fragment(opt, id)),
 
-          renderLocationNotesPage__columns.date,
+          renderLocationInspectionsPage__columns.date,
 
-          renderLocationNotesPage__columns.note,
+          renderLocationInspectionsPage__columns.result(auth),
 
-          renderLocationNotesPage__columns.__CreatedOn,
-          renderLocationNotesPage__columns.__ModifiedOn,
-          renderLocationNotesPage__columns.__Owner,
-          renderLocationNotesPage__columns.__Status,
+          renderLocationInspectionsPage__columns.note,
 
-          Object.assign({}, renderLocationNotesPage__columns.location, { visible: false }),
+          renderLocationInspectionsPage__columns.__CreatedOn,
+          renderLocationInspectionsPage__columns.__ModifiedOn,
+          renderLocationInspectionsPage__columns.__Owner,
+          renderLocationInspectionsPage__columns.__Status,
+
+          Object.assign({}, renderLocationInspectionsPage__columns.location, { visible: false }),
         ],
 
         order: [
@@ -44,25 +46,25 @@ const renderLocationDetailsNotesPage__views = {
   }
 };
 
-let renderLocationDetailsNotesPage__currentView = 'all';
+let renderLocationDetailsInspectionsPage__currentView = 'all';
 
-/* exported renderLocationDetailsNotesPage__resetState */
-function renderLocationDetailsNotesPage__resetState(opt1, id1) {
-  const stateSaveWebStorageKey = `locations_${opt1}_${id1}_notes_${renderLocationDetailsNotesPage__currentView}`;
+/* exported renderLocationDetailsInspectionsPage__resetState */
+function renderLocationDetailsInspectionsPage__resetState(opt1, id1) {
+  const stateSaveWebStorageKey = `locations_${opt1}_${id1}_inspections_${renderLocationDetailsInspectionsPage__currentView}`;
   sessionStorage.removeItem(stateSaveWebStorageKey);
 }
 
-/* exported renderLocationDetailsNotesPage */
-function renderLocationDetailsNotesPage(app, $container, router, auth, opt1, id1, opt2, query) {
+/* exported renderLocationDetailsInspectionsPage */
+function renderLocationDetailsInspectionsPage(app, $container, router, auth, opt1, id1, opt2, query) {
   if (!(opt1 in renderLocationsPage__views)) {
     const query = query__objectToString({ resetState: 'yes' });
     router.navigate(`${renderLocationsPage__views.all.fragment}/${id1}/${opt2}?${query}`, { trigger: true, replace: true });
     return;
   }
 
-  if (!(opt2 in renderLocationDetailsNotesPage__views)) {
+  if (!(opt2 in renderLocationDetailsInspectionsPage__views)) {
     const query = query__objectToString({ resetState: 'yes' });
-    router.navigate(`${renderLocationDetailsNotesPage__views.all.fragment(opt1, id1)}?${query}`, { trigger: true, replace: true });
+    router.navigate(`${renderLocationDetailsInspectionsPage__views.all.fragment(opt1, id1)}?${query}`, { trigger: true, replace: true });
     return;
   }
 
@@ -87,11 +89,11 @@ function renderLocationDetailsNotesPage(app, $container, router, auth, opt1, id1
             <a href="#${renderLocationsPage__views[opt1].fragment}/${id1}" class="nav-link">Location</a>
           </li>
 
-          <li class="nav-item active" role="presentation">
+          <li class="nav-item" role="presentation">
             <a href="#${renderLocationsPage__views[opt1].fragment}/${id1}/notes/${renderLocationDetailsNotesPage__currentView}" class="nav-link">Notes</a>
           </li>
 
-          <li class="nav-item" role="presentation">
+          <li class="nav-item active" role="presentation">
             <a href="#${renderLocationsPage__views[opt1].fragment}/${id1}/inspections/${renderLocationDetailsInspectionsPage__currentView}" class="nav-link">Inspections</a>
           </li>
 
@@ -105,7 +107,7 @@ function renderLocationDetailsNotesPage(app, $container, router, auth, opt1, id1
     `);
     fixButtonLinks($tabContainer);
 
-    $container.append(`<h2>${renderLocationDetailsNotesPage__views[opt2].title}</h2>`);
+    $container.append(`<h2>${renderLocationDetailsInspectionsPage__views[opt2].title}</h2>`);
 
     return Promise.resolve().then(() => {
       return ajaxes({
@@ -119,28 +121,28 @@ function renderLocationDetailsNotesPage(app, $container, router, auth, opt1, id1
         url: `/* @echo C3DATA_LOCATIONS_URL */('${id1}')?$select=site_name`
       });
     }).then(({ data }) => {
-      const definition = renderLocationDetailsNotesPage__views[opt2].definition(auth, opt1, id1);
+      const definition = renderLocationDetailsInspectionsPage__views[opt2].definition(auth, opt1, id1);
 
-      const stateSaveWebStorageKey = `locations_${opt1}_${id1}_notes_${opt2}`;
+      const stateSaveWebStorageKey = `locations_${opt1}_${id1}_inspections_${opt2}`;
       if (resetState === 'yes') {
-        renderLocationDetailsNotesPage__currentView = opt2;
+        renderLocationDetailsInspectionsPage__currentView = opt2;
         renderLocationDetailsNotesPage__resetState(opt1, id1);
         renderLocationDetailsInspectionsPage__resetState(opt1, id1);
       }
 
-      const views = Object.keys(renderLocationDetailsNotesPage__views).map((key) => ({
-        title: renderLocationDetailsNotesPage__views[key].title,
-        fragment: `${renderLocationDetailsNotesPage__views[key].fragment}?${query__objectToString({ resetState: 'yes' })}`,
+      const views = Object.keys(renderLocationDetailsInspectionsPage__views).map((key) => ({
+        title: renderLocationDetailsInspectionsPage__views[key].title,
+        fragment: `${renderLocationDetailsInspectionsPage__views[key].fragment}?${query__objectToString({ resetState: 'yes' })}`,
         isCurrent: key === opt2
       }));
 
       return Promise.resolve().then(() => {
         return renderDatatable($container, definition, {
           auth,
-          url: '/* @echo C3DATA_LOCATION_NOTES_URL */',
+          url: '/* @echo C3DATA_LOCATION_INSPECTIONS_URL */',
 
-          newButtonLabel: 'New Note',
-          newButtonFragment: `${renderLocationDetailsNotesPage__views[opt2].fragment(opt2, id1)}/new`,
+          newButtonLabel: 'New Inspections',
+          newButtonFragment: `${renderLocationDetailsInspectionsPage__views[opt2].fragment(opt2, id1)}/new`,
 
           stateSaveWebStorageKey,
 
@@ -152,8 +154,8 @@ function renderLocationDetailsNotesPage(app, $container, router, auth, opt1, id1
           { name: 'Locations', link: `#${renderLocationsPage__views.all.fragment}` },
           { name: renderLocationsPage__views[opt1].breadcrumb, link: `#${renderLocationsPage__views[opt1].fragment}` },
           { name: data.site_name, link: `#${renderLocationsPage__views[opt1].fragment}/${data.id}` },
-          { name: 'Notes', link: `#${renderLocationDetailsNotesPage__views.all.fragment(opt2, id1)}` },
-          { name: renderLocationDetailsNotesPage__views[opt2].breadcrumb, link: `#${renderLocationDetailsNotesPage__views[opt2].fragment(opt2, id1)}` }
+          { name: 'Inspections', link: `#${renderLocationDetailsInspectionsPage__views.all.fragment(opt2, id1)}` },
+          { name: renderLocationDetailsInspectionsPage__views[opt2].breadcrumb, link: `#${renderLocationDetailsInspectionsPage__views[opt2].fragment(opt2, id1)}` }
         ];
         app.setBreadcrumb(breadcrumbs, true);
 

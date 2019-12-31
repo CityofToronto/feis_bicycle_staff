@@ -91,13 +91,15 @@ $(function () {
 
       // ---
 
-      // ['locations/:opt/:id/inspections/:opt2/:id2(/)'](opt, id, opt2, id2, query) { // eslint-disable-line no-unused-vars
-      // return renderLocationDetailsNotesPage(app, $container, router, auth, opt, id, opt2, query);
-      // },
+      ['locations/:opt/:id/inspections/:opt2/:id2(/)'](opt, id, opt2, id2, query) { // eslint-disable-line no-unused-vars
+        /* global renderLocationDetailsInspectionDetailsPage */
+        return renderLocationDetailsInspectionDetailsPage(app, $container, router, auth, opt, id, opt2, id2, query);
+      },
 
-      // ['locations/:opt/:id/inspections(/:opt2)(/)'](opt, id, opt2, query) { // eslint-disable-line no-unused-vars
-      // return renderLocationDetailsNotesPage(app, $container, router, auth, opt, id, opt2, query);
-      // },
+      ['locations/:opt/:id/inspections(/:opt2)(/)'](opt, id, opt2, query) { // eslint-disable-line no-unused-vars
+        /* global renderLocationDetailsInspectionsPage */
+        return renderLocationDetailsInspectionsPage(app, $container, router, auth, opt, id, opt2, query);
+      },
 
       ['locations/:opt/:id/notes/:opt2/:id2(/)'](opt, id, opt2, id2, query) { // eslint-disable-line no-unused-vars
         /* global renderLocationDetailsNoteDetailsPage */
