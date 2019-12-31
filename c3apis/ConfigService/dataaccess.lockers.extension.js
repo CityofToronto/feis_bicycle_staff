@@ -152,6 +152,9 @@ function updateLocation(content, request) {
       lockers_total++;
     } else if (method === 'PUT') {
       var previousVersion = getPreviousVersion(content, request);
+      if (previousVersion.location !== location) {
+        lockers_total++;
+      }
       if (previousVersion.__Status !== status) {
         if (status === 'Active') {
           lockers_total++;
