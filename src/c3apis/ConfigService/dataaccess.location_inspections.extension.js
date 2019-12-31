@@ -106,11 +106,11 @@ function updateLocation(content, request, {
   id = content.get('id').getAsString(),
   location = content.get('location').getAsString(),
   date = content.get('date').getAsString(),
-  note = content.get('note').getAsString(),
   result = content.get('result').getAsString(),
+  note = content.get('note').getAsString(),
   __Status: status = content.get('__Status').getAsString()
 } = {}) {
-  const select = encodeURIComponent('id,date,note,result');
+  const select = encodeURIComponent('id,date,result,note');
   const filter = encodeURIComponent(`location eq '${location}' and __Status eq 'Active'`);
   const orderby = encodeURIComponent('date desc');
   const top = encodeURIComponent('2');
@@ -137,7 +137,7 @@ function updateLocation(content, request, {
         body.value[0].note = note;
         body.value[0].result = result;
       } else {
-        body.value.push({ id, date, note, result });
+        body.value.push({ id, date, result, note });
       }
     }
 
