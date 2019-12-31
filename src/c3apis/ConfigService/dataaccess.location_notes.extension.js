@@ -81,61 +81,87 @@ function setStatus(content, request) {
   content.addProperty('__Status', 'Active');
 }
 
-function cleanupLocation(content, request) {
+function getPreviousVersion(content, request) {
   if (request.getMethod() !== 'PUT') {
-    return;
+    return null;
   }
 
-  const select = encodeURIComponent('location');
+  let returnValue;
+
+  const select = encodeURIComponent('location,__Status');
   ajax.request({
     headers: { Authorization: request.getHeader('Authorization') },
     method: 'GET',
     uri: `${common.DA_LOCATION_NOTES_URL}('${content.get('id').getAsString()}')?$select=${select}`
   }, function okFunction(okResponse) {
     const body = JSON.parse(okResponse.body);
-    if (body.location !== content.get('location').getAsString()) {
-      updateLocation(content, request, { 'location': body.location, '__Status': 'Inactive' });
-    }
+    returnValue = {
+      location: body.location,
+      __Status: body.__Status
+    };
 
     // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
   }, function errorFunction(errorResponse) { // eslint-disable-line no-unused-vars
     // mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);
   });
+
+  return returnValue;
+}
+
+function cleanupLocation(content, request) {
+  if (request.getMethod() !== 'PUT') {
+    return;
+  }
+
+  const previousVersion = getPreviousVersion(content, request);
+  if (previousVersion.location !== content.get('location').getAsString()) {
+    updateLocation(content, request, { location: previousVersion.location, __Status: 'Inactive' });
+  }
 }
 
 function updateLocation(content, request, {
-  id = content.get('id').getAsString(),
   location = content.get('location').getAsString(),
-  date = content.get('date').getAsString(),
-  note = content.get('note').getAsString(),
-  __Status: status = content.get('__Status').getAsString()
+  __Status = content.get('__Status').getAsString()
 } = {}) {
+  const method = request.getMethod();
+
   const select = encodeURIComponent('id,date,note');
   const filter = encodeURIComponent(`location eq '${location}' and __Status eq 'Active'`);
   const orderby = encodeURIComponent('date desc');
-  const top = encodeURIComponent('2');
+  const top = method === 'POST' || (method === 'PUT' && __Status === 'Active') ? 1 : 2;
 
   ajax.request({
     headers: { Authorization: request.getHeader('Authorization') },
     method: 'GET',
     uri: `${common.DA_LOCATION_NOTES_URL}?$select=${select}&$filter=${filter}&$orderby=${orderby}&$top=${top}`
   }, function okFunction(okResponse) {
+    const id = content.get('id').getAsString();
+    const date = content.get('date').getAsString();
+    const note = content.get('note').getAsString();
+
     const body = JSON.parse(okResponse.body);
-    if (request.getMethod() === 'DELETE' || status !== 'Active') {
+    if (method === 'DELETE') {
       if (body.value[1] && body.value[1].id === id) {
         body.value.splice(1, 1);
       } else if (body.value[0] && body.value[0].id === id) {
         body.value.splice(0, 1);
       }
-    } else {
-      if (body.value[1] && body.value[1].id === id) {
-        body.value[1].date = date;
-        body.value[1].note = note;
-      } else if (body.value[1] && body.value[0].id === id) {
-        body.value[0].date = date;
-        body.value[0].note = note;
+    } else if (method === 'POST') {
+      body.value.push({ id, date, note });
+    } else if (method === 'PUT') {
+      if (__Status === 'Active') {
+        if (body.value[0] && body.value[0].id === id) {
+          body.value[0].date = date;
+          body.value[0].note = note;
+        } else {
+          body.value.push({ id, date, note });
+        }
       } else {
-        body.value.push({ id, date, note });
+        if (body.value[1] && body.value[1].id === id) {
+          body.value.splice(1, 1);
+        } else if (body.value[0] && body.value[0].id === id) {
+          body.value.splice(0, 1);
+        }
       }
     }
 

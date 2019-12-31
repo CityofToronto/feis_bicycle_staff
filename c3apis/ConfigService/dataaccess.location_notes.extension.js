@@ -87,67 +87,90 @@ function setStatus(content, request) {
   content.addProperty('__Status', 'Active');
 }
 
-function cleanupLocation(content, request) {
+function getPreviousVersion(content, request) {
   if (request.getMethod() !== 'PUT') {
-    return;
+    return null;
   }
 
-  var select = encodeURIComponent('location');
+  var returnValue = void 0;
+
+  var select = encodeURIComponent('location,__Status');
   ajax.request({
     headers: { Authorization: request.getHeader('Authorization') },
     method: 'GET',
     uri: common.DA_LOCATION_NOTES_URL + '(\'' + content.get('id').getAsString() + '\')?$select=' + select
   }, function okFunction(okResponse) {
     var body = JSON.parse(okResponse.body);
-    if (body.location !== content.get('location').getAsString()) {
-      updateLocation(content, request, { 'location': body.location, '__Status': 'Inactive' });
-    }
+    returnValue = {
+      location: body.location,
+      __Status: body.__Status
+    };
 
     // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
   }, function errorFunction(errorResponse) {// eslint-disable-line no-unused-vars
     // mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);
   });
+
+  return returnValue;
+}
+
+function cleanupLocation(content, request) {
+  if (request.getMethod() !== 'PUT') {
+    return;
+  }
+
+  var previousVersion = getPreviousVersion(content, request);
+  if (previousVersion.location !== content.get('location').getAsString()) {
+    updateLocation(content, request, { location: previousVersion.location, __Status: 'Inactive' });
+  }
 }
 
 function updateLocation(content, request) {
   var _ref = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
-      _ref$id = _ref.id,
-      id = _ref$id === undefined ? content.get('id').getAsString() : _ref$id,
       _ref$location = _ref.location,
       location = _ref$location === undefined ? content.get('location').getAsString() : _ref$location,
-      _ref$date = _ref.date,
-      date = _ref$date === undefined ? content.get('date').getAsString() : _ref$date,
-      _ref$note = _ref.note,
-      note = _ref$note === undefined ? content.get('note').getAsString() : _ref$note,
       _ref$__Status = _ref.__Status,
-      status = _ref$__Status === undefined ? content.get('__Status').getAsString() : _ref$__Status;
+      __Status = _ref$__Status === undefined ? content.get('__Status').getAsString() : _ref$__Status;
+
+  var method = request.getMethod();
 
   var select = encodeURIComponent('id,date,note');
   var filter = encodeURIComponent('location eq \'' + location + '\' and __Status eq \'Active\'');
   var orderby = encodeURIComponent('date desc');
-  var top = encodeURIComponent('2');
+  var top = method === 'POST' || method === 'PUT' && __Status === 'Active' ? 1 : 2;
 
   ajax.request({
     headers: { Authorization: request.getHeader('Authorization') },
     method: 'GET',
     uri: common.DA_LOCATION_NOTES_URL + '?$select=' + select + '&$filter=' + filter + '&$orderby=' + orderby + '&$top=' + top
   }, function okFunction(okResponse) {
+    var id = content.get('id').getAsString();
+    var date = content.get('date').getAsString();
+    var note = content.get('note').getAsString();
+
     var body = JSON.parse(okResponse.body);
-    if (request.getMethod() === 'DELETE' || status !== 'Active') {
+    if (method === 'DELETE') {
       if (body.value[1] && body.value[1].id === id) {
         body.value.splice(1, 1);
       } else if (body.value[0] && body.value[0].id === id) {
         body.value.splice(0, 1);
       }
-    } else {
-      if (body.value[1] && body.value[1].id === id) {
-        body.value[1].date = date;
-        body.value[1].note = note;
-      } else if (body.value[1] && body.value[0].id === id) {
-        body.value[0].date = date;
-        body.value[0].note = note;
+    } else if (method === 'POST') {
+      body.value.push({ id: id, date: date, note: note });
+    } else if (method === 'PUT') {
+      if (__Status === 'Active') {
+        if (body.value[0] && body.value[0].id === id) {
+          body.value[0].date = date;
+          body.value[0].note = note;
+        } else {
+          body.value.push({ id: id, date: date, note: note });
+        }
       } else {
-        body.value.push({ id: id, date: date, note: note });
+        if (body.value[1] && body.value[1].id === id) {
+          body.value.splice(1, 1);
+        } else if (body.value[0] && body.value[0].id === id) {
+          body.value.splice(0, 1);
+        }
       }
     }
 
