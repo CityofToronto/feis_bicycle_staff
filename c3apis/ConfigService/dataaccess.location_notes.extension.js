@@ -94,7 +94,7 @@ function getPreviousVersion(content, request) {
 
   var returnValue = void 0;
 
-  var select = encodeURIComponent('location,__Status');
+  var select = encodeURIComponent('location');
   ajax.request({
     headers: { Authorization: request.getHeader('Authorization') },
     method: 'GET',
@@ -102,8 +102,7 @@ function getPreviousVersion(content, request) {
   }, function okFunction(okResponse) {
     var body = JSON.parse(okResponse.body);
     returnValue = {
-      location: body.location,
-      __Status: body.__Status
+      location: body.location
     };
 
     // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
