@@ -94,7 +94,7 @@ function getPreviousVersion(content, request) {
 
   var returnValue = void 0;
 
-  var select = encodeURIComponent('location');
+  var select = 'location';
   ajax.request({
     headers: { Authorization: request.getHeader('Authorization') },
     method: 'GET',
