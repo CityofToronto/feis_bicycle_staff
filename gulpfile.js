@@ -21,22 +21,23 @@ core.embeddedApp.createTasks(gulp, {
       C3DATA_LOCKERS_NOTES_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/locker_notes',
       C3DATA_LOCKERS_INSPECTIONS_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/locker_inspections',
 
-      C3DATA_STATIONS_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/stations',
-      C3DATA_STATION_NOTES_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/station_notes',
-      C3DATA_STATION_INSPECTIONS_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/station_inspections',
+      // C3DATA_STATIONS_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/stations',
+      // C3DATA_STATION_NOTES_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/station_notes',
+      // C3DATA_STATION_INSPECTIONS_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/station_inspections',
 
-      C3DATA_KEYFOBS_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/keyfobs',
-      C3DATA_KEYFOB_NOTES_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/keyfob_notes',
+      // C3DATA_KEYFOBS_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/keyfobs',
+      // C3DATA_KEYFOB_NOTES_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/keyfob_notes',
 
-      C3DATA_CUSTOMERS_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/customers',
-      C3DATA_CUSTOMER_NOTES_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/customer_notes',
-      C3DATA_CUSTOMER_NOTIFICATIONS_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/customer_inspections',
+      // C3DATA_CUSTOMERS_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/customers',
+      // C3DATA_CUSTOMER_NOTES_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/customer_notes',
+      // C3DATA_CUSTOMER_NOTIFICATIONS_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/customer_inspections',
 
-      C3DATA_PAYMENTS_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/payments',
-      C3DATA_PAYMENT_NOTES_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/payment_notes',
-      C3DATA_PAYMENT_NOTIFICATIONS_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/payment_inspections',
+      // C3DATA_PAYMENTS_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/payments',
+      // C3DATA_PAYMENT_NOTES_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/payment_notes',
+      // C3DATA_PAYMENT_NOTIFICATIONS_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/payment_inspections',
 
       C3DATAMEDIA_LOCATION_INSPECTION_CHOICES: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/Media(\\\'location_inspection_choices.json\\\')/$value',
+      C3DATAMEDIA_LOCKER_INSPECTION_CHOICES: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/Media(\\\'locker_inspection_choices.json\\\')/$value',
       C3DATAMEDIA_PROVINCE_CHOICES: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/Media(\\\'province_choices.json\\\')/$value'
     },
     dev: {},
