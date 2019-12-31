@@ -34,7 +34,7 @@ function renderForm($container, definition, model, options = {}) {
     removePromptValue,
   } = options;
 
-  model = model || new Backbone.Model();
+  model = model instanceof Backbone.Model ? model : new Backbone.Model(model);
 
   let $form, formValidator;
 
@@ -128,15 +128,16 @@ function renderForm($container, definition, model, options = {}) {
           fields: [
             {
               title: 'ID',
-              bindTo: 'id',
               required: true,
               class: 'col-sm-8',
+              htmlAttr: { readonly: true },
 
               postRender({ field }) {
-                $(`#${field.id}`).prop('readonly', true);
-                model.on(`change:${field.bindTo}`, () => {
-                  $(`#${field.id}`).val(model.get(field.bindTo));
-                });
+                function handler() {
+                  $(`#${field.id}`).val(model.get('id'));
+                }
+                model.on('change:id', handler);
+                handler();
               }
             },
             {
@@ -149,9 +150,10 @@ function renderForm($container, definition, model, options = {}) {
               class: 'col-sm-4',
 
               postRender({ field }) {
-                model.on(`change:${field.bindTo}`, () => {
+                function handler() {
                   $(`#${field.id}Element input[type="radio"][value="${model.get(field.bindTo)}"]`).prop('checked', true);
-                });
+                }
+                model.on('change:__Status', handler);
               }
             }
           ]
@@ -160,7 +162,6 @@ function renderForm($container, definition, model, options = {}) {
           fields: [
             {
               title: 'Created On',
-              // bindTo: '__CreatedOn',
               required: true,
               htmlAttr: { readOnly: true },
 
@@ -179,7 +180,6 @@ function renderForm($container, definition, model, options = {}) {
             },
             {
               title: 'Modified On',
-              // bindTo: '__ModifiedOn',
               required: true,
               htmlAttr: { readOnly: true },
 
@@ -198,14 +198,15 @@ function renderForm($container, definition, model, options = {}) {
             },
             {
               title: 'Modified By',
-              bindTo: '__Owner',
               required: true,
               htmlAttr: { readOnly: true },
 
               postRender({ field }) {
-                model.on(`change:${field.bindTo}`, () => {
-                  $(`#${field.id}`).val(model.get(field.bindTo));
-                });
+                function handler() {
+                  $(`#${field.id}`).val(model.get('__Owner'));
+                }
+                model.on('change:__Owner', handler);
+                handler();
               }
             }
           ]

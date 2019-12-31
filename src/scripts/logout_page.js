@@ -3,7 +3,6 @@
 /* exported renderLogoutPage */
 function renderLogoutPage(app, $container, router, auth) {
   return auth__logout(auth).then(() => {
-
     $container.html(`
       <h2>You Have Successfully Logged Out</h2>
 
@@ -18,9 +17,14 @@ function renderLogoutPage(app, $container, router, auth) {
       </div>
     `);
 
-    app.setBreadcrumb([{ name: app.name, link: '#home' }, { name: 'Logout' }], false);
+    const breadcrumbs = [
+      { name: app.name, link: '#home' },
+      { name: 'Logout', link: '#logout' }
+    ];
+    app.setBreadcrumb(breadcrumbs, true);
+
     app.setTitle(app.name, { documentTitle: `Logout - ${app.name}` });
-  }, (error) => {
+  }).catch((error) => {
     console.error(error); // eslint-disable-line no-console
   });
 }

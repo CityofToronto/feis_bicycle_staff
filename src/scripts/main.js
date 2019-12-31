@@ -5,12 +5,10 @@
 
 /* global $ Backbone */
 /* global cot_app */
-/* global auth__init Router */
+/* global auth__init query__objectToString Router */
 /* global renderLoginButton */
 
 $(function () {
-
-  // Using CoT App to finalize the c-frame
   const app = new cot_app('Bicycle Parking', {
     hasContentTop: false,
     hasContentBottom: false,
@@ -20,7 +18,8 @@ $(function () {
   });
   app.setBreadcrumb([]).render();
 
-  // Enhance setTitle method to include document title and focus
+  // ---
+
   const $titleContainer = $('#app-header').find('h1').attr('tabindex', '-1');
   let setTitleFocus = false;
   app.setTitle = ((originalSetTitle) => function (title = app.name, options = {}) {
@@ -44,7 +43,8 @@ $(function () {
     }
   })(app.setTitle);
 
-  // Add login related reference for login button and authentications
+  // ---
+
   const $loginButtonContainer = $('<div class="loginButtonContainer">').appendTo('.securesite');
   const auth = auth__init({
     app: 'bicycle_parking',
@@ -53,60 +53,86 @@ $(function () {
     webStorageKey: 'bicycle_parking_auth'
   });
 
-  // Add routing for page rendering based on url hash values
+  // ---
+
   const $container = $('#feis_bicycle_staff_container');
   const AppRouter = Router.extend({
     defaultFragment: 'home',
 
+    navigateToLoginPage() {
+      const query = query__objectToString({
+        redirect: Backbone.history.getFragment()
+      });
+      router.navigate(`login?${query}`, { trigger: true });
+    },
+
     routes: {
-      /* global renderLocationInspectionDetailsPage */
       ['location_inspections/:opt/:id(/)'](opt, id, query) {
+        /* global renderLocationInspectionDetailsPage */
         return renderLocationInspectionDetailsPage(app, $container, router, auth, opt, id, query);
       },
 
-      /* global renderLocationInspectionsPage */
       ['location_inspections(/:opt)(/)'](opt, query) {
+        /* global renderLocationInspectionsPage */
         return renderLocationInspectionsPage(app, $container, router, auth, opt, query);
       },
 
       // ---
 
-      /* global renderLocationNoteDetailsPage */
       ['location_notes/:opt/:id(/)'](opt, id, query) {
+        /* global renderLocationNoteDetailsPage */
         return renderLocationNoteDetailsPage(app, $container, router, auth, opt, id, query);
       },
 
-      /* global renderLocationNotesPage */
       ['location_notes(/:opt)(/)'](opt, query) {
+        /* global renderLocationNotesPage */
         return renderLocationNotesPage(app, $container, router, auth, opt, query);
       },
 
       // ---
 
-      /* global renderLocationDetailsPage */
+      // ['locations/:opt/:id/inspections/:opt2/:id2(/)'](opt, id, opt2, id2, query) { // eslint-disable-line no-unused-vars
+      // return renderLocationDetailsNotesPage(app, $container, router, auth, opt, id, opt2, query);
+      // },
+
+      // ['locations/:opt/:id/inspections(/:opt2)(/)'](opt, id, opt2, query) { // eslint-disable-line no-unused-vars
+      // return renderLocationDetailsNotesPage(app, $container, router, auth, opt, id, opt2, query);
+      // },
+
+      ['locations/:opt/:id/notes/:opt2/:id2(/)'](opt, id, opt2, id2, query) { // eslint-disable-line no-unused-vars
+        /* global renderLocationDetailsNoteDetailsPage */
+        return renderLocationDetailsNoteDetailsPage(app, $container, router, auth, opt, id, opt2, id2, query);
+      },
+
+      ['locations/:opt/:id/notes(/:opt2)(/)'](opt, id, opt2, query) {
+        /* global renderLocationDetailsNotesPage */
+        return renderLocationDetailsNotesPage(app, $container, router, auth, opt, id, opt2, query);
+      },
+
       ['locations/:opt/:id(/)'](opt, id, query) {
+        /* global renderLocationDetailsPage */
         return renderLocationDetailsPage(app, $container, router, auth, opt, id, query);
       },
 
-      /* global renderLocationsPage */
       ['locations(/:opt)(/)'](opt, query) {
+        /* global renderLocationsPage */
         return renderLocationsPage(app, $container, router, auth, opt, query);
       },
 
       // ---
 
-      /* global renderLoginPage */
       ['login(/)'](query) {
+        /* global renderLoginPage */
         return renderLoginPage(app, $container, router, auth, query);
       },
 
-      /* global renderLogoutPage */
       ['logout(/)'](query) {
+        /* global renderLogoutPage */
         return renderLogoutPage(app, $container, router, auth, query);
       },
 
-      /* global renderHomePage */
       ['home(/)'](query) {
+        /* global renderHomePage */
         return renderHomePage(app, $container, router, auth, query);
       },
 
@@ -119,13 +145,14 @@ $(function () {
     renderLoginButton($loginButtonContainer, auth);
   });
 
-  // Load initial "loading" page then start routing
-  Promise.resolve()
-    .then(() => {
-      /* global renderLoadingPage */
-      return renderLoadingPage(app, $container, router, auth);
-    })
-    .then(() => {
-      Backbone.history.start();
-    });
+  // ---
+
+  Promise.resolve().then(() => {
+    /* global renderLoadingPage */
+    return renderLoadingPage(app, $container, router, auth);
+  }).then(() => {
+    Backbone.history.start();
+  }).catch((error) => {
+    console.error(error); // eslint-disable-line no-console
+  });
 });

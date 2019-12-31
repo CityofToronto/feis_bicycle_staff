@@ -1,0 +1,48 @@
+# Pages
+
+- locations/
+  - location_config
+  - location_details
+  - location_note_details
+  - location_notes
+  - location_inspection_details
+  - location_inspections
+  - location_locker_details
+  - location_lockers
+  - locations
+- lockers/
+  - locker_config
+  - locker_details
+  - locker_note_details
+  - locker_notes
+  - locker_inspection_details
+  - locker_inspections
+  - lockers
+- stations/
+  - station_config
+  - station_details
+  - station_note_details
+  - station_notes
+  - station_inspection_details
+  - station_inspections
+  - station_locker_details
+  - station_lockers
+  - stations
+- keyfobs/
+  - keyfob_config
+  - keyfob_details
+  - keyfob_note_details
+  - keyfob_notes
+  - keyfobs
+- customers/
+- payments/
+- utilities/
+  - ...
+- widgets/
+  - ...
+- home_page.js
+- loading_page.js
+- login_page.js
+- logout_page.js
+- main.js
+

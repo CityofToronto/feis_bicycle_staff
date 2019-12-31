@@ -1,6 +1,7 @@
 /* global $ */
 
 const ajaxes__requests = [];
+
 let ajaxes__activeCounter = 0;
 
 /* exported ajaxes */
