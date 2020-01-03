@@ -2,12 +2,12 @@
 /* global ajaxes auth__checkLogin modal__showConfirm query__objectToString query__stringToObject
    renderAlert toSnapShot */
 /* global renderForm */
-/* global renderEntityLocationsPage__views entityLocationDetails__fields */
+/* global renderEntityLockersPage__views entityLockerDetails__fields */
 
-/* exported renderEntityLocationDetailsPage */
-function renderEntityLocationDetailsPage(app, $container, router, auth, opt, id, query) {
-  if (!(opt in renderEntityLocationsPage__views)) {
-    const fragment = renderEntityLocationsPage__views.all.fragment;
+/* exported renderEntityLockerDetailsPage */
+function renderEntityLockerDetailsPage(app, $container, router, auth, opt, id, query) {
+  if (!(opt in renderEntityLockersPage__views)) {
+    const fragment = renderEntityLockersPage__views.all.fragment;
     const query = query__objectToString({ resetState: 'yes' });
     router.navigate(`${fragment}?${query}`, { trigger: true, replace: true });
     return;
@@ -18,11 +18,11 @@ function renderEntityLocationDetailsPage(app, $container, router, auth, opt, id,
       return router.navigateToLoginPage();
     }
 
-    const currentLocationView = renderEntityLocationsPage__views[opt];
+    const currentLockerView = renderEntityLockersPage__views[opt];
 
     const {
-      redirectTo = 'Locations',
-      redirectToFragment = currentLocationView.fragment
+      redirectTo = 'Lockers',
+      redirectToFragment = currentLockerView.fragment
     } = query__stringToObject(query);
 
     $container.empty();
@@ -31,8 +31,8 @@ function renderEntityLocationDetailsPage(app, $container, router, auth, opt, id,
     const breadcrumbs = [
       { name: app.name, link: '#home' },
       { name: 'Entities', link: '#entities' },
-      { name: 'Locations', link: `#${renderEntityLocationsPage__views.all.fragment}` },
-      { name: currentLocationView.breadcrumb, link: `#${currentLocationView.fragment}` }
+      { name: 'Lockers', link: `#${renderEntityLockersPage__views.all.fragment}` },
+      { name: currentLockerView.breadcrumb, link: `#${currentLockerView.fragment}` }
     ];
 
     return Promise.resolve().then(() => {
@@ -45,7 +45,7 @@ function renderEntityLocationDetailsPage(app, $container, router, auth, opt, id,
           },
           contentType: 'application/json; charset=utf-8',
           method: 'GET',
-          url: `/* @echo C3DATA_LOCATIONS_URL */('${id}')`
+          url: `/* @echo C3DATA_LOCKERS_URL */('${id}')`
         });
       }
 
@@ -53,8 +53,7 @@ function renderEntityLocationDetailsPage(app, $container, router, auth, opt, id,
     }).then(({ data }) => {
       const Model = Backbone.Model.extend({
         defaults: {
-          municipality: 'Toronto',
-          province: 'Ontario',
+          number: '0000'
         }
       });
       const model = new Model(data);
@@ -79,11 +78,13 @@ function renderEntityLocationDetailsPage(app, $container, router, auth, opt, id,
           }).then(({ data, textStatus, jqXHR }) => {
             snapShot = toSnapShot(data);
 
-            router.navigate(`${currentLocationView.fragment}/${data.id}`, { trigger: false, replace: true });
+            router.navigate(`${currentLockerView.fragment}/${data.id}`, { trigger: false, replace: true });
 
-            breadcrumbs.push({ name: data.site_name, link: `#${currentLocationView.fragment}/${data.id}` });
+            breadcrumbs.splice(breadcrumbs.length - 1, 1, {
+              name: `${data.location__site_name} ${data.number}`, link: `#${currentLockerView.fragment}/${data.id}`
+            });
             app.setBreadcrumb(breadcrumbs, true);
-            app.setTitle(data.site_name);
+            app.setTitle(`${data.location__site_name} ${data.number}`);
 
             return { data, textStatus, jqXHR };
           }).catch((error) => {
@@ -99,68 +100,13 @@ function renderEntityLocationDetailsPage(app, $container, router, auth, opt, id,
             rows: [
               {
                 fields: [
-                  Object.assign({}, entityLocationDetails__fields.site_name, { className: 'col-sm-4' }),
-                  Object.assign({}, entityLocationDetails__fields.description, { className: 'col-sm-8' })
+                  Object.assign({}, entityLockerDetails__fields.location(auth), { className: 'col-sm-4' })
                 ]
               },
               {
                 fields: [
-                  Object.assign({}, entityLocationDetails__fields.civic_address, { className: 'col-sm-8' })
-                ]
-              },
-              {
-                fields: [
-                  entityLocationDetails__fields.municipality,
-                  entityLocationDetails__fields.province(auth),
-                  entityLocationDetails__fields.postal_code
-                ]
-              }
-            ]
-          },
-          {
-            title: 'Contacts',
-
-            rows: [
-              {
-                fields: [
-                  {
-                    type: 'html',
-                    html: '<h4>Primary Contact</h4>'
-                  }
-                ]
-              },
-              {
-                fields: [
-                  Object.assign({}, entityLocationDetails__fields.primary_contact_first_name, { title: 'First Name', className: 'col-sm-4' }),
-                  Object.assign({}, entityLocationDetails__fields.primary_contact_last_name, { title: 'Last Name', className: 'col-sm-4' })
-                ]
-              },
-              {
-                fields: [
-                  Object.assign({}, entityLocationDetails__fields.primary_contact_email, { title: 'Email' }),
-                  Object.assign({}, entityLocationDetails__fields.primary_contact_primary_phone, { title: 'Primary Phone' }),
-                  Object.assign({}, entityLocationDetails__fields.primary_contact_alternate_phone, { title: 'Alternate Phone' })
-                ]
-              },
-              {
-                fields: [
-                  {
-                    type: 'html',
-                    html: '<h4>Alternate Contact</h4>'
-                  }
-                ]
-              },
-              {
-                fields: [
-                  Object.assign({}, entityLocationDetails__fields.alternate_contact_first_name, { title: 'First Name', className: 'col-sm-4' }),
-                  Object.assign({}, entityLocationDetails__fields.alternate_contact_last_name, { title: 'Last Name', className: 'col-sm-4' })
-                ]
-              },
-              {
-                fields: [
-                  Object.assign({}, entityLocationDetails__fields.alternate_contact_email, { title: 'Email' }),
-                  Object.assign({}, entityLocationDetails__fields.alternate_contact_primary_phone, { title: 'Primary Phone' }),
-                  Object.assign({}, entityLocationDetails__fields.alternate_contact_alternate_phone, { title: 'Alternate Phone' })
+                  Object.assign({}, entityLockerDetails__fields.number, { className: 'col-sm-4' }),
+                  Object.assign({}, entityLockerDetails__fields.description, { className: 'col-sm-8' })
                 ]
               }
             ]
@@ -183,12 +129,12 @@ function renderEntityLocationDetailsPage(app, $container, router, auth, opt, id,
             rows: [
               {
                 fields: [
-                  Object.assign({}, entityLocationDetails__fields.latest_note__date(model), { title: 'Date', className: 'col-sm-4' })
+                  Object.assign({}, entityLockerDetails__fields.latest_note__date(model), { title: 'Date', className: 'col-sm-4' })
                 ]
               },
               {
                 fields: [
-                  Object.assign({}, entityLocationDetails__fields.latest_note__note(model), { title: 'Note' })
+                  Object.assign({}, entityLockerDetails__fields.latest_note__note(model), { title: 'Note' })
                 ]
               }
             ]
@@ -211,13 +157,13 @@ function renderEntityLocationDetailsPage(app, $container, router, auth, opt, id,
             rows: [
               {
                 fields: [
-                  Object.assign({}, entityLocationDetails__fields.latest_inspection__date(model), { title: 'Date', className: 'col-sm-4' }),
-                  Object.assign({}, entityLocationDetails__fields.latest_inspection__result(model), { title: 'Result', className: 'col-sm-4' })
+                  Object.assign({}, entityLockerDetails__fields.latest_inspection__date(model), { title: 'Date', className: 'col-sm-4' }),
+                  Object.assign({}, entityLockerDetails__fields.latest_inspection__result(model), { title: 'Result', className: 'col-sm-4' })
                 ]
               },
               {
                 fields: [
-                  Object.assign({}, entityLocationDetails__fields.latest_inspection__note(model), { title: 'Note' })
+                  Object.assign({}, entityLockerDetails__fields.latest_inspection__note(model), { title: 'Note' })
                 ]
               }
             ]
@@ -228,27 +174,27 @@ function renderEntityLocationDetailsPage(app, $container, router, auth, opt, id,
       return Promise.resolve().then(() => {
         return renderForm($('<div></div>').appendTo($container), definition, model, {
           auth,
-          url: '/* @echo C3DATA_LOCATIONS_URL */',
+          url: '/* @echo C3DATA_LOCKERS_URL */',
 
-          saveButtonLabel: (model) => model.isNew() ? 'Create Location' : 'Update Location',
+          saveButtonLabel: (model) => model.isNew() ? 'Create Locker' : 'Update Locker',
 
           cancelButtonLabel: 'Cancel',
-          cancelButtonFragment: currentLocationView.fragment,
+          cancelButtonFragment: currentLockerView.fragment,
 
-          removeButtonLabel: 'Remove Location',
+          removeButtonLabel: 'Remove Locker',
           removePromptValue: 'DELETE'
         });
       }).then(() => {
         $containerTop.html(`<p><a href="#${redirectToFragment}">Back to ${redirectTo}</a></p>`);
 
         if (id === 'new') {
-          breadcrumbs.push({ name: 'New', link: `#${currentLocationView.fragment}/new` });
+          breadcrumbs.push({ name: 'New', link: `#${currentLockerView.fragment}/new` });
           app.setBreadcrumb(breadcrumbs, true);
-          app.setTitle('New Location');
+          app.setTitle('New Locker');
         } else {
-          breadcrumbs.push({ name: data.site_name, link: `#${currentLocationView.fragment}/${data.id}` });
+          breadcrumbs.push({ name: `${data.location__site_name} ${data.number}`, link: `#${currentLockerView.fragment}/${data.id}` });
           app.setBreadcrumb(breadcrumbs, true);
-          app.setTitle(data.site_name);
+          app.setTitle(`${data.location__site_name} ${data.number}`);
         }
 
         return () => {

@@ -86,7 +86,7 @@ function renderEntityLocationInspectionDetailsPage(app, $container, router, auth
 
             router.navigate(`${currentLocationInspectionView.fragment}/${data.id}`, { trigger: false, replace: true });
 
-            breadcrumbs.push({ name: data.date, link: `#${currentLocationInspectionView.fragment}/${data.id}` });
+            breadcrumbs.splice(breadcrumbs.length - 1, 1, { name: data.date, link: `#${currentLocationInspectionView.fragment}/${data.id}` });
             app.setBreadcrumb(breadcrumbs, true);
             app.setTitle(data.date);
 

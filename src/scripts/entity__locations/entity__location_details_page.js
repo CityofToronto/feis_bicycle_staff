@@ -81,7 +81,7 @@ function renderEntityLocationDetailsPage(app, $container, router, auth, opt, id,
 
             router.navigate(`${currentLocationView.fragment}/${data.id}`, { trigger: false, replace: true });
 
-            breadcrumbs.push({ name: data.site_name, link: `#${currentLocationView.fragment}/${data.id}` });
+            breadcrumbs.splice(breadcrumbs.length - 1, 1, { name: data.site_name, link: `#${currentLocationView.fragment}/${data.id}` });
             app.setBreadcrumb(breadcrumbs, true);
             app.setTitle(data.site_name);
 

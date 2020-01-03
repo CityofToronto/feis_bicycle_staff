@@ -85,7 +85,7 @@ function renderEntityLocationNoteDetailsPage(app, $container, router, auth, opt,
 
             router.navigate(`${currentLocationNoteView.fragment}/${data.id}`, { trigger: false, replace: true });
 
-            breadcrumbs.push({ name: data.date, link: `#${currentLocationNoteView.fragment}/${data.id}` });
+            breadcrumbs.splice(breadcrumbs.length - 1, 1, { name: data.date, link: `#${currentLocationNoteView.fragment}/${data.id}` });
             app.setBreadcrumb(breadcrumbs, true);
             app.setTitle(data.date);
 

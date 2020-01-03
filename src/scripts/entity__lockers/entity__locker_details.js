@@ -1,29 +1,11 @@
 /* global $ moment */
 
-/* exported entityLocationDetails__fields */
-const entityLocationDetails__fields = {
-  site_name: {
-    title: 'Site Name',
-    bindTo: 'site_name',
-    required: true
-  },
-  description: {
-    title: 'Description',
-    bindTo: 'description',
-    type: 'textarea'
-  },
-
-  civic_address: {
-    title: 'Street Address',
-    bindTo: 'civic_address'
-  },
-  municipality: {
-    title: 'City',
-    bindTo: 'municipality'
-  },
-  province: (auth) => ({
-    title: 'Province',
-    bindTo: 'province',
+/* exported entityLockerDetails__fields */
+const entityLockerDetails__fields = {
+  location: (auth) => ({
+    title: 'Locker Location',
+    bindTo: 'location',
+    required: true,
     type: 'dropdown',
     choices: {
       beforeSend(jqXHR) {
@@ -33,54 +15,39 @@ const entityLocationDetails__fields = {
       },
       contentType: 'application/json; charset=utf-8',
       method: 'GET',
-      url: '/* @echo C3DATAMEDIA_PROVINCE_CHOICES */'
+      url: '/* @echo C3DATA_LOCATIONS_URL */?$select=id,site_name&$filter=__Status eq \'Active\''
     },
+    choicesMap(data) {
+      if (data && data.value) {
+        return data.value.sort((a, b) => {
+          const a_site_name = a.site_name.toLowerCase();
+          const b_site_name = b.site_name.toLowerCase();
+          if (a_site_name > b_site_name) {
+            return 1;
+          }
+          if (a_site_name < b_site_name) {
+            return -1;
+          }
+          return 0;
+        }).map((item) => {
+          return {
+            text: item.site_name,
+            value: item.id
+          };
+        });
+      }
+      return [];
+    }
   }),
-  postal_code: {
-    title: 'Postal Code',
-    bindTo: 'postal_code'
-  },
 
-  primary_contact_first_name: {
-    title: 'First Name (Primary Contact)',
-    bindTo: 'primary_contact_first_name'
+  number: {
+    title: 'Number',
+    bindTo: 'number',
   },
-  primary_contact_last_name: {
-    title: 'Last Name (Primary Contact)',
-    bindTo: 'primary_contact_last_name'
-  },
-  primary_contact_email: {
-    title: 'Email (Primary Contact)',
-    bindTo: 'primary_contact_email'
-  },
-  primary_contact_primary_phone: {
-    title: 'Primary Phone (Primary Contact)',
-    bindTo: 'primary_contact_primary_phone'
-  },
-  primary_contact_alternate_phone: {
-    title: 'Alternate Phone (Primary Contact)',
-    bindTo: 'primary_contact_alternate_phone'
-  },
-
-  alternate_contact_first_name: {
-    title: 'First Name (Alternate Contact)',
-    bindTo: 'alternate_contact_first_name'
-  },
-  alternate_contact_last_name: {
-    title: 'Last Name (Alternate Contact)',
-    bindTo: 'alternate_contact_last_name'
-  },
-  alternate_contact_email: {
-    title: 'Email (Alternate Contact)',
-    bindTo: 'alternate_contact_email'
-  },
-  alternate_contact_primary_phone: {
-    title: 'Primary Phone (Alternate Contact)',
-    bindTo: 'alternate_contact_primary_phone'
-  },
-  alternate_contact_alternate_phone: {
-    title: 'Alternate Phone (Alternate Contact)',
-    bindTo: 'alternate_contact_alternate_phone'
+  description: {
+    title: 'Description',
+    bindTo: 'description',
+    type: 'textarea'
   },
 
   latest_note__date: (model) => ({

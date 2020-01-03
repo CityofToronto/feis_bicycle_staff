@@ -1,8 +1,8 @@
 /* global moment */
-/* global oData__escapeValue query__objectToString */
+/* global query__objectToString */
 
-/* exported entityLocations__columns */
-const entityLocations__columns = {
+/* exported entityLockers__columns */
+const entityLockers__columns = {
   action: (fragmentPrefix) => ({
     title: 'Action',
     className: 'excludeFromButtons openButtonWidth',
@@ -21,10 +21,20 @@ const entityLocations__columns = {
     data: 'id'
   },
 
-  site_name: {
-    title: 'Site Name',
+  location: {
+    title: 'Location ID',
     className: 'minWidth',
-    data: 'site_name'
+    data: 'location'
+  },
+  location__site_name: {
+    title: 'Location',
+    className: 'minWidth',
+    data: 'location__site_name'
+  },
+  number: {
+    title: 'Number',
+    className: 'minWidth',
+    data: 'number'
   },
   description: {
     title: 'Description',
@@ -37,127 +47,6 @@ const entityLocations__columns = {
         return '';
       }
     }
-  },
-
-  civic_address: {
-    title: 'Address',
-    className: 'minWidth',
-    data: 'civic_address'
-  },
-  municipality: {
-    title: 'City',
-    className: 'minWidth',
-    data: 'municipality'
-  },
-  province: (auth) => ({
-    title: 'Province',
-    className: 'minWidth',
-    data: 'province',
-    searchType: 'equals',
-    choices: {
-      beforeSend(jqXHR) {
-        if (auth && auth.sId) {
-          jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
-        }
-      },
-      contentType: 'application/json; charset=utf-8',
-      method: 'GET',
-      url: '/* @echo C3DATAMEDIA_PROVINCE_CHOICES */'
-    },
-  }),
-  postal_code: {
-    title: 'Postal Code',
-    className: 'minWidth',
-    data: 'postal_code'
-  },
-
-  address: {
-    title: 'Address',
-    className: 'minWidth',
-    data: 'civic_address',
-    select: ['municipality', 'province', 'postal_code'],
-    type: 'function',
-    render(data, settings, row) {
-      const line1 = data;
-      const line2 = [row['municipality'], row['province'], row['postal_code']].filter((value) => value).join(' ');
-      return [line1, line2].filter((value) => value).join('<br>');
-    },
-    filter(column) {
-      let filterColumns = `concat(concat(province,' '),postal_code)`;
-      filterColumns = `concat(concat(municipality,' '),${filterColumns})`;
-      filterColumns = `concat(concat(civic_address,' '),${filterColumns})`;
-
-      return column.search.value
-        .split(' ')
-        .filter((value, index, array) => value && array.indexOf(value) === index)
-        .map((value) => `contains(tolower(${filterColumns}),'${oData__escapeValue(value.toLowerCase())}')`)
-        .join(' and ');
-    },
-    orderBy(order) {
-      let orderColumns = `concat(concat(province,' '),postal_code)`;
-      orderColumns = `concat(concat(municipality,' '),${orderColumns})`;
-      orderColumns = `concat(concat(civic_address,' '),${orderColumns})`;
-      return `tolower(${orderColumns}) ${order.dir}`;
-    }
-  },
-
-  primary_contact_first_name: {
-    title: 'First Name - Primary Contact',
-    className: 'minWidth',
-    data: 'primary_contact_first_name'
-  },
-  primary_contact_last_name: {
-    title: 'Last Name - Primary Contact',
-    className: 'minWidth',
-    data: 'primary_contact_last_name'
-  },
-  primary_contact_email: {
-    title: 'Email - Primary Contact',
-    className: 'minWidth',
-    data: 'primary_contact_email'
-  },
-  primary_contact_primary_phone: {
-    title: 'Primary Phone - Primary Contact',
-    className: 'minWidth',
-    data: 'primary_contact_primary_phone'
-  },
-  primary_contact_alternate_phone: {
-    title: 'Alternate Phone - Primary Contact',
-    className: 'minWidth',
-    data: 'primary_contact_alternate_phone'
-  },
-
-  alternate_contact_first_name: {
-    title: 'First Name - Alternate Contact',
-    className: 'minWidth',
-    data: 'alternate_contact_first_name'
-  },
-  alternate_contact_last_name: {
-    title: 'Last Name - Alternate Contact',
-    className: 'minWidth',
-    data: 'alternate_contact_last_name'
-  },
-  alternate_contact_email: {
-    title: 'Email - Alternate Contact',
-    className: 'minWidth',
-    data: 'alternate_contact_email'
-  },
-  alternate_contact_primary_phone: {
-    title: 'Primary Phone - Alternate Contact',
-    className: 'minWidth',
-    data: 'alternate_contact_primary_phone'
-  },
-  alternate_contact_alternate_phone: {
-    title: 'Alternate Phone - Alternate Contact',
-    className: 'minWidth',
-    data: 'alternate_contact_alternate_phone'
-  },
-
-  lockers_total: {
-    title: 'Total Lockers',
-    className: 'minWidth',
-    data: 'lockers_total',
-    type: 'number'
   },
 
   latest_note: {

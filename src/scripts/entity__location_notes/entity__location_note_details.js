@@ -47,7 +47,6 @@ const entityLocationNoteDetails__fields = {
       format: 'YYYY/MM/DD h:mm A'
     }
   },
-
   note: {
     title: 'Note',
     bindTo: 'note',
