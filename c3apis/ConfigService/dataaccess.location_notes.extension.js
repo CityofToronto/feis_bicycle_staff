@@ -20,6 +20,7 @@ function beforeContentParse(content, request, uriInfo, response) {
 
   cleanupLocation(content, request);
 
+  // NOTE: Can be removed
   setLocationSiteName(content, request);
 
   setStatus(content, request);
@@ -145,7 +146,7 @@ function updateLocation(content, request) {
   }, function okFunction(okResponse) {
     var id = content.get('id').getAsString();
     var date = content.get('date').getAsString();
-    var note = content.get('note').getAsString();
+    var note = content.has('note') ? content.get('note').getAsString() : null;
 
     var body = JSON.parse(okResponse.body);
     if (method === 'DELETE') {

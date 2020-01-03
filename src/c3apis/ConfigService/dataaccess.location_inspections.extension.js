@@ -17,6 +17,7 @@ function beforeContentParse(content, request, uriInfo, response) { // eslint-dis
 
   cleanupLocation(content, request);
 
+  // NOTE: Can be removed
   setLocationSiteName(content, request);
 
   setStatus(content, request);
@@ -136,7 +137,7 @@ function updateLocation(content, request, {
     const id = content.get('id').getAsString();
     const date = content.get('date').getAsString();
     const result = content.get('result').getAsString();
-    const note = content.get('note').getAsString();
+    const note = content.has('note') ? content.get('note').getAsString() : null;
 
     const body = JSON.parse(okResponse.body);
     if (method === 'DELETE') {

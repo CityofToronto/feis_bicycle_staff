@@ -2,7 +2,7 @@
 /* global auth__checkLogin query__objectToString query__stringToObject */
 /* global renderDatatable */
 
-const renderLocationNotesPage__columns = {
+const renderLockerNotesPage__columns = {
   action: (fragmentPrefix) => ({
     title: 'Action',
     className: 'excludeFromButtons openButtonWidth',
@@ -15,16 +15,16 @@ const renderLocationNotesPage__columns = {
     searchable: false
   }),
 
-  location: {
-    title: 'Locker Location',
+  locker: {
+    title: 'Locker',
     className: 'minWidth',
-    data: 'location'
+    data: 'locker'
   },
 
-  location__site_name: {
-    title: 'Locker Location',
+  locker__name: {
+    title: 'Locker',
     className: 'minWidth',
-    data: 'location__site_name'
+    data: 'locker__name'
   },
 
   date: {
@@ -102,7 +102,7 @@ const renderLocationNotesPage__columns = {
   }
 };
 
-const renderLocationNotesPage__views = {
+const renderLockerNotesPage__views = {
   all: {
     breadcrumb: 'All',
 
@@ -112,18 +112,18 @@ const renderLocationNotesPage__views = {
     definition() {
       const definition = {
         columns: [
-          renderLocationNotesPage__columns.action('location_notes/all'),
+          renderLockerNotesPage__columns.action('location_notes/all'),
 
-          renderLocationNotesPage__columns.location__site_name,
+          renderLockerNotesPage__columns.locker__name,
 
-          renderLocationNotesPage__columns.date,
+          renderLockerNotesPage__columns.date,
 
-          renderLocationNotesPage__columns.note,
+          renderLockerNotesPage__columns.note,
 
-          renderLocationNotesPage__columns.__CreatedOn,
-          renderLocationNotesPage__columns.__ModifiedOn,
-          renderLocationNotesPage__columns.__Owner,
-          renderLocationNotesPage__columns.__Status
+          renderLockerNotesPage__columns.__CreatedOn,
+          renderLockerNotesPage__columns.__ModifiedOn,
+          renderLockerNotesPage__columns.__Owner,
+          renderLockerNotesPage__columns.__Status
         ],
 
         order: [
@@ -140,11 +140,11 @@ const renderLocationNotesPage__views = {
   }
 };
 
-/* exported renderLocationNotesPage */
-function renderLocationNotesPage(app, $container, router, auth, opt, query) {
-  if (!(opt in renderLocationNotesPage__views)) {
+/* exported renderLockerNotesPage */
+function renderLockerNotesPage(app, $container, router, auth, opt, query) {
+  if (!(opt in renderLockerNotesPage__views)) {
     const query = query__objectToString({ resetState: 'yes' });
-    router.navigate(`${router.navigate(`${renderLocationNotesPage__views.all.fragment}?${query}`, { trigger: true, replace: true })}?${query}`, { trigger: true, replace: true });
+    router.navigate(`${router.navigate(`${renderLockerNotesPage__views.all.fragment}?${query}`, { trigger: true, replace: true })}?${query}`, { trigger: true, replace: true });
     return;
   }
 
@@ -160,23 +160,23 @@ function renderLocationNotesPage(app, $container, router, auth, opt, query) {
     } = query__stringToObject(query);
 
     $container.html(`<p><a href="#${redirectToFragment}">Back to ${redirectTo}</a></p>`);
-    $container.append(`<h2>${renderLocationNotesPage__views[opt].title}</h2>`);
+    $container.append(`<h2>${renderLockerNotesPage__views[opt].title}</h2>`);
 
-    const definition = renderLocationNotesPage__views[opt].definition();
+    const definition = renderLockerNotesPage__views[opt].definition();
     const stateSaveWebStorageKey = `location_notes_${opt}`;
     if (resetState === 'yes') {
       sessionStorage.removeItem(stateSaveWebStorageKey);
     }
-    const views = Object.keys(renderLocationNotesPage__views).map((key) => ({
-      title: renderLocationNotesPage__views[key].title,
-      fragment: `${renderLocationNotesPage__views[key].fragment}?${query__objectToString({ resetState: 'yes' })}`,
+    const views = Object.keys(renderLockerNotesPage__views).map((key) => ({
+      title: renderLockerNotesPage__views[key].title,
+      fragment: `${renderLockerNotesPage__views[key].fragment}?${query__objectToString({ resetState: 'yes' })}`,
       isCurrent: key === opt
     }));
 
     return Promise.resolve().then(() => {
       return renderDatatable($container, definition, {
         auth,
-        url: '/* @echo C3DATA_LOCATION_NOTES_URL */',
+        url: '/* @echo C3DATA_LOCKER_NOTES_URL */',
 
         newButtonLabel: 'New Location Note',
         newButtonFragment: `location_notes/${opt}/new`,
@@ -188,8 +188,8 @@ function renderLocationNotesPage(app, $container, router, auth, opt, query) {
     }).then(() => {
       const breadcrumbs = [
         { name: app.name, link: '#home' },
-        { name: 'Location Notes', link: `#${renderLocationNotesPage__views.all.fragment}` },
-        { name: renderLocationNotesPage__views[opt].breadcrumb, link: `#${renderLocationNotesPage__views[opt].fragment}` }
+        { name: 'Location Notes', link: `#${renderLockerNotesPage__views.all.fragment}` },
+        { name: renderLockerNotesPage__views[opt].breadcrumb, link: `#${renderLockerNotesPage__views[opt].fragment}` }
       ];
       app.setBreadcrumb(breadcrumbs, true);
 

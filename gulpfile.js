@@ -18,8 +18,8 @@ core.embeddedApp.createTasks(gulp, {
       C3DATA_LOCATION_INSPECTIONS_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/location_inspections',
 
       C3DATA_LOCKERS_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/lockers',
-      C3DATA_LOCKERS_NOTES_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/locker_notes',
-      C3DATA_LOCKERS_INSPECTIONS_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/locker_inspections',
+      C3DATA_LOCKER_NOTES_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/locker_notes',
+      C3DATA_LOCKER_INSPECTIONS_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/locker_inspections',
 
       // C3DATA_STATIONS_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/stations',
       // C3DATA_STATION_NOTES_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/station_notes',
