@@ -61,7 +61,7 @@ function setLockerName(content, request) {
     uri: `${common.DA_LOCKERS_URL}('${content.get('locker').getAsString()}')?$select=${select}`
   }, function okFunction(okResponse) {
     const body = JSON.parse(okResponse.body);
-    content.addProperty('locker__name', `${body.location__site_name} - ${body.number}`);
+    content.addProperty('locker__name', `${body.location__site_name} ${body.number}`);
 
     // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
   }, function errorFunction(errorResponse) { // eslint-disable-line no-unused-vars
@@ -136,7 +136,7 @@ function updateLocker(content, request, {
   }, function okFunction(okResponse) {
     const id = content.get('id').getAsString();
     const date = content.get('date').getAsString();
-    const note = content.get('note').getAsString();
+    const note = content.has('note') ? content.get('note').getAsString() : null;
 
     const body = JSON.parse(okResponse.body);
     if (method === 'DELETE') {

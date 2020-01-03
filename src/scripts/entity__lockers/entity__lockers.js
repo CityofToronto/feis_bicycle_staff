@@ -31,6 +31,7 @@ const entityLockers__columns = {
     className: 'minWidth',
     data: 'location__site_name'
   },
+
   number: {
     title: 'Number',
     className: 'minWidth',
@@ -38,7 +39,7 @@ const entityLockers__columns = {
   },
   description: {
     title: 'Description',
-    className: 'minWidth',
+    className: 'minWidthLarge',
     data: 'description',
     render(data) {
       if (data) {
@@ -70,7 +71,7 @@ const entityLockers__columns = {
   },
   latest_note__note: {
     title: 'Latest Note',
-    className: 'minWidth',
+    className: 'minWidthLarge',
     data: 'latest_note__note',
     render(data) {
       if (data) {

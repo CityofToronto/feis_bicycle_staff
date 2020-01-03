@@ -1,7 +1,7 @@
 /* exported entityLocationNoteDetails__fields */
 const entityLocationNoteDetails__fields = {
   location: (auth) => ({
-    title: 'Locker Location',
+    title: 'Location',
     bindTo: 'location',
     required: true,
     type: 'dropdown',

@@ -2,12 +2,14 @@
 /* global ajaxes auth__checkLogin modal__showConfirm query__objectToString query__stringToObject
    renderAlert toSnapShot */
 /* global renderForm */
-/* global renderEntityLocationNotesPage__views entityLocationNoteDetails__fields */
+/* global renderEntityLockerNotesPage__views entityLockerNoteDetails__fields */
 
-/* exported renderEntityLocationNoteDetailsPage */
-function renderEntityLocationNoteDetailsPage(app, $container, router, auth, opt, id, query) {
-  if (!(opt in renderEntityLocationNotesPage__views)) {
-    const fragment = renderEntityLocationNotesPage__views.all.fragment;
+console.log('TEST');
+
+/* exported renderEntityLockerNoteDetailsPage */
+function renderEntityLockerNoteDetailsPage(app, $container, router, auth, opt, id, query) {
+  if (!(opt in renderEntityLockerNotesPage__views)) {
+    const fragment = renderEntityLockerNotesPage__views.all.fragment;
     const query = query__objectToString({ resetState: 'yes' });
     router.navigate(`${fragment}?${query}`, { trigger: true, replace: true });
     return;
@@ -18,11 +20,11 @@ function renderEntityLocationNoteDetailsPage(app, $container, router, auth, opt,
       return router.navigateToLoginPage();
     }
 
-    const currentLocationNoteView = renderEntityLocationNotesPage__views[opt];
+    const currentLockerNoteView = renderEntityLockerNotesPage__views[opt];
 
     const {
-      redirectTo = 'Location Notes',
-      redirectToFragment = currentLocationNoteView.fragment
+      redirectTo = 'Locker Notes',
+      redirectToFragment = currentLockerNoteView.fragment
     } = query__stringToObject(query);
 
     $container.empty();
@@ -31,8 +33,8 @@ function renderEntityLocationNoteDetailsPage(app, $container, router, auth, opt,
     const breadcrumbs = [
       { name: app.name, link: '#home' },
       { name: 'Entities', link: '#entities' },
-      { name: 'Location Notes', link: `#${renderEntityLocationNotesPage__views.all.fragment}` },
-      { name: currentLocationNoteView.breadcrumb, link: `#${currentLocationNoteView.fragment}` }
+      { name: 'Locker Notes', link: `#${renderEntityLockerNotesPage__views.all.fragment}` },
+      { name: currentLockerNoteView.breadcrumb, link: `#${currentLockerNoteView.fragment}` }
     ];
 
     return Promise.resolve().then(() => {
@@ -45,7 +47,7 @@ function renderEntityLocationNoteDetailsPage(app, $container, router, auth, opt,
           },
           contentType: 'application/json; charset=utf-8',
           method: 'GET',
-          url: `/* @echo C3DATA_LOCATION_NOTES_URL */('${id}')`
+          url: `/* @echo C3DATA_LOCKER_NOTES_URL */('${id}')`
         });
       }
 
@@ -83,9 +85,9 @@ function renderEntityLocationNoteDetailsPage(app, $container, router, auth, opt,
           }).then(({ data, textStatus, jqXHR }) => {
             snapShot = toSnapShot(data);
 
-            router.navigate(`${currentLocationNoteView.fragment}/${data.id}`, { trigger: false, replace: true });
+            router.navigate(`${currentLockerNoteView.fragment}/${data.id}`, { trigger: false, replace: true });
 
-            breadcrumbs.splice(breadcrumbs.length - 1, 1, { name: data.date, link: `#${currentLocationNoteView.fragment}/${data.id}` });
+            breadcrumbs.splice(breadcrumbs.length - 1, 1, { name: data.date, link: `#${currentLockerNoteView.fragment}/${data.id}` });
             app.setBreadcrumb(breadcrumbs, true);
             app.setTitle(data.date);
 
@@ -103,13 +105,13 @@ function renderEntityLocationNoteDetailsPage(app, $container, router, auth, opt,
             rows: [
               {
                 fields: [
-                  Object.assign({}, entityLocationNoteDetails__fields.location(auth), { className: 'col-sm-4' }),
-                  Object.assign({}, entityLocationNoteDetails__fields.date, { className: 'col-sm-4' })
+                  Object.assign({}, entityLockerNoteDetails__fields.locker(auth), { className: 'col-sm-4' }),
+                  Object.assign({}, entityLockerNoteDetails__fields.date, { className: 'col-sm-4' })
                 ]
               },
               {
                 fields: [
-                  entityLocationNoteDetails__fields.note
+                  entityLockerNoteDetails__fields.note
                 ]
               }
             ]
@@ -120,25 +122,25 @@ function renderEntityLocationNoteDetailsPage(app, $container, router, auth, opt,
       return Promise.resolve().then(() => {
         return renderForm($('<div></div>').appendTo($container), definition, model, {
           auth,
-          url: '/* @echo C3DATA_LOCATION_NOTES_URL */',
+          url: '/* @echo C3DATA_LOCKER_NOTES_URL */',
 
-          saveButtonLabel: (model) => model.isNew() ? 'Create Location Note' : 'Update Location Note',
+          saveButtonLabel: (model) => model.isNew() ? 'Create Locker Note' : 'Update Locker Note',
 
           cancelButtonLabel: 'Cancel',
-          cancelButtonFragment: currentLocationNoteView.fragment,
+          cancelButtonFragment: currentLockerNoteView.fragment,
 
-          removeButtonLabel: 'Remove Location Note',
+          removeButtonLabel: 'Remove Locker Note',
           removePromptValue: 'DELETE'
         });
       }).then(() => {
         $containerTop.html(`<p><a href="#${redirectToFragment}">Back to ${redirectTo}</a></p>`);
 
         if (id === 'new') {
-          breadcrumbs.push({ name: 'New', link: `#${currentLocationNoteView.fragment}/new` });
+          breadcrumbs.push({ name: 'New', link: `#${currentLockerNoteView.fragment}/new` });
           app.setBreadcrumb(breadcrumbs, true);
-          app.setTitle('New Location Note');
+          app.setTitle('New Locker Note');
         } else {
-          breadcrumbs.push({ name: data.date, link: `#${currentLocationNoteView.fragment}/${data.id}` });
+          breadcrumbs.push({ name: data.date, link: `#${currentLockerNoteView.fragment}/${data.id}` });
           app.setBreadcrumb(breadcrumbs, true);
           app.setTitle(data.date);
         }

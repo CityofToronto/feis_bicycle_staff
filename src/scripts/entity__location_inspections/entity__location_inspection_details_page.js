@@ -124,12 +124,12 @@ function renderEntityLocationInspectionDetailsPage(app, $container, router, auth
           auth,
           url: '/* @echo C3DATA_LOCATION_INSPECTIONS_URL */',
 
-          saveButtonLabel: (model) => model.isNew() ? 'Create Location' : 'Update Location',
+          saveButtonLabel: (model) => model.isNew() ? 'Create Location Inspection' : 'Update Location Inspection',
 
           cancelButtonLabel: 'Cancel',
           cancelButtonFragment: currentLocationInspectionView.fragment,
 
-          removeButtonLabel: 'Remove Location',
+          removeButtonLabel: 'Remove Location Inspection',
           removePromptValue: 'DELETE'
         });
       }).then(() => {

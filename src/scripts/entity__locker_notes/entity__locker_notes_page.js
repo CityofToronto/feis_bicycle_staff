@@ -1,32 +1,31 @@
 /* global $ */
 /* global auth__checkLogin query__objectToString query__stringToObject */
 /* global renderDatatable */
-/* global entityLocationInspections__columns */
+/* global entityLockerNotes__columns */
 
-const renderEntityLocationInspectionsPage__views = {
+const renderEntityLockerNotesPage__views = {
   all: {
     breadcrumb: 'All',
 
-    title: 'All Location Inspections',
-    fragment: 'entities/location_inspections/all',
-    stateSaveWebStorageKey: 'entity_location_inspections_all',
+    title: 'All Locker Notes',
+    fragment: 'entities/locker_notes/all',
+    stateSaveWebStorageKey: 'entity_locker_notes_all',
 
     definition: (auth, opt) => { // eslint-disable-line no-unused-vars
       const definition = {
         columns: [
-          entityLocationInspections__columns.action(renderEntityLocationInspectionsPage__views.all.fragment),
+          entityLockerNotes__columns.action(renderEntityLockerNotesPage__views.all.fragment),
 
-          entityLocationInspections__columns.id,
-          entityLocationInspections__columns.location,
-          entityLocationInspections__columns.location__site_name,
-          entityLocationInspections__columns.date,
-          entityLocationInspections__columns.result(auth),
-          entityLocationInspections__columns.note,
+          entityLockerNotes__columns.id,
+          entityLockerNotes__columns.locker,
+          entityLockerNotes__columns.locker__name,
+          entityLockerNotes__columns.date,
+          entityLockerNotes__columns.note,
 
-          entityLocationInspections__columns.__CreatedOn,
-          entityLocationInspections__columns.__ModifiedOn,
-          entityLocationInspections__columns.__Owner,
-          entityLocationInspections__columns.__Status
+          entityLockerNotes__columns.__CreatedOn,
+          entityLockerNotes__columns.__ModifiedOn,
+          entityLockerNotes__columns.__Owner,
+          entityLockerNotes__columns.__Status
         ],
 
         order: [[1, 'asc']],
@@ -41,10 +40,10 @@ const renderEntityLocationInspectionsPage__views = {
   }
 };
 
-/* exported renderEntityLocationInspectionsPage */
-function renderEntityLocationInspectionsPage(app, $container, router, auth, opt, query) {
-  if (!(opt in renderEntityLocationInspectionsPage__views)) {
-    const fragment = renderEntityLocationInspectionsPage__views.all.fragment;
+/* exported renderEntityLockerNotesPage */
+function renderEntityLockerNotesPage(app, $container, router, auth, opt, query) {
+  if (!(opt in renderEntityLockerNotesPage__views)) {
+    const fragment = renderEntityLockerNotesPage__views.all.fragment;
     const query = query__objectToString({ resetState: 'yes' });
     router.navigate(`${fragment}?${query}`, { trigger: true, replace: true });
     return;
@@ -58,7 +57,7 @@ function renderEntityLocationInspectionsPage(app, $container, router, auth, opt,
     $container.empty();
 
     const $containerTop = $('<div></div>').appendTo($container);
-    const currentLocationView = renderEntityLocationInspectionsPage__views[opt];
+    const currentLocationView = renderEntityLockerNotesPage__views[opt];
 
     const {
       redirectTo = 'Entities',
@@ -72,18 +71,18 @@ function renderEntityLocationInspectionsPage(app, $container, router, auth, opt,
 
     const definition = currentLocationView.definition(auth, opt);
 
-    const views = Object.keys(renderEntityLocationInspectionsPage__views).map((key) => ({
-      title: renderEntityLocationInspectionsPage__views[key].title,
-      fragment: `${renderEntityLocationInspectionsPage__views[key].fragment}?${query__objectToString({ resetState: 'yes' })}`,
+    const views = Object.keys(renderEntityLockerNotesPage__views).map((key) => ({
+      title: renderEntityLockerNotesPage__views[key].title,
+      fragment: `${renderEntityLockerNotesPage__views[key].fragment}?${query__objectToString({ resetState: 'yes' })}`,
       isCurrent: key === opt
     }));
 
     return Promise.resolve().then(() => {
       return renderDatatable($container, definition, {
         auth,
-        url: '/* @echo C3DATA_LOCATION_INSPECTIONS_URL */',
+        url: '/* @echo C3DATA_LOCKER_NOTES_URL */',
 
-        newButtonLabel: 'New Location Inspection',
+        newButtonLabel: 'New Locker Note',
         newButtonFragment: `${currentLocationView.fragment}/new`,
 
         stateSaveWebStorageKey: currentLocationView.stateSaveWebStorageKey,
@@ -97,11 +96,11 @@ function renderEntityLocationInspectionsPage(app, $container, router, auth, opt,
       const breadcrumbs = [
         { name: app.name, link: '#home' },
         { name: 'Entities', link: '#entities' },
-        { name: 'Location Inpections', link: `#${renderEntityLocationInspectionsPage__views.all.fragment}` },
+        { name: 'Locker Notes', link: `#${renderEntityLockerNotesPage__views.all.fragment}` },
         { name: currentLocationView.breadcrumb, link: `#${currentLocationView.fragment}` }
       ];
       app.setBreadcrumb(breadcrumbs, true);
-      app.setTitle('Location Inspections');
+      app.setTitle('Locker Notes');
     });
   }).catch((error) => {
     console.error(error); // eslint-disable-line no-console

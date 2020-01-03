@@ -28,7 +28,7 @@ const entityLocations__columns = {
   },
   description: {
     title: 'Description',
-    className: 'minWidth',
+    className: 'minWidthLarge',
     data: 'description',
     render(data) {
       if (data) {
@@ -181,7 +181,7 @@ const entityLocations__columns = {
   },
   latest_note__note: {
     title: 'Latest Note',
-    className: 'minWidth',
+    className: 'minWidthLarge',
     data: 'latest_note__note',
     render(data) {
       if (data) {
@@ -236,7 +236,7 @@ const entityLocations__columns = {
   }),
   latest_inspection__note: {
     title: 'Latest Note',
-    className: 'minWidth',
+    className: 'minWidthLarge',
     data: 'latest_inspection__note',
     render(data) {
       if (data) {
