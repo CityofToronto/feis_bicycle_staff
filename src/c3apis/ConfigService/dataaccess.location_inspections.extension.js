@@ -54,11 +54,13 @@ function setLocationSiteName(content, request) {
     content.remove('location__site_name');
   }
 
+  const { location } = JSON.parse(content.toString());
+
   const select = encodeURIComponent('site_name');
   ajax.request({
     headers: { Authorization: request.getHeader('Authorization') },
     method: 'GET',
-    uri: `${common.DA_LOCATIONS_URL}('${content.get('location').getAsString()}')?$select=${select}`
+    uri: `${common.DA_LOCATIONS_URL}('${location}')?$select=${select}`
   }, function okFunction(okResponse) {
     const body = JSON.parse(okResponse.body);
     content.addProperty('location__site_name', body.site_name);
@@ -86,13 +88,15 @@ function getPreviousVersion(content, request) {
     return null;
   }
 
+  const { id } = JSON.parse(content.toString());
+
   let returnValue;
 
   const select = 'location';
   ajax.request({
     headers: { Authorization: request.getHeader('Authorization') },
     method: 'GET',
-    uri: `${common.DA_LOCATION_INSPECTIONS_URL}('${content.get('id').getAsString()}')?$select=${select}`
+    uri: `${common.DA_LOCATION_INSPECTIONS_URL}('${id}')?$select=${select}`
   }, function okFunction(okResponse) {
     const body = JSON.parse(okResponse.body);
     returnValue = {
@@ -112,16 +116,18 @@ function cleanupLocation(content, request) {
     return;
   }
 
+  const { location } = JSON.parse(content.toString());
+
   const previousVersion = getPreviousVersion(content, request);
-  if (previousVersion.location !== content.get('location').getAsString()) {
+  if (previousVersion.location !== location) {
     updateLocation(content, request, { location: previousVersion.location, __Status: 'Inactive' });
   }
 }
 
-function updateLocation(content, request, {
-  location = content.get('location').getAsString(),
-  __Status = content.get('__Status').getAsString()
-} = {}) {
+function updateLocation(content, request, options = {}) {
+  const { location: contentLocation, __Status: contentStatus, id, date, result, note } = JSON.parse(content.toString());
+  const { location = contentLocation, __Status = contentStatus } = options;
+
   const method = request.getMethod();
 
   const select = encodeURIComponent('id,date,result,note');
@@ -134,11 +140,6 @@ function updateLocation(content, request, {
     method: 'GET',
     uri: `${common.DA_LOCATION_INSPECTIONS_URL}?$select=${select}&$filter=${filter}&$orderby=${orderby}&$top=${top}`
   }, function okFunction(okResponse) {
-    const id = content.get('id').getAsString();
-    const date = content.get('date').getAsString();
-    const result = content.get('result').getAsString();
-    const note = content.has('note') ? content.get('note').getAsString() : null;
-
     const body = JSON.parse(okResponse.body);
     if (method === 'DELETE') {
       if (body.value[1] && body.value[1].id === id) {

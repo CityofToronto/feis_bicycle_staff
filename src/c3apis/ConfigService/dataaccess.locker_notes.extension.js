@@ -53,12 +53,14 @@ function setLockerName(content, request) {
     content.remove('locker__name');
   }
 
+  const { locker } = JSON.parse(content.toString());
+
   const select = encodeURIComponent('location__site_name,number');
 
   ajax.request({
     headers: { Authorization: request.getHeader('Authorization') },
     method: 'GET',
-    uri: `${common.DA_LOCKERS_URL}('${content.get('locker').getAsString()}')?$select=${select}`
+    uri: `${common.DA_LOCKERS_URL}('${locker}')?$select=${select}`
   }, function okFunction(okResponse) {
     const body = JSON.parse(okResponse.body);
     content.addProperty('locker__name', `${body.location__site_name} ${body.number}`);
@@ -86,13 +88,15 @@ function getPreviousVersion(content, request) {
     return null;
   }
 
+  const { id } = JSON.parse(content.toString());
+
   let returnValue;
 
   const select = 'locker';
   ajax.request({
     headers: { Authorization: request.getHeader('Authorization') },
     method: 'GET',
-    uri: `${common.DA_LOCKER_NOTES_URL}('${content.get('id').getAsString()}')?$select=${select}`
+    uri: `${common.DA_LOCKER_NOTES_URL}('${id}')?$select=${select}`
   }, function okFunction(okResponse) {
     const body = JSON.parse(okResponse.body);
     returnValue = {
@@ -112,16 +116,18 @@ function cleanupLocker(content, request) {
     return;
   }
 
+  const { locker } = JSON.parse(content.toString());
+
   const previousVersion = getPreviousVersion(content, request);
-  if (previousVersion.locker !== content.get('locker').getAsString()) {
+  if (previousVersion.locker !== locker) {
     updateLocker(content, request, { locker: previousVersion.locker, __Status: 'Inactive' });
   }
 }
 
-function updateLocker(content, request, {
-  locker = content.get('locker').getAsString(),
-  __Status = content.get('__Status').getAsString()
-} = {}) {
+function updateLocker(content, request, options = {}) {
+  const { locker: contentLocker, __Status: contentStatus, id, date, note } = JSON.parse(content.toString());
+  const { locker = contentLocker, __Status = contentStatus } = options;
+
   const method = request.getMethod();
 
   const select = encodeURIComponent('id,date,note');
@@ -134,10 +140,6 @@ function updateLocker(content, request, {
     method: 'GET',
     uri: `${common.DA_LOCKER_NOTES_URL}?$select=${select}&$filter=${filter}&$orderby=${orderby}&$top=${top}`
   }, function okFunction(okResponse) {
-    const id = content.get('id').getAsString();
-    const date = content.get('date').getAsString();
-    const note = content.has('note') ? content.get('note').getAsString() : null;
-
     const body = JSON.parse(okResponse.body);
     if (method === 'DELETE') {
       if (body.value[1] && body.value[1].id === id) {

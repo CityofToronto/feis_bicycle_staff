@@ -59,12 +59,15 @@ function setLockerName(content, request) {
     content.remove('locker__name');
   }
 
+  var _JSON$parse = JSON.parse(content.toString()),
+      locker = _JSON$parse.locker;
+
   var select = encodeURIComponent('location__site_name,number');
 
   ajax.request({
     headers: { Authorization: request.getHeader('Authorization') },
     method: 'GET',
-    uri: common.DA_LOCKERS_URL + '(\'' + content.get('locker').getAsString() + '\')?$select=' + select
+    uri: common.DA_LOCKERS_URL + '(\'' + locker + '\')?$select=' + select
   }, function okFunction(okResponse) {
     var body = JSON.parse(okResponse.body);
     content.addProperty('locker__name', body.location__site_name + ' ' + body.number);
@@ -92,13 +95,16 @@ function getPreviousVersion(content, request) {
     return null;
   }
 
+  var _JSON$parse2 = JSON.parse(content.toString()),
+      id = _JSON$parse2.id;
+
   var returnValue = void 0;
 
   var select = 'locker';
   ajax.request({
     headers: { Authorization: request.getHeader('Authorization') },
     method: 'GET',
-    uri: common.DA_LOCKER_NOTES_URL + '(\'' + content.get('id').getAsString() + '\')?$select=' + select
+    uri: common.DA_LOCKER_NOTES_URL + '(\'' + id + '\')?$select=' + select
   }, function okFunction(okResponse) {
     var body = JSON.parse(okResponse.body);
     returnValue = {
@@ -118,18 +124,29 @@ function cleanupLocker(content, request) {
     return;
   }
 
+  var _JSON$parse3 = JSON.parse(content.toString()),
+      locker = _JSON$parse3.locker;
+
   var previousVersion = getPreviousVersion(content, request);
-  if (previousVersion.locker !== content.get('locker').getAsString()) {
+  if (previousVersion.locker !== locker) {
     updateLocker(content, request, { locker: previousVersion.locker, __Status: 'Inactive' });
   }
 }
 
 function updateLocker(content, request) {
-  var _ref = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
-      _ref$locker = _ref.locker,
-      locker = _ref$locker === undefined ? content.get('locker').getAsString() : _ref$locker,
-      _ref$__Status = _ref.__Status,
-      __Status = _ref$__Status === undefined ? content.get('__Status').getAsString() : _ref$__Status;
+  var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+  var _JSON$parse4 = JSON.parse(content.toString()),
+      contentLocker = _JSON$parse4.locker,
+      contentStatus = _JSON$parse4.__Status,
+      id = _JSON$parse4.id,
+      date = _JSON$parse4.date,
+      note = _JSON$parse4.note;
+
+  var _options$locker = options.locker,
+      locker = _options$locker === undefined ? contentLocker : _options$locker,
+      _options$__Status = options.__Status,
+      __Status = _options$__Status === undefined ? contentStatus : _options$__Status;
 
   var method = request.getMethod();
 
@@ -143,10 +160,6 @@ function updateLocker(content, request) {
     method: 'GET',
     uri: common.DA_LOCKER_NOTES_URL + '?$select=' + select + '&$filter=' + filter + '&$orderby=' + orderby + '&$top=' + top
   }, function okFunction(okResponse) {
-    var id = content.get('id').getAsString();
-    var date = content.get('date').getAsString();
-    var note = content.has('note') ? content.get('note').getAsString() : null;
-
     var body = JSON.parse(okResponse.body);
     if (method === 'DELETE') {
       if (body.value[1] && body.value[1].id === id) {

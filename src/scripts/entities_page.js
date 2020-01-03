@@ -50,7 +50,7 @@ function renderEntitiesPage(app, $container, router, auth) {
       </div>
     `).appendTo($container);
 
-    /* global renderEntityLockersPage__views renderEntityLockerNotesPage__views */
+    /* global renderEntityLockersPage__views renderEntityLockerNotesPage__views renderEntityLockerInspectionsPage__views */
     $(`
       <h2>Locker Enitities</h2>
 
@@ -81,7 +81,7 @@ function renderEntitiesPage(app, $container, router, auth) {
           <h3>Locker Inspections</h3>
 
           <div class="list-group">
-            <a href="#${renderEntityLocationsPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+            <a href="#${renderEntityLockerInspectionsPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
               <span class="badge badge-locations-all"></span>
               All
             </a>

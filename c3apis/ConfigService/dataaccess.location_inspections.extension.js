@@ -60,11 +60,14 @@ function setLocationSiteName(content, request) {
     content.remove('location__site_name');
   }
 
+  var _JSON$parse = JSON.parse(content.toString()),
+      location = _JSON$parse.location;
+
   var select = encodeURIComponent('site_name');
   ajax.request({
     headers: { Authorization: request.getHeader('Authorization') },
     method: 'GET',
-    uri: common.DA_LOCATIONS_URL + '(\'' + content.get('location').getAsString() + '\')?$select=' + select
+    uri: common.DA_LOCATIONS_URL + '(\'' + location + '\')?$select=' + select
   }, function okFunction(okResponse) {
     var body = JSON.parse(okResponse.body);
     content.addProperty('location__site_name', body.site_name);
@@ -92,13 +95,16 @@ function getPreviousVersion(content, request) {
     return null;
   }
 
+  var _JSON$parse2 = JSON.parse(content.toString()),
+      id = _JSON$parse2.id;
+
   var returnValue = void 0;
 
   var select = 'location';
   ajax.request({
     headers: { Authorization: request.getHeader('Authorization') },
     method: 'GET',
-    uri: common.DA_LOCATION_INSPECTIONS_URL + '(\'' + content.get('id').getAsString() + '\')?$select=' + select
+    uri: common.DA_LOCATION_INSPECTIONS_URL + '(\'' + id + '\')?$select=' + select
   }, function okFunction(okResponse) {
     var body = JSON.parse(okResponse.body);
     returnValue = {
@@ -118,18 +124,30 @@ function cleanupLocation(content, request) {
     return;
   }
 
+  var _JSON$parse3 = JSON.parse(content.toString()),
+      location = _JSON$parse3.location;
+
   var previousVersion = getPreviousVersion(content, request);
-  if (previousVersion.location !== content.get('location').getAsString()) {
+  if (previousVersion.location !== location) {
     updateLocation(content, request, { location: previousVersion.location, __Status: 'Inactive' });
   }
 }
 
 function updateLocation(content, request) {
-  var _ref = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
-      _ref$location = _ref.location,
-      location = _ref$location === undefined ? content.get('location').getAsString() : _ref$location,
-      _ref$__Status = _ref.__Status,
-      __Status = _ref$__Status === undefined ? content.get('__Status').getAsString() : _ref$__Status;
+  var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+  var _JSON$parse4 = JSON.parse(content.toString()),
+      contentLocation = _JSON$parse4.location,
+      contentStatus = _JSON$parse4.__Status,
+      id = _JSON$parse4.id,
+      date = _JSON$parse4.date,
+      result = _JSON$parse4.result,
+      note = _JSON$parse4.note;
+
+  var _options$location = options.location,
+      location = _options$location === undefined ? contentLocation : _options$location,
+      _options$__Status = options.__Status,
+      __Status = _options$__Status === undefined ? contentStatus : _options$__Status;
 
   var method = request.getMethod();
 
@@ -143,11 +161,6 @@ function updateLocation(content, request) {
     method: 'GET',
     uri: common.DA_LOCATION_INSPECTIONS_URL + '?$select=' + select + '&$filter=' + filter + '&$orderby=' + orderby + '&$top=' + top
   }, function okFunction(okResponse) {
-    var id = content.get('id').getAsString();
-    var date = content.get('date').getAsString();
-    var result = content.get('result').getAsString();
-    var note = content.has('note') ? content.get('note').getAsString() : null;
-
     var body = JSON.parse(okResponse.body);
     if (method === 'DELETE') {
       if (body.value[1] && body.value[1].id === id) {

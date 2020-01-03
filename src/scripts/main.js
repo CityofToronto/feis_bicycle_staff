@@ -169,6 +169,17 @@ $(function () {
 
       // ---
 
+      ['entities/locker_inspections/:opt/:id(/)'](opt, id, query) {
+        /* global renderEntityLockerInspectionDetailsPage */
+        return renderEntityLockerInspectionDetailsPage(app, $container, router, auth, opt, id, query);
+      },
+      ['entities/locker_inspections(/:opt)(/)'](opt, query) {
+        /* global renderEntityLockerInspectionsPage */
+        return renderEntityLockerInspectionsPage(app, $container, router, auth, opt, query);
+      },
+
+      // ---
+
       ['entities/locker_notes/:opt/:id(/)'](opt, id, query) {
         /* global renderEntityLockerNoteDetailsPage */
         return renderEntityLockerNoteDetailsPage(app, $container, router, auth, opt, id, query);
