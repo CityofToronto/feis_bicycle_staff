@@ -4,8 +4,6 @@
 /* global renderForm */
 /* global renderEntityLockerNotesPage__views entityLockerNoteDetails__fields */
 
-console.log('TEST');
-
 /* exported renderEntityLockerNoteDetailsPage */
 function renderEntityLockerNoteDetailsPage(app, $container, router, auth, opt, id, query) {
   if (!(opt in renderEntityLockerNotesPage__views)) {
