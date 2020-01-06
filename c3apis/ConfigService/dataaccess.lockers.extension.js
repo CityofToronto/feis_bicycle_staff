@@ -49,6 +49,9 @@ function afterDelete(content, request, uriInfo, response) {
     return;
   }
 
+  assertLockerNotes(content, request);
+  assertLockerInspections(content, request);
+
   updateLocation(content, request);
 }
 
@@ -182,6 +185,48 @@ function updateLocation(content, request) {
     }, function errorFunction(errorResponse) {// eslint-disable-line no-unused-vars
       // mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);
     });
+
+    // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
+  }, function errorFunction(errorResponse) {// eslint-disable-line no-unused-vars
+    // mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);
+  });
+}
+
+function assertLockerNotes(content, request) {
+  var filter = encodeURIComponent('locker eq \'' + content.get('id').getAsString() + '\'');
+  var select = encodeURIComponent('id');
+  var top = encodeURIComponent('1');
+
+  ajax.request({
+    headers: { Authorization: request.getHeader('Authorization') },
+    method: 'GET',
+    uri: common.DA_LOCKER_NOTES_URL + '?$filter=' + filter + '&$select=' + select + '&$top=' + top
+  }, function okFunction(okResponse) {
+    var body = JSON.parse(okResponse.body);
+    if (body.value && body.value.length > 0) {
+      throw 'This entity cannot be deleted.';
+    }
+
+    // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
+  }, function errorFunction(errorResponse) {// eslint-disable-line no-unused-vars
+    // mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);
+  });
+}
+
+function assertLockerInspections(content, request) {
+  var filter = encodeURIComponent('locker eq \'' + content.get('id').getAsString() + '\'');
+  var select = encodeURIComponent('id');
+  var top = encodeURIComponent('1');
+
+  ajax.request({
+    headers: { Authorization: request.getHeader('Authorization') },
+    method: 'GET',
+    uri: common.DA_LOCKER_INSPECTIONS_URL + '?$filter=' + filter + '&$select=' + select + '&$top=' + top
+  }, function okFunction(okResponse) {
+    var body = JSON.parse(okResponse.body);
+    if (body.value && body.value.length > 0) {
+      throw 'This entity cannot be deleted.';
+    }
 
     // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
   }, function errorFunction(errorResponse) {// eslint-disable-line no-unused-vars
