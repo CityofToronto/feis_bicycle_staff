@@ -20,7 +20,6 @@ function beforeContentParse(content, request, uriInfo, response) {
 
   cleanupLocation(content, request);
 
-  // NOTE: Can be removed
   setLocationSiteName(content, request);
 
   setStatus(content, request);
