@@ -130,7 +130,7 @@ function renderEntitiesPage(app, $container, router, auth) {
       </div>
     `).appendTo($container);
 
-    /* global renderEntityKeyfobsPage__views */
+    /* global renderEntityKeyfobsPage__views renderEntityKeyfobNotesPage__views */
     $(`
       <h2>Key Fob Enitities</h2>
 
@@ -150,7 +150,7 @@ function renderEntitiesPage(app, $container, router, auth) {
           <h3>Key Fob Notes</h3>
 
           <div class="list-group">
-            <a href="#${renderEntityLocationsPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+            <a href="#${renderEntityKeyfobNotesPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
               <span class="badge badge-locations-all"></span>
               All
             </a>

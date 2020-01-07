@@ -64,10 +64,10 @@ function setKeyfobsNumber(content, request) {
   ajax.request({
     headers: { Authorization: request.getHeader('Authorization') },
     method: 'GET',
-    uri: common.DA_LOCATIONS_URL + '(\'' + content.get('keyfob').getAsString() + '\')?$select=' + select
+    uri: common.DA_KEYFOBS_URL + '(\'' + content.get('keyfob').getAsString() + '\')?$select=' + select
   }, function okFunction(okResponse) {
     var body = JSON.parse(okResponse.body);
-    content.addProperty('keyfob__number', body.site_name);
+    content.addProperty('keyfob__number', body.number);
 
     // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
   }, function errorFunction(errorResponse) {// eslint-disable-line no-unused-vars
