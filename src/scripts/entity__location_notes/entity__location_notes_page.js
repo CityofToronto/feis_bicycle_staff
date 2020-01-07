@@ -59,7 +59,7 @@ function renderEntityLocationNotesPage(app, $container, router, auth, opt, query
     $container.empty();
 
     const $containerTop = $('<div></div>').appendTo($container);
-    const currentLocationView = renderEntityLocationNotesPage__views[opt];
+    const currentLocationNoteView = renderEntityLocationNotesPage__views[opt];
 
     const {
       redirectTo = 'Entities',
@@ -68,10 +68,10 @@ function renderEntityLocationNotesPage(app, $container, router, auth, opt, query
     } = query__stringToObject(query);
 
     if (resetState === 'yes') {
-      sessionStorage.removeItem(currentLocationView.stateSaveWebStorageKey);
+      sessionStorage.removeItem(currentLocationNoteView.stateSaveWebStorageKey);
     }
 
-    const definition = currentLocationView.definition(auth, opt);
+    const definition = currentLocationNoteView.definition(auth, opt);
 
     const views = Object.keys(renderEntityLocationNotesPage__views).map((key) => ({
       title: renderEntityLocationNotesPage__views[key].title,
@@ -85,21 +85,21 @@ function renderEntityLocationNotesPage(app, $container, router, auth, opt, query
         url: '/* @echo C3DATA_LOCATION_NOTES_URL */',
 
         newButtonLabel: 'New Location Note',
-        newButtonFragment: `${currentLocationView.fragment}/new`,
+        newButtonFragment: `${currentLocationNoteView.fragment}/new`,
 
-        stateSaveWebStorageKey: currentLocationView.stateSaveWebStorageKey,
+        stateSaveWebStorageKey: currentLocationNoteView.stateSaveWebStorageKey,
 
         views
       });
     }).then(() => {
       $containerTop.html(`<p><a href="#${redirectToFragment}">Back to ${redirectTo}</a></p>`);
-      $containerTop.append(`<h2>${currentLocationView.title}</h2>`);
+      $containerTop.append(`<h2>${currentLocationNoteView.title}</h2>`);
 
       const breadcrumbs = [
         { name: app.name, link: '#home' },
         { name: 'Entities', link: '#entities' },
         { name: 'Location Notes', link: `#${renderEntityLocationNotesPage__views.all.fragment}` },
-        { name: currentLocationView.breadcrumb, link: `#${currentLocationView.fragment}` }
+        { name: currentLocationNoteView.breadcrumb, link: `#${currentLocationNoteView.fragment}` }
       ];
       app.setBreadcrumb(breadcrumbs, true);
       app.setTitle('Location Notes');
