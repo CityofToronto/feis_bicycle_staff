@@ -21,7 +21,6 @@ function beforeContentParse(content, request, uriInfo, response) {
   cleanupLocation(content, request);
 
   setLocationSiteName(content, request);
-
   setStatus(content, request);
 }
 

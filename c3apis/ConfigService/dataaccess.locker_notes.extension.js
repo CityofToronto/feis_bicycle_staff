@@ -21,7 +21,6 @@ function beforeContentParse(content, request, uriInfo, response) {
   cleanupLocker(content, request);
 
   setLockerName(content, request);
-
   setStatus(content, request);
 }
 
