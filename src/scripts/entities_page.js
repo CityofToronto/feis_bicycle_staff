@@ -90,7 +90,7 @@ function renderEntitiesPage(app, $container, router, auth) {
       </div>
     `).appendTo($container);
 
-    /* global renderEntityStationsPage__views renderEntityStationNotesPage__views */
+    /* global renderEntityStationsPage__views renderEntityStationNotesPage__views renderEntityStationInspectionsPage__views */
     $(`
       <h2>Station Enitities</h2>
 
@@ -121,7 +121,7 @@ function renderEntitiesPage(app, $container, router, auth) {
           <h3>Station Inspections</h3>
 
           <div class="list-group">
-            <a href="#${renderEntityLocationsPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+            <a href="#${renderEntityStationInspectionsPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
               <span class="badge badge-locations-all"></span>
               All
             </a>

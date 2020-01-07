@@ -140,7 +140,7 @@ function updateStation(content, request) {
   ajax.request({
     headers: { Authorization: request.getHeader('Authorization') },
     method: 'GET',
-    uri: common.DA_LOCATION_INSPECTIONS_URL + '?$select=' + select + '&$filter=' + filter + '&$orderby=' + orderby + '&$top=' + top
+    uri: common.DA_STATION_INSPECTIONS_URL + '?$select=' + select + '&$filter=' + filter + '&$orderby=' + orderby + '&$top=' + top
   }, function okFunction(okResponse) {
     var id = content.get('id').getAsString();
     var date = content.get('date').getAsString();
