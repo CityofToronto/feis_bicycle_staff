@@ -18,7 +18,6 @@ function beforeContentParse(content, request, uriInfo, response) { // eslint-dis
   cleanupLocker(content, request);
 
   setLockerName(content, request);
-
   setStatus(content, request);
 }
 
