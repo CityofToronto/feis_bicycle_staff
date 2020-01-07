@@ -26,6 +26,11 @@ function afterUpdate(content, request, uriInfo, response) { // eslint-disable-li
 }
 
 function afterDelete(content, request, uriInfo, response) { // eslint-disable-line no-unused-vars
+  if (common.SSJS_DISABLED) {
+    return;
+  }
+
+  assertKeyfobNotes(content, request);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -71,4 +76,25 @@ function setStatus(content, request) {
   }
 
   content.addProperty('__Status', 'Active');
+}
+
+function assertKeyfobNotes(content, request) {
+  const filter = encodeURIComponent(`keyfob eq '${content.get('id').getAsString()}'`);
+  const select = encodeURIComponent('id');
+  const top = encodeURIComponent('1');
+
+  ajax.request({
+    headers: { Authorization: request.getHeader('Authorization') },
+    method: 'GET',
+    uri: `${common.DA_KEYFOB_NOTES_URL}?$filter=${filter}&$select=${select}&$top=${top}`
+  }, function okFunction(okResponse) {
+    const body = JSON.parse(okResponse.body);
+    if (body.value && body.value.length > 0) {
+      throw 'This entity cannot be deleted.';
+    }
+
+    // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
+    }, function errorFunction(errorResponse) { // eslint-disable-line no-unused-vars
+    // mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);
+  });
 }
