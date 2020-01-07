@@ -25,8 +25,8 @@ core.embeddedApp.createTasks(gulp, {
       C3DATA_STATION_NOTES_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/station_notes',
       C3DATA_STATION_INSPECTIONS_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/station_inspections',
 
-      // C3DATA_KEYFOBS_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/keyfobs',
-      // C3DATA_KEYFOB_NOTES_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/keyfob_notes',
+      C3DATA_KEYFOBS_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/keyfobs',
+      C3DATA_KEYFOB_NOTES_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/keyfob_notes',
 
       // C3DATA_CUSTOMERS_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/customers',
       // C3DATA_CUSTOMER_NOTES_URL: 'https://config.cc.toronto.ca:49093/c3api_data/v2/DataAccess.svc/bicycle_parking/customer_notes',
