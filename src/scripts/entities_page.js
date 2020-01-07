@@ -184,6 +184,17 @@ function renderEntitiesPage(app, $container, router, auth) {
           </a>
         </div>
       </div>
+
+      <div class="col-sm-3">
+        <h3>Customer Notifications</h3>
+
+        <div class="list-group">
+          <a href="#${renderEntityLocationsPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+            <span class="badge badge-locations-all"></span>
+            All
+          </a>
+        </div>
+      </div>
     </div>
   `).appendTo($container);
 
@@ -204,6 +215,17 @@ function renderEntitiesPage(app, $container, router, auth) {
 
       <div class="col-sm-3">
         <h3>Payment Notes</h3>
+
+        <div class="list-group">
+          <a href="#${renderEntityLocationsPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+            <span class="badge badge-locations-all"></span>
+            All
+          </a>
+        </div>
+      </div>
+
+      <div class="col-sm-3">
+        <h3>Payment Notification</h3>
 
         <div class="list-group">
           <a href="#${renderEntityLocationsPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
