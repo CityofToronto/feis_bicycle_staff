@@ -18,7 +18,6 @@ function beforeContentParse(content, request, uriInfo, response) { // eslint-dis
   cleanupLocation(content, request);
 
   setLocationSiteName(content, request);
-
   setStatus(content, request);
 }
 
