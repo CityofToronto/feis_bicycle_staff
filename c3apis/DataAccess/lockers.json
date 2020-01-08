@@ -1,6 +1,5 @@
 {
   "location": "string",
-  "location__site_name": "string",
   "number": "string",
   "description": "string",
   "latest_note": "string",

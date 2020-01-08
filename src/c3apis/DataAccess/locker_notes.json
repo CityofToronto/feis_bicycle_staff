@@ -1,6 +1,5 @@
 {
   "locker": "string",
-  "locker__name": "string",
   "date": "2019-12-23T00:00:00.000-05:00",
   "note": "string"
 }
