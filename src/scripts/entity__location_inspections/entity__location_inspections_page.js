@@ -1,5 +1,5 @@
 /* global $ */
-/* global auth__checkLogin query__objectToString query__stringToObject */
+/* global ajaxes auth__checkLogin query__objectToString query__stringToObject */
 /* global renderDatatable */
 /* global entityLocationInspections__columns */
 
@@ -35,6 +35,71 @@ const renderEntityLocationInspectionsPage__views = {
       };
 
       definition.searchCols[definition.columns.length - 1] = { search: 'Active' };
+
+      definition.ajaxCore = definition.ajaxCore || function (data, callback, settings, queryObject, url, options = {}) {
+        const { auth } = options;
+
+        return ajaxes({
+          beforeSend(jqXHR) {
+            if (auth && auth.sId) {
+              jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+            }
+          },
+          contentType: 'application/json; charset=utf-8',
+          method: 'GET',
+          url: `${url}?${query__objectToString(queryObject)}`
+        }).then(({ data: response }) => {
+          const locations = response.value.map(({ location }) => location)
+            .filter((location, index, array) => array.indexOf(location) === index);
+
+          if (locations.length > 0) {
+            const filter = encodeURIComponent(locations.map((id) => `id eq '${id}'`).join(' or '));
+            return ajaxes({
+              beforeSend(jqXHR) {
+                if (auth && auth.sId) {
+                  jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+                }
+              },
+              contentType: 'application/json; charset=utf-8',
+              method: 'GET',
+              url: `/* @echo C3DATA_LOCATIONS_URL */?$filter=${filter}`,
+            }).then(({ data: response2 }) => {
+              const locationMap = response2.value.reduce((acc, { id, site_name }) => {
+                acc[id] = site_name;
+                return acc;
+              }, {});
+
+              response.value.forEach((locationNote) => {
+                locationNote.location__site_name = locationMap[locationNote.location];
+              });
+
+              callback({
+                data: response.value,
+                draw: data.draw,
+                recordsTotal: response['@odata.count'],
+                recordsFiltered: response['@odata.count']
+              });
+            }, (error) => {
+              callback({ data: [], draw: data.draw, recordsTotal: 0, recordsFiltered: 0 });
+              throw error;
+            });
+          } else {
+            response.value.forEach((locationNote) => {
+              locationNote.location__site_name = null;
+            });
+
+            callback({
+              data: response.value,
+              draw: data.draw,
+              recordsTotal: response['@odata.count'],
+              recordsFiltered: response['@odata.count']
+            });
+          }
+        }, (error) => {
+          callback({ data: [], draw: data.draw, recordsTotal: 0, recordsFiltered: 0 });
+          throw error;
+        });
+      };
 
       return definition;
     }

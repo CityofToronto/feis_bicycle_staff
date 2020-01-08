@@ -1,11 +1,9 @@
 'use strict';
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// REQUIRE
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 var common = require('bicycle_parking/common.js');
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// LIFE CYCLE
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /* exported afterQuery, beforeContentParse, afterCreate, afterUpdate, afterDelete */
 
@@ -40,6 +38,8 @@ function afterDelete(content, request, uriInfo, response) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// SET PROPERTIES
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function setLockersTotal(content, request) {
   if (request.getMethod() !== 'POST') {
@@ -65,10 +65,14 @@ function setStatus(content, request) {
   content.addProperty('__Status', 'Active');
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ASSERTS
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 function assertLocationNotes(content, request) {
   var filter = encodeURIComponent('location eq \'' + content.get('id').getAsString() + '\'');
-  var select = encodeURIComponent('id');
-  var top = encodeURIComponent('1');
+  var select = 'id';
+  var top = '1';
 
   ajax.request({
     headers: { Authorization: request.getHeader('Authorization') },
@@ -88,8 +92,8 @@ function assertLocationNotes(content, request) {
 
 function assertLocationInspections(content, request) {
   var filter = encodeURIComponent('location eq \'' + content.get('id').getAsString() + '\'');
-  var select = encodeURIComponent('id');
-  var top = encodeURIComponent('1');
+  var select = 'id';
+  var top = '1';
 
   ajax.request({
     headers: { Authorization: request.getHeader('Authorization') },
@@ -109,8 +113,8 @@ function assertLocationInspections(content, request) {
 
 function assertLockers(content, request) {
   var filter = encodeURIComponent('location eq \'' + content.get('id').getAsString() + '\'');
-  var select = encodeURIComponent('id');
-  var top = encodeURIComponent('1');
+  var select = 'id';
+  var top = '1';
 
   ajax.request({
     headers: { Authorization: request.getHeader('Authorization') },
