@@ -13,21 +13,13 @@ const renderEntityLocationInspectionsPage__views = {
 
     definition: (auth, opt) => { // eslint-disable-line no-unused-vars
       const definition = {
-        columns: [
-          entityLocationInspections__columns.action(renderEntityLocationInspectionsPage__views.all.fragment),
-
-          entityLocationInspections__columns.id,
-          entityLocationInspections__columns.location,
-          entityLocationInspections__columns.calc_location_site_name,
-          entityLocationInspections__columns.date,
-          entityLocationInspections__columns.result(auth),
-          entityLocationInspections__columns.note,
-
-          entityLocationInspections__columns.__CreatedOn,
-          entityLocationInspections__columns.__ModifiedOn,
-          entityLocationInspections__columns.__Owner,
-          entityLocationInspections__columns.__Status
-        ],
+        columns: Object.keys(entityLocationInspections__columns).map((key) => {
+          if (key === 'action') {
+            return entityLocationInspections__columns[key](renderEntityLocationInspectionsPage__views.all.fragment);
+          }
+          return typeof entityLocationInspections__columns[key] === 'function' ? entityLocationInspections__columns[key](auth)
+            : entityLocationInspections__columns[key];
+        }),
 
         order: [[1, 'asc']],
 

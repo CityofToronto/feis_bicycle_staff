@@ -115,6 +115,37 @@ function renderEntityLocationInspectionDetailsPage(app, $container, router, auth
                 ]
               }
             ]
+          },
+          {
+            title: 'Details',
+            id: 'details',
+            postRender({ model, section }) {
+              function handler() {
+                if (model.isNew()) {
+                  $(`#${section.id}`).hide();
+                } else {
+                  $(`#${section.id}`).show();
+                }
+              }
+              handler();
+              model.on(`change:${model.idAttribute}`, handler);
+            },
+
+            rows: [
+              {
+                fields: [
+                  Object.assign({}, entityLocationInspectionDetails__fields.id(model), { className: 'col-sm-8' }),
+                  Object.assign({}, entityLocationInspectionDetails__fields.__Status(auth, model), { className: 'col-sm-4' })
+                ]
+              },
+              {
+                fields: [
+                  entityLocationInspectionDetails__fields.__CreatedOn(model),
+                  entityLocationInspectionDetails__fields.__ModifiedOn(model),
+                  entityLocationInspectionDetails__fields.__Owner(model)
+                ]
+              }
+            ]
           }
         ]
       };
@@ -122,7 +153,7 @@ function renderEntityLocationInspectionDetailsPage(app, $container, router, auth
       return Promise.resolve().then(() => {
         return renderForm($('<div></div>').appendTo($container), definition, model, {
           auth,
-          url: '/* @echo C3DATA_LOCATION_INSPECTIONS_URL */',
+          url: '/* @echo C3DATA_INSPECTIONS_URL */',
 
           saveButtonLabel: (model) => model.isNew() ? 'Create Location Inspection' : 'Update Location Inspection',
 

@@ -12,40 +12,13 @@ const renderEntityLocationsPage__views = {
 
     definition: (auth, opt) => { // eslint-disable-line no-unused-vars
       const definition = {
-        columns: [
-          entityLocations__columns.action(renderEntityLocationsPage__views.all.fragment),
-
-          entityLocations__columns.id,
-          entityLocations__columns.site_name,
-          entityLocations__columns.description,
-          entityLocations__columns.civic_address,
-          entityLocations__columns.municipality,
-          entityLocations__columns.province(auth),
-          entityLocations__columns.postal_code,
-          entityLocations__columns.primary_contact_first_name,
-          entityLocations__columns.primary_contact_last_name,
-          entityLocations__columns.primary_contact_email,
-          entityLocations__columns.primary_contact_primary_phone,
-          entityLocations__columns.primary_contact_alternate_phone,
-          entityLocations__columns.alternate_contact_first_name,
-          entityLocations__columns.alternate_contact_last_name,
-          entityLocations__columns.alternate_contact_email,
-          entityLocations__columns.alternate_contact_primary_phone,
-          entityLocations__columns.alternate_contact_alternate_phone,
-          entityLocations__columns.lockers_total,
-          entityLocations__columns.latest_note,
-          entityLocations__columns.latest_note__date,
-          entityLocations__columns.latest_note__note,
-          entityLocations__columns.latest_inspection,
-          entityLocations__columns.latest_inspection__date,
-          entityLocations__columns.latest_inspection__result(auth),
-          entityLocations__columns.latest_inspection__note,
-
-          entityLocations__columns.__CreatedOn,
-          entityLocations__columns.__ModifiedOn,
-          entityLocations__columns.__Owner,
-          entityLocations__columns.__Status
-        ],
+        columns: Object.keys(entityLocations__columns).map((key) => {
+          if (key === 'action') {
+            return entityLocations__columns[key](renderEntityLocationsPage__views.all.fragment);
+          }
+          return typeof entityLocations__columns[key] === 'function' ? entityLocations__columns[key](auth)
+            : entityLocations__columns[key];
+        }),
 
         order: [[1, 'asc']],
 

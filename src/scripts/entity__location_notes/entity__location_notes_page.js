@@ -13,20 +13,13 @@ const renderEntityLocationNotesPage__views = {
 
     definition: (auth, opt) => { // eslint-disable-line no-unused-vars
       const definition = {
-        columns: [
-          entityLocationNotes__columns.action(renderEntityLocationNotesPage__views.all.fragment),
-
-          entityLocationNotes__columns.id,
-          entityLocationNotes__columns.location,
-          entityLocationNotes__columns.calc_location_site_name,
-          entityLocationNotes__columns.date,
-          entityLocationNotes__columns.note,
-
-          entityLocationNotes__columns.__CreatedOn,
-          entityLocationNotes__columns.__ModifiedOn,
-          entityLocationNotes__columns.__Owner,
-          entityLocationNotes__columns.__Status
-        ],
+        columns: Object.keys(entityLocationNotes__columns).map((key) => {
+          if (key === 'action') {
+            return entityLocationNotes__columns[key](renderEntityLocationNotesPage__views.all.fragment);
+          }
+          return typeof entityLocationNotes__columns[key] === 'function' ? entityLocationNotes__columns[key](auth)
+            : entityLocationNotes__columns[key];
+        }),
 
         order: [
           [1, 'asc']

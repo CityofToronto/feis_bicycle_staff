@@ -221,6 +221,37 @@ function renderEntityLocationDetailsPage(app, $container, router, auth, opt, id,
                 ]
               }
             ]
+          },
+          {
+            title: 'Details',
+            id: 'details',
+            postRender({ model, section }) {
+              function handler() {
+                if (model.isNew()) {
+                  $(`#${section.id}`).hide();
+                } else {
+                  $(`#${section.id}`).show();
+                }
+              }
+              handler();
+              model.on(`change:${model.idAttribute}`, handler);
+            },
+
+            rows: [
+              {
+                fields: [
+                  Object.assign({}, entityLocationDetails__fields.id(model), { className: 'col-sm-8' }),
+                  Object.assign({}, entityLocationDetails__fields.__Status(auth, model), { className: 'col-sm-4' })
+                ]
+              },
+              {
+                fields: [
+                  entityLocationDetails__fields.__CreatedOn(model),
+                  entityLocationDetails__fields.__ModifiedOn(model),
+                  entityLocationDetails__fields.__Owner(model)
+                ]
+              }
+            ]
           }
         ]
       };

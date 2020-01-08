@@ -5,31 +5,34 @@
 const entityLocations__columns = {
   action: (fragmentPrefix) => ({
     title: 'Action',
-    className: 'excludeFromButtons openButtonWidth',
     data: 'id',
     orderable: false,
+    searchable: false,
+    className: 'excludeFromButtons openButtonWidth',
     render(data) {
       const href = `#${fragmentPrefix}/${data}?${query__objectToString({ resetState: 'yes' })}`;
       return `<a href="${href}" class="btn btn-default dblclick-target">Open</a>`;
-    },
-    searchable: false
+    }
   }),
 
   id: {
     title: 'ID',
-    className: 'minWidth',
-    data: 'id'
+    data: 'id',
+    type: 'string',
+    className: 'minWidth'
   },
 
   site_name: {
     title: 'Site Name',
-    className: 'minWidth',
-    data: 'site_name'
+    data: 'site_name',
+    type: 'string',
+    className: 'minWidth'
   },
   description: {
     title: 'Description',
-    className: 'minWidthLarge',
     data: 'description',
+    type: 'string',
+    className: 'minWidthLarge',
     render(data) {
       if (data) {
         return data.replace(/(?:\r\n|\r|\n)/g, '<br>');
@@ -41,18 +44,20 @@ const entityLocations__columns = {
 
   civic_address: {
     title: 'Address',
-    className: 'minWidth',
-    data: 'civic_address'
+    data: 'civic_address',
+    type: 'string',
+    className: 'minWidth'
   },
   municipality: {
     title: 'City',
-    className: 'minWidth',
-    data: 'municipality'
+    data: 'municipality',
+    type: 'string',
+    className: 'minWidth'
   },
   province: (auth) => ({
     title: 'Province',
-    className: 'minWidth',
     data: 'province',
+    type: 'string',
     searchType: 'equals',
     choices: {
       beforeSend(jqXHR) {
@@ -64,24 +69,20 @@ const entityLocations__columns = {
       method: 'GET',
       url: '/* @echo C3DATAMEDIA_PROVINCE_CHOICES */'
     },
+    className: 'minWidth'
   }),
   postal_code: {
     title: 'Postal Code',
-    className: 'minWidth',
-    data: 'postal_code'
+    data: 'postal_code',
+    type: 'string',
+    className: 'minWidth'
   },
 
   address: {
     title: 'Address',
-    className: 'minWidth',
     data: 'civic_address',
-    select: ['municipality', 'province', 'postal_code'],
     type: 'function',
-    render(data, settings, row) {
-      const line1 = data;
-      const line2 = [row['municipality'], row['province'], row['postal_code']].filter((value) => value).join(' ');
-      return [line1, line2].filter((value) => value).join('<br>');
-    },
+    select: ['municipality', 'province', 'postal_code'],
     filter(column) {
       let filterColumns = `concat(concat(province,' '),postal_code)`;
       filterColumns = `concat(concat(municipality,' '),${filterColumns})`;
@@ -98,78 +99,95 @@ const entityLocations__columns = {
       orderColumns = `concat(concat(municipality,' '),${orderColumns})`;
       orderColumns = `concat(concat(civic_address,' '),${orderColumns})`;
       return `tolower(${orderColumns}) ${order.dir}`;
+    },
+    className: 'minWidth',
+    render(data, settings, row) {
+      const line1 = data;
+      const line2 = [row['municipality'], row['province'], row['postal_code']].filter((value) => value).join(' ');
+      return [line1, line2].filter((value) => value).join('<br>');
     }
   },
 
   primary_contact_first_name: {
     title: 'First Name - Primary Contact',
-    className: 'minWidth',
-    data: 'primary_contact_first_name'
+    data: 'primary_contact_first_name',
+    type: 'string',
+    className: 'minWidth'
   },
   primary_contact_last_name: {
     title: 'Last Name - Primary Contact',
-    className: 'minWidth',
-    data: 'primary_contact_last_name'
+    data: 'primary_contact_last_name',
+    type: 'string',
+    className: 'minWidth'
   },
   primary_contact_email: {
     title: 'Email - Primary Contact',
-    className: 'minWidth',
-    data: 'primary_contact_email'
+    data: 'primary_contact_email',
+    type: 'string',
+    className: 'minWidth'
   },
   primary_contact_primary_phone: {
     title: 'Primary Phone - Primary Contact',
-    className: 'minWidth',
-    data: 'primary_contact_primary_phone'
+    data: 'primary_contact_primary_phone',
+    type: 'string',
+    className: 'minWidth'
   },
   primary_contact_alternate_phone: {
     title: 'Alternate Phone - Primary Contact',
-    className: 'minWidth',
-    data: 'primary_contact_alternate_phone'
+    data: 'primary_contact_alternate_phone',
+    type: 'string',
+    className: 'minWidth'
   },
 
   alternate_contact_first_name: {
     title: 'First Name - Alternate Contact',
-    className: 'minWidth',
-    data: 'alternate_contact_first_name'
+    data: 'alternate_contact_first_name',
+    type: 'string',
+    className: 'minWidth'
   },
   alternate_contact_last_name: {
     title: 'Last Name - Alternate Contact',
-    className: 'minWidth',
-    data: 'alternate_contact_last_name'
+    data: 'alternate_contact_last_name',
+    type: 'string',
+    className: 'minWidth'
   },
   alternate_contact_email: {
     title: 'Email - Alternate Contact',
-    className: 'minWidth',
-    data: 'alternate_contact_email'
+    data: 'alternate_contact_email',
+    type: 'string',
+    className: 'minWidth'
   },
   alternate_contact_primary_phone: {
     title: 'Primary Phone - Alternate Contact',
-    className: 'minWidth',
-    data: 'alternate_contact_primary_phone'
+    data: 'alternate_contact_primary_phone',
+    type: 'string',
+    className: 'minWidth'
   },
   alternate_contact_alternate_phone: {
     title: 'Alternate Phone - Alternate Contact',
-    className: 'minWidth',
-    data: 'alternate_contact_alternate_phone'
+    data: 'alternate_contact_alternate_phone',
+    type: 'string',
+    className: 'minWidth'
   },
 
   lockers_total: {
     title: 'Total Lockers',
-    className: 'minWidth',
     data: 'lockers_total',
-    type: 'number'
+    type: 'number',
+    className: 'minWidth'
   },
 
   latest_note: {
     title: 'Latest Note ID',
-    className: 'minWidth',
-    data: 'latest_note'
+    data: 'latest_note',
+    type: 'string',
+    className: 'minWidth'
   },
   latest_note__date: {
     title: 'Latest Note Date',
-    className: 'minWidth',
     data: 'latest_note__date',
     type: 'date',
+    className: 'minWidth',
     render(data) {
       const dataMoment = moment(data);
       if (dataMoment.isValid()) {
@@ -181,8 +199,9 @@ const entityLocations__columns = {
   },
   latest_note__note: {
     title: 'Latest Note',
-    className: 'minWidthLarge',
     data: 'latest_note__note',
+    type: 'string',
+    className: 'minWidthLarge',
     render(data) {
       if (data) {
         return data.replace(/(?:\r\n|\r|\n)/g, '<br>');
@@ -194,14 +213,15 @@ const entityLocations__columns = {
 
   latest_inspection: {
     title: 'Latest Inspection ID',
-    className: 'minWidth',
-    data: 'latest_inspection'
+    data: 'latest_inspection',
+    type: 'string',
+    className: 'minWidth'
   },
   latest_inspection__date: {
     title: 'Latest Inspection Date',
-    className: 'minWidth',
     data: 'latest_inspection__date',
     type: 'date',
+    className: 'minWidth',
     render(data) {
       const dataMoment = moment(data);
       if (dataMoment.isValid()) {
@@ -213,8 +233,8 @@ const entityLocations__columns = {
   },
   latest_inspection__result: (auth) => ({
     title: 'Latest Inspection Result',
-    className: 'minWidth',
     data: 'latest_inspection__result',
+    type: 'string',
     searchType: 'equals',
     choices: {
       beforeSend(jqXHR) {
@@ -224,8 +244,9 @@ const entityLocations__columns = {
       },
       contentType: 'application/json; charset=utf-8',
       method: 'GET',
-      url: '/* @echo C3DATAMEDIA_LOCATION_INSPECTION_CHOICES */'
+      url: '/* @echo C3DATAMEDIA_INSPECTION_CHOICES */'
     },
+    className: 'minWidth',
     render(data) {
       if (data) {
         const labelClass = data === 'OK' ? 'success' : data === 'Problems' ? 'danger' : 'default';
@@ -236,8 +257,9 @@ const entityLocations__columns = {
   }),
   latest_inspection__note: {
     title: 'Latest Note',
-    className: 'minWidthLarge',
     data: 'latest_inspection__note',
+    type: 'string',
+    className: 'minWidthLarge',
     render(data) {
       if (data) {
         return data.replace(/(?:\r\n|\r|\n)/g, '<br>');
@@ -249,9 +271,9 @@ const entityLocations__columns = {
 
   __CreatedOn: {
     title: 'Created On',
-    className: 'minWidth',
     data: '__CreatedOn',
     type: 'date',
+    className: 'minWidth',
     render(data) {
       const dataMoment = moment(data);
       if (dataMoment.isValid()) {
@@ -263,9 +285,9 @@ const entityLocations__columns = {
   },
   __ModifiedOn: {
     title: 'Modified On',
-    className: 'minWidth',
     data: '__ModifiedOn',
     type: 'date',
+    className: 'minWidth',
     render(data) {
       const dataMoment = moment(data);
       if (dataMoment.isValid()) {
@@ -277,20 +299,29 @@ const entityLocations__columns = {
   },
   __Owner: {
     title: 'Modified By',
-    className: 'minWidth',
     data: '__Owner',
-    type: 'string'
+    type: 'string',
+    className: 'minWidth'
   },
-  __Status: {
+  __Status: (auth) => ({
     title: 'Status',
-    className: 'statusWidth',
     data: '__Status',
     type: 'string',
     searchType: 'equals',
-    choices: [{ text: 'Active' }, { text: 'Inactive' }],
+    choices: {
+      beforeSend(jqXHR) {
+        if (auth && auth.sId) {
+          jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+        }
+      },
+      contentType: 'application/json; charset=utf-8',
+      method: 'GET',
+      url: '/* @echo C3DATAMEDIA_STATUS_CHOICES */'
+    },
+    className: 'statusWidth',
     render(data) {
       const labelClass = data === 'Active' ? 'success' : data === 'Inactive' ? 'danger' : 'default';
       return `<span class="label label-${labelClass}" style="font-size: 90%;">${data}</span>`;
     }
-  }
+  })
 };

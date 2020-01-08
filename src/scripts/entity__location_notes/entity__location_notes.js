@@ -5,29 +5,34 @@
 const entityLocationNotes__columns = {
   action: (fragmentPrefix) => ({
     title: 'Action',
-    className: 'excludeFromButtons openButtonWidth',
     data: 'id',
+    type: 'string',
     orderable: false,
+    searchable: false,
+    className: 'excludeFromButtons openButtonWidth',
     render(data) {
       const href = `#${fragmentPrefix}/${data}?${query__objectToString({ resetState: 'yes' })}`;
       return `<a href="${href}" class="btn btn-default dblclick-target">Open</a>`;
-    },
-    searchable: false
+    }
   }),
 
   id: {
     title: 'ID',
+    data: 'id',
+    type: 'string',
     className: 'minWidth',
-    data: 'id'
   },
 
   location: {
     title: 'Location ID',
-    className: 'minWidth',
-    data: 'location'
+    data: 'location',
+    type: 'string',
+    className: 'minWidth'
   },
   calc_location_site_name: {
     title: 'Location',
+    orderable: false,
+    searchable: false,
     className: 'minWidth',
     render(data, type, row) {
       return row.calc_location_site_name;
@@ -36,9 +41,9 @@ const entityLocationNotes__columns = {
 
   date: {
     title: 'Date',
-    className: 'minWidth',
     data: 'date',
     type: 'date',
+    className: 'minWidth',
     render(data) {
       const dataMoment = moment(data);
       if (dataMoment.isValid()) {
@@ -50,8 +55,9 @@ const entityLocationNotes__columns = {
   },
   note: {
     title: 'Note',
-    className: 'minWidthLarge',
     data: 'note',
+    type: 'string',
+    className: 'minWidthLarge',
     render(data) {
       if (data) {
         return data.replace(/(?:\r\n|\r|\n)/g, '<br>');
@@ -63,9 +69,9 @@ const entityLocationNotes__columns = {
 
   __CreatedOn: {
     title: 'Created On',
-    className: 'minWidth',
     data: '__CreatedOn',
     type: 'date',
+    className: 'minWidth',
     render(data) {
       const dataMoment = moment(data);
       if (dataMoment.isValid()) {
@@ -77,9 +83,9 @@ const entityLocationNotes__columns = {
   },
   __ModifiedOn: {
     title: 'Modified On',
-    className: 'minWidth',
     data: '__ModifiedOn',
     type: 'date',
+    className: 'minWidth',
     render(data) {
       const dataMoment = moment(data);
       if (dataMoment.isValid()) {
@@ -91,19 +97,28 @@ const entityLocationNotes__columns = {
   },
   __Owner: {
     title: 'Modified By',
-    className: 'minWidth',
     data: '__Owner',
-    type: 'string'
+    type: 'string',
+    className: 'minWidth'
   },
-  __Status: {
+  __Status: (auth) => ({
     title: 'Status',
-    className: 'statusWidth',
     data: '__Status',
     type: 'string',
     searchType: 'equals',
-    choices: [{ text: 'Active' }, { text: 'Inactive' }],
+    choices: {
+      beforeSend(jqXHR) {
+        if (auth && auth.sId) {
+          jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+        }
+      },
+      contentType: 'application/json; charset=utf-8',
+      method: 'GET',
+      url: '/* @echo C3DATAMEDIA_STATUS_CHOICES */'
+    },
+    className: 'statusWidth',
     render(data) {
       return `<span class="label label-${data === 'Active' ? 'success' : data === 'Inactive' ? 'danger' : 'default'}" style="font-size: 90%;">${data}</span>`;
     }
-  }
+  })
 };
