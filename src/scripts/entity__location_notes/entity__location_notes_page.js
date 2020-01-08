@@ -18,7 +18,7 @@ const renderEntityLocationNotesPage__views = {
 
           entityLocationNotes__columns.id,
           entityLocationNotes__columns.location,
-          entityLocationNotes__columns.location__site_name,
+          entityLocationNotes__columns.calc_location_site_name,
           entityLocationNotes__columns.date,
           entityLocationNotes__columns.note,
 
@@ -71,7 +71,7 @@ const renderEntityLocationNotesPage__views = {
               }, {});
 
               response.value.forEach((locationNote) => {
-                locationNote.location__site_name = locationMap[locationNote.location];
+                locationNote.calc_location_site_name = locationMap[locationNote.location];
               });
 
               callback({
@@ -83,7 +83,7 @@ const renderEntityLocationNotesPage__views = {
             });
           } else {
             response.value.forEach((locationNote) => {
-              locationNote.location__site_name = null;
+              locationNote.calc_location_site_name = null;
             });
 
             callback({

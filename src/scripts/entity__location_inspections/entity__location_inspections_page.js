@@ -18,7 +18,7 @@ const renderEntityLocationInspectionsPage__views = {
 
           entityLocationInspections__columns.id,
           entityLocationInspections__columns.location,
-          entityLocationInspections__columns.location__site_name,
+          entityLocationInspections__columns.calc_location_site_name,
           entityLocationInspections__columns.date,
           entityLocationInspections__columns.result(auth),
           entityLocationInspections__columns.note,
@@ -70,7 +70,7 @@ const renderEntityLocationInspectionsPage__views = {
               }, {});
 
               response.value.forEach((locationNote) => {
-                locationNote.location__site_name = locationMap[locationNote.location];
+                locationNote.calc_location_site_name = locationMap[locationNote.location];
               });
 
               callback({
@@ -85,7 +85,7 @@ const renderEntityLocationInspectionsPage__views = {
             });
           } else {
             response.value.forEach((locationNote) => {
-              locationNote.location__site_name = null;
+              locationNote.calc_location_site_name = null;
             });
 
             callback({

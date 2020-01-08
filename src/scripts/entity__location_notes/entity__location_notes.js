@@ -26,10 +26,12 @@ const entityLocationNotes__columns = {
     className: 'minWidth',
     data: 'location'
   },
-  location__site_name: {
+  calc_location_site_name: {
     title: 'Location',
     className: 'minWidth',
-    data: 'location__site_name'
+    render(data, type, row) {
+      return row.calc_location_site_name;
+    }
   },
 
   date: {
