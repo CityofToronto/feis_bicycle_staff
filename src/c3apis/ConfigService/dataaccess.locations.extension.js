@@ -1,9 +1,8 @@
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// REQUIRE
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 const common = require('bicycle_parking/common.js');
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// LIFE CYCLE
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /* exported afterQuery, beforeContentParse, afterCreate, afterUpdate, afterDelete */
 
@@ -15,8 +14,7 @@ function beforeContentParse(content, request, uriInfo, response) { // eslint-dis
     return;
   }
 
-  setLockersTotal(content, request);
-  setStatus(content, request);
+  setStatusProperty(content, request);
 }
 
 function afterCreate(content, request, uriInfo, response) { // eslint-disable-line no-unused-vars
@@ -35,21 +33,12 @@ function afterDelete(content, request, uriInfo, response) { // eslint-disable-li
   assertLockers(content, request);
 }
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// SET PROPERTIES
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function setLockersTotal(content, request) {
-  if (request.getMethod() !== 'POST') {
-    return;
-  }
-
-  if (content.has('lockers_total')) {
-    content.remove('lockers_total');
-  }
-
-  content.addProperty('lockers_total', 0);
-}
-
-function setStatus(content, request) {
+function setStatusProperty(content, request) {
   if (request.getMethod() !== 'POST') {
     return;
   }
@@ -61,10 +50,15 @@ function setStatus(content, request) {
   content.addProperty('__Status', 'Active');
 }
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ASSERTS
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 function assertLocationNotes(content, request) {
   const filter = encodeURIComponent(`location eq '${content.get('id').getAsString()}'`);
-  const select = encodeURIComponent('id');
-  const top = encodeURIComponent('1');
+  const select = 'id';
+  const top = '1';
 
   ajax.request({
     headers: { Authorization: request.getHeader('Authorization') },
@@ -84,8 +78,8 @@ function assertLocationNotes(content, request) {
 
 function assertLocationInspections(content, request) {
   const filter = encodeURIComponent(`location eq '${content.get('id').getAsString()}'`);
-  const select = encodeURIComponent('id');
-  const top = encodeURIComponent('1');
+  const select = 'id';
+  const top = '1';
 
   ajax.request({
     headers: { Authorization: request.getHeader('Authorization') },
@@ -105,8 +99,8 @@ function assertLocationInspections(content, request) {
 
 function assertLockers(content, request) {
   const filter = encodeURIComponent(`location eq '${content.get('id').getAsString()}'`);
-  const select = encodeURIComponent('id');
-  const top = encodeURIComponent('1');
+  const select = 'id';
+  const top = '1';
 
   ajax.request({
     headers: { Authorization: request.getHeader('Authorization') },

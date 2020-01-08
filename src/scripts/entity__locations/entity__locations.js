@@ -1,35 +1,35 @@
 /* global moment */
-/* global oData__escapeValue query__objectToString */
+/* global query__objectToString */
 
 /* exported entityLocations__columns */
 const entityLocations__columns = {
   action: (fragmentPrefix) => ({
     title: 'Action',
-    className: 'excludeFromButtons openButtonWidth',
     data: 'id',
     orderable: false,
+    searchable: false,
+    className: 'excludeFromButtons openButtonWidth',
     render(data) {
       const href = `#${fragmentPrefix}/${data}?${query__objectToString({ resetState: 'yes' })}`;
       return `<a href="${href}" class="btn btn-default dblclick-target">Open</a>`;
-    },
-    searchable: false
+    }
   }),
 
   id: {
     title: 'ID',
-    className: 'minWidth',
-    data: 'id'
+    data: 'id',
+    className: 'minWidth'
   },
 
   site_name: {
     title: 'Site Name',
-    className: 'minWidth',
-    data: 'site_name'
+    data: 'site_name',
+    className: 'minWidth'
   },
   description: {
     title: 'Description',
-    className: 'minWidthLarge',
     data: 'description',
+    className: 'minWidthLarge',
     render(data) {
       if (data) {
         return data.replace(/(?:\r\n|\r|\n)/g, '<br>');
@@ -41,17 +41,16 @@ const entityLocations__columns = {
 
   civic_address: {
     title: 'Address',
-    className: 'minWidth',
-    data: 'civic_address'
+    data: 'civic_address',
+    className: 'minWidth'
   },
   municipality: {
     title: 'City',
-    className: 'minWidth',
-    data: 'municipality'
+    data: 'municipality',
+    className: 'minWidth'
   },
   province: (auth) => ({
     title: 'Province',
-    className: 'minWidth',
     data: 'province',
     searchType: 'equals',
     choices: {
@@ -64,188 +63,120 @@ const entityLocations__columns = {
       method: 'GET',
       url: '/* @echo C3DATAMEDIA_PROVINCE_CHOICES */'
     },
+    className: 'minWidth'
   }),
   postal_code: {
     title: 'Postal Code',
-    className: 'minWidth',
-    data: 'postal_code'
-  },
-
-  address: {
-    title: 'Address',
-    className: 'minWidth',
-    data: 'civic_address',
-    select: ['municipality', 'province', 'postal_code'],
-    type: 'function',
-    render(data, settings, row) {
-      const line1 = data;
-      const line2 = [row['municipality'], row['province'], row['postal_code']].filter((value) => value).join(' ');
-      return [line1, line2].filter((value) => value).join('<br>');
-    },
-    filter(column) {
-      let filterColumns = `concat(concat(province,' '),postal_code)`;
-      filterColumns = `concat(concat(municipality,' '),${filterColumns})`;
-      filterColumns = `concat(concat(civic_address,' '),${filterColumns})`;
-
-      return column.search.value
-        .split(' ')
-        .filter((value, index, array) => value && array.indexOf(value) === index)
-        .map((value) => `contains(tolower(${filterColumns}),'${oData__escapeValue(value.toLowerCase())}')`)
-        .join(' and ');
-    },
-    orderBy(order) {
-      let orderColumns = `concat(concat(province,' '),postal_code)`;
-      orderColumns = `concat(concat(municipality,' '),${orderColumns})`;
-      orderColumns = `concat(concat(civic_address,' '),${orderColumns})`;
-      return `tolower(${orderColumns}) ${order.dir}`;
-    }
+    data: 'postal_code',
+    className: 'minWidth'
   },
 
   primary_contact_first_name: {
     title: 'First Name - Primary Contact',
-    className: 'minWidth',
-    data: 'primary_contact_first_name'
+    data: 'primary_contact_first_name',
+    className: 'minWidth'
   },
   primary_contact_last_name: {
     title: 'Last Name - Primary Contact',
+    data: 'primary_contact_last_name',
     className: 'minWidth',
-    data: 'primary_contact_last_name'
   },
   primary_contact_email: {
     title: 'Email - Primary Contact',
+    data: 'primary_contact_email',
     className: 'minWidth',
-    data: 'primary_contact_email'
   },
   primary_contact_primary_phone: {
     title: 'Primary Phone - Primary Contact',
+    data: 'primary_contact_primary_phone',
     className: 'minWidth',
-    data: 'primary_contact_primary_phone'
   },
   primary_contact_alternate_phone: {
     title: 'Alternate Phone - Primary Contact',
+    data: 'primary_contact_alternate_phone',
     className: 'minWidth',
-    data: 'primary_contact_alternate_phone'
   },
 
   alternate_contact_first_name: {
     title: 'First Name - Alternate Contact',
+    data: 'alternate_contact_first_name',
     className: 'minWidth',
-    data: 'alternate_contact_first_name'
   },
   alternate_contact_last_name: {
     title: 'Last Name - Alternate Contact',
+    data: 'alternate_contact_last_name',
     className: 'minWidth',
-    data: 'alternate_contact_last_name'
   },
   alternate_contact_email: {
     title: 'Email - Alternate Contact',
+    data: 'alternate_contact_email',
     className: 'minWidth',
-    data: 'alternate_contact_email'
   },
   alternate_contact_primary_phone: {
     title: 'Primary Phone - Alternate Contact',
+    data: 'alternate_contact_primary_phone',
     className: 'minWidth',
-    data: 'alternate_contact_primary_phone'
   },
   alternate_contact_alternate_phone: {
     title: 'Alternate Phone - Alternate Contact',
+    data: 'alternate_contact_alternate_phone',
     className: 'minWidth',
-    data: 'alternate_contact_alternate_phone'
   },
 
   lockers_total: {
     title: 'Total Lockers',
     className: 'minWidth',
-    data: 'lockers_total',
-    type: 'number'
+    data: 'id',
+    searchable: false
   },
 
   latest_note: {
     title: 'Latest Note ID',
     className: 'minWidth',
-    data: 'latest_note'
+    data: 'id',
+    searchable: false
   },
-  latest_note__date: {
-    title: 'Latest Note Date',
-    className: 'minWidth',
-    data: 'latest_note__date',
-    type: 'date',
-    render(data) {
-      const dataMoment = moment(data);
-      if (dataMoment.isValid()) {
-        return dataMoment.format('YYYY/MM/DD h:mm A');
-      } else {
-        return '';
-      }
-    }
-  },
-  latest_note__note: {
-    title: 'Latest Note',
-    className: 'minWidthLarge',
-    data: 'latest_note__note',
-    render(data) {
-      if (data) {
-        return data.replace(/(?:\r\n|\r|\n)/g, '<br>');
-      } else {
-        return '';
-      }
-    }
-  },
+  // latest_note__date: {
+  //   title: 'Latest Note Date',
+  //   className: 'minWidth',
+  //   data: 'id',
+  //   searchable: false
+  // },
+  // latest_note__note: {
+  //   title: 'Latest Note',
+  //   className: 'minWidthLarge',
+  //   data: 'id',
+  //   searchable: false
+  // },
 
   latest_inspection: {
     title: 'Latest Inspection ID',
     className: 'minWidth',
-    data: 'latest_inspection'
+    data: 'latest_inspection',
+    searchable: false,
+    orderable: false
   },
-  latest_inspection__date: {
-    title: 'Latest Inspection Date',
-    className: 'minWidth',
-    data: 'latest_inspection__date',
-    type: 'date',
-    render(data) {
-      const dataMoment = moment(data);
-      if (dataMoment.isValid()) {
-        return dataMoment.format('YYYY/MM/DD h:mm A');
-      } else {
-        return '';
-      }
-    }
-  },
-  latest_inspection__result: (auth) => ({
-    title: 'Latest Inspection Result',
-    className: 'minWidth',
-    data: 'latest_inspection__result',
-    searchType: 'equals',
-    choices: {
-      beforeSend(jqXHR) {
-        if (auth && auth.sId) {
-          jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
-        }
-      },
-      contentType: 'application/json; charset=utf-8',
-      method: 'GET',
-      url: '/* @echo C3DATAMEDIA_LOCATION_INSPECTION_CHOICES */'
-    },
-    render(data) {
-      if (data) {
-        const labelClass = data === 'OK' ? 'success' : data === 'Problems' ? 'danger' : 'default';
-        return `<span class="label label-${labelClass}" style="font-size: 90%;">${data}</span>`;
-      }
-      return '';
-    }
-  }),
-  latest_inspection__note: {
-    title: 'Latest Note',
-    className: 'minWidthLarge',
-    data: 'latest_inspection__note',
-    render(data) {
-      if (data) {
-        return data.replace(/(?:\r\n|\r|\n)/g, '<br>');
-      } else {
-        return '';
-      }
-    }
-  },
+  // latest_inspection__date: {
+  //   title: 'Latest Inspection Date',
+  //   className: 'minWidth',
+  //   data: 'latest_inspection__date',
+  //   searchable: false,
+  //   orderable: false
+  // },
+  // latest_inspection__result: {
+  //   title: 'Latest Inspection Result',
+  //   className: 'minWidth',
+  //   data: 'latest_inspection__result',
+  //   searchable: false,
+  //   orderable: false
+  // },
+  // latest_inspection__note: {
+  //   title: 'Latest Note',
+  //   className: 'minWidthLarge',
+  //   data: 'latest_inspection__note',
+  //   searchable: false,
+  //   orderable: false
+  // },
 
   __CreatedOn: {
     title: 'Created On',
