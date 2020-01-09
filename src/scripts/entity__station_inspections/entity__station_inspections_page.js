@@ -1,5 +1,5 @@
 /* global $ */
-/* global auth__checkLogin query__objectToString query__stringToObject */
+/* global ajaxes auth__checkLogin query__objectToString query__stringToObject */
 /* global renderDatatable */
 /* global entityStationInspections__columns */
 
@@ -13,21 +13,13 @@ const renderEntityStationInspectionsPage__views = {
 
     definition: (auth, opt) => { // eslint-disable-line no-unused-vars
       const definition = {
-        columns: [
-          entityStationInspections__columns.action(renderEntityStationInspectionsPage__views.all.fragment),
-
-          entityStationInspections__columns.id,
-          entityStationInspections__columns.station,
-          entityStationInspections__columns.station__site_name,
-          entityStationInspections__columns.date,
-          entityStationInspections__columns.result(auth),
-          entityStationInspections__columns.note,
-
-          entityStationInspections__columns.__CreatedOn,
-          entityStationInspections__columns.__ModifiedOn,
-          entityStationInspections__columns.__Owner,
-          entityStationInspections__columns.__Status
-        ],
+        columns: Object.keys(entityStationInspections__columns).map((key) => {
+          if (key === 'action') {
+            return entityStationInspections__columns[key](renderEntityStationInspectionsPage__views.all.fragment);
+          }
+          return typeof entityStationInspections__columns[key] === 'function' ? entityStationInspections__columns[key](auth)
+            : entityStationInspections__columns[key];
+        }),
 
         order: [[1, 'asc']],
 
@@ -35,6 +27,68 @@ const renderEntityStationInspectionsPage__views = {
       };
 
       definition.searchCols[definition.columns.length - 1] = { search: 'Active' };
+
+      definition.ajaxCore = definition.ajaxCore || function (data, callback, settings, queryObject, url, options = {}) {
+        const { auth } = options;
+
+        return ajaxes({
+          beforeSend(jqXHR) {
+            if (auth && auth.sId) {
+              jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+            }
+          },
+          contentType: 'application/json; charset=utf-8',
+          method: 'GET',
+          url: `${url}?${query__objectToString(queryObject)}`
+        }).then(({ data: response }) => {
+          const stations = response.value.map(({ station }) => station)
+            .filter((station, index, array) => array.indexOf(station) === index);
+
+          if (stations.length > 0) {
+            const filter = encodeURIComponent(stations.map((id) => `id eq '${id}'`).join(' or '));
+            return ajaxes({
+              beforeSend(jqXHR) {
+                if (auth && auth.sId) {
+                  jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+                }
+              },
+              contentType: 'application/json; charset=utf-8',
+              method: 'GET',
+              url: `/* @echo C3DATA_STATIONS_URL */?$filter=${filter}`,
+            }).then(({ data: response2 }) => {
+              const stationMap = response2.value.reduce((acc, { id, site_name }) => {
+                acc[id] = site_name;
+                return acc;
+              }, {});
+
+              response.value.forEach((stationInspection) => {
+                stationInspection.calc_station_site_name = stationMap[stationInspection.station];
+              });
+
+              callback({
+                data: response.value,
+                draw: data.draw,
+                recordsTotal: response['@odata.count'],
+                recordsFiltered: response['@odata.count']
+              });
+            });
+          } else {
+            response.value.forEach((locationNote) => {
+              locationNote.calc_station_site_name = null;
+            });
+
+            callback({
+              data: response.value,
+              draw: data.draw,
+              recordsTotal: response['@odata.count'],
+              recordsFiltered: response['@odata.count']
+            });
+          }
+        }).catch((error) => {
+          callback({ data: [], draw: data.draw, recordsTotal: 0, recordsFiltered: 0 });
+          throw error;
+        });
+      };
 
       return definition;
     }

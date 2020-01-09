@@ -113,6 +113,37 @@ function renderEntityStationNoteDetailsPage(app, $container, router, auth, opt, 
                 ]
               }
             ]
+          },
+          {
+            title: 'Details',
+            id: 'details',
+            postRender({ model, section }) {
+              function handler() {
+                if (model.isNew()) {
+                  $(`#${section.id}`).hide();
+                } else {
+                  $(`#${section.id}`).show();
+                }
+              }
+              handler();
+              model.on(`change:${model.idAttribute}`, handler);
+            },
+
+            rows: [
+              {
+                fields: [
+                  Object.assign({}, entityStationNoteDetails__fields.id(model), { className: 'col-sm-8' }),
+                  Object.assign({}, entityStationNoteDetails__fields.__Status(auth, model), { className: 'col-sm-4' })
+                ]
+              },
+              {
+                fields: [
+                  entityStationNoteDetails__fields.__CreatedOn(model),
+                  entityStationNoteDetails__fields.__ModifiedOn(model),
+                  entityStationNoteDetails__fields.__Owner(model)
+                ]
+              }
+            ]
           }
         ]
       };

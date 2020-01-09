@@ -1,5 +1,5 @@
 /* global $ */
-/* global auth__checkLogin query__objectToString query__stringToObject */
+/* global ajaxes auth__checkLogin query__objectToString query__stringToObject */
 /* global renderDatatable */
 /* global entityStationNotes__columns */
 
@@ -13,20 +13,13 @@ const renderEntityStationNotesPage__views = {
 
     definition: (auth, opt) => { // eslint-disable-line no-unused-vars
       const definition = {
-        columns: [
-          entityStationNotes__columns.action(renderEntityStationNotesPage__views.all.fragment),
-
-          entityStationNotes__columns.id,
-          entityStationNotes__columns.station,
-          entityStationNotes__columns.station__site_name,
-          entityStationNotes__columns.date,
-          entityStationNotes__columns.note,
-
-          entityStationNotes__columns.__CreatedOn,
-          entityStationNotes__columns.__ModifiedOn,
-          entityStationNotes__columns.__Owner,
-          entityStationNotes__columns.__Status
-        ],
+        columns: Object.keys(entityStationNotes__columns).map((key) => {
+          if (key === 'action') {
+            return entityStationNotes__columns[key](renderEntityStationNotesPage__views.all.fragment);
+          }
+          return typeof entityStationNotes__columns[key] === 'function' ? entityStationNotes__columns[key](auth)
+            : entityStationNotes__columns[key];
+        }),
 
         order: [
           [1, 'asc']
@@ -36,6 +29,68 @@ const renderEntityStationNotesPage__views = {
       };
 
       definition.searchCols[definition.columns.length - 1] = { search: 'Active' };
+
+      definition.ajaxCore = definition.ajaxCore || function (data, callback, settings, queryObject, url, options = {}) {
+        const { auth } = options;
+
+        return ajaxes({
+          beforeSend(jqXHR) {
+            if (auth && auth.sId) {
+              jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+            }
+          },
+          contentType: 'application/json; charset=utf-8',
+          method: 'GET',
+          url: `${url}?${query__objectToString(queryObject)}`
+        }).then(({ data: response }) => {
+          const stations = response.value.map(({ station }) => station)
+            .filter((station, index, array) => array.indexOf(station) === index);
+
+          if (stations.length > 0) {
+            const filter = encodeURIComponent(stations.map((id) => `id eq '${id}'`).join(' or '));
+            return ajaxes({
+              beforeSend(jqXHR) {
+                if (auth && auth.sId) {
+                  jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+                }
+              },
+              contentType: 'application/json; charset=utf-8',
+              method: 'GET',
+              url: `/* @echo C3DATA_STATIONS_URL */?$filter=${filter}`,
+            }).then(({ data: response2 }) => {
+              const stationMap = response2.value.reduce((acc, { id, site_name }) => {
+                acc[id] = site_name;
+                return acc;
+              }, {});
+
+              response.value.forEach((stationNote) => {
+                stationNote.calc_station_site_name = stationMap[stationNote.station];
+              });
+
+              callback({
+                data: response.value,
+                draw: data.draw,
+                recordsTotal: response['@odata.count'],
+                recordsFiltered: response['@odata.count']
+              });
+            });
+          } else {
+            response.value.forEach((locationNote) => {
+              locationNote.calc_station_site_name = null;
+            });
+
+            callback({
+              data: response.value,
+              draw: data.draw,
+              recordsTotal: response['@odata.count'],
+              recordsFiltered: response['@odata.count']
+            });
+          }
+        }).catch((error) => {
+          callback({ data: [], draw: data.draw, recordsTotal: 0, recordsFiltered: 0 });
+          throw error;
+        });
+      };
 
       return definition;
     }

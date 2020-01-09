@@ -224,7 +224,7 @@ const entityStations__columns = {
       },
       contentType: 'application/json; charset=utf-8',
       method: 'GET',
-      url: '/* @echo C3DATAMEDIA_STATION_INSPECTION_CHOICES */'
+      url: '/* @echo C3DATAMEDIA_INSPECTION_CHOICES */'
     },
     render(data) {
       if (data) {
@@ -281,16 +281,27 @@ const entityStations__columns = {
     data: '__Owner',
     type: 'string'
   },
-  __Status: {
+  __Status: (auth) => ({
     title: 'Status',
-    className: 'statusWidth',
     data: '__Status',
+
     type: 'string',
     searchType: 'equals',
-    choices: [{ text: 'Active' }, { text: 'Inactive' }],
+    choices: {
+      beforeSend(jqXHR) {
+        if (auth && auth.sId) {
+          jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+        }
+      },
+      contentType: 'application/json; charset=utf-8',
+      method: 'GET',
+      url: '/* @echo C3DATAMEDIA_STATUS_CHOICES */'
+    },
+
+    className: 'statusWidth',
     render(data) {
       const labelClass = data === 'Active' ? 'success' : data === 'Inactive' ? 'danger' : 'default';
       return `<span class="label label-${labelClass}" style="font-size: 90%;">${data}</span>`;
     }
-  }
+  })
 };
