@@ -1,5 +1,5 @@
 /* global $ */
-/* global auth__checkLogin query__objectToString query__stringToObject */
+/* global ajaxes auth__checkLogin query__objectToString query__stringToObject */
 /* global renderDatatable */
 /* global entityLockerNotes__columns */
 
@@ -13,20 +13,13 @@ const renderEntityLockerNotesPage__views = {
 
     definition: (auth, opt) => { // eslint-disable-line no-unused-vars
       const definition = {
-        columns: [
-          entityLockerNotes__columns.action(renderEntityLockerNotesPage__views.all.fragment),
-
-          entityLockerNotes__columns.id,
-          entityLockerNotes__columns.locker,
-          entityLockerNotes__columns.locker__name,
-          entityLockerNotes__columns.date,
-          entityLockerNotes__columns.note,
-
-          entityLockerNotes__columns.__CreatedOn,
-          entityLockerNotes__columns.__ModifiedOn,
-          entityLockerNotes__columns.__Owner,
-          entityLockerNotes__columns.__Status
-        ],
+        columns: Object.keys(entityLockerNotes__columns).map((key) => {
+          if (key === 'action') {
+            return entityLockerNotes__columns[key](renderEntityLockerNotesPage__views.all.fragment);
+          }
+          return typeof entityLockerNotes__columns[key] === 'function' ? entityLockerNotes__columns[key](auth)
+            : entityLockerNotes__columns[key];
+        }),
 
         order: [[1, 'asc']],
 
@@ -34,6 +27,68 @@ const renderEntityLockerNotesPage__views = {
       };
 
       definition.searchCols[definition.columns.length - 1] = { search: 'Active' };
+
+      definition.ajaxCore = definition.ajaxCore || function (data, callback, settings, queryObject, url, options = {}) {
+        const { auth } = options;
+
+        return ajaxes({
+          beforeSend(jqXHR) {
+            if (auth && auth.sId) {
+              jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+            }
+          },
+          contentType: 'application/json; charset=utf-8',
+          method: 'GET',
+          url: `${url}?${query__objectToString(queryObject)}`
+        }).then(({ data: response }) => {
+          const lockers = response.value.map(({ locker }) => locker)
+            .filter((locker, index, array) => array.indexOf(locker) === index);
+
+          if (lockers.length > 0) {
+            const filter = encodeURIComponent(lockers.map((id) => `id eq '${id}'`).join(' or '));
+            return ajaxes({
+              beforeSend(jqXHR) {
+                if (auth && auth.sId) {
+                  jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+                }
+              },
+              contentType: 'application/json; charset=utf-8',
+              method: 'GET',
+              url: `/* @echo C3DATA_LOCKERS_URL */?$filter=${filter}`,
+            }).then(({ data: response2 }) => {
+              const lockerMap = response2.value.reduce((acc, { id, number }) => {
+                acc[id] = number;
+                return acc;
+              }, {});
+
+              response.value.forEach((lockerNote) => {
+                lockerNote.calc_locker_number = lockerMap[lockerNote.locker];
+              });
+
+              callback({
+                data: response.value,
+                draw: data.draw,
+                recordsTotal: response['@odata.count'],
+                recordsFiltered: response['@odata.count']
+              });
+            });
+          } else {
+            response.value.forEach((locationNote) => {
+              locationNote.calc_locker_number = null;
+            });
+
+            callback({
+              data: response.value,
+              draw: data.draw,
+              recordsTotal: response['@odata.count'],
+              recordsFiltered: response['@odata.count']
+            });
+          }
+        }).catch((error) => {
+          callback({ data: [], draw: data.draw, recordsTotal: 0, recordsFiltered: 0 });
+          throw error;
+        });
+      };
 
       return definition;
     }

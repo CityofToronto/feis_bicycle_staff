@@ -84,7 +84,7 @@ function assertLockerNotes(content, request) {
     }
 
     // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
-    }, function errorFunction(errorResponse) { // eslint-disable-line no-unused-vars
+  }, function errorFunction(errorResponse) { // eslint-disable-line no-unused-vars
     // mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);
   });
 }
@@ -157,6 +157,8 @@ function updateLocation(content, request, {
   location = content.get('location').getAsString(),
   __Status = content.get('__Status').getAsString()
 } = {}) {
+  let lockers_total;
+
   const select = 'id';
   const filter = encodeURIComponent(`location eq '${location}' and __Status eq 'Active'`);
   const top = 999;
@@ -167,7 +169,7 @@ function updateLocation(content, request, {
     uri: `${common.DA_LOCKERS_URL}?$select=${select}&$filter=${filter}&$top=${top}`
   }, function okFunction(okResponse) {
     const body = JSON.parse(okResponse.body);
-    let lockers_total = body.value.length;
+    lockers_total = body.value.length;
 
     const method = request.getMethod();
     if (method === 'DELETE') {
@@ -176,10 +178,10 @@ function updateLocation(content, request, {
       lockers_total++;
     } else if (method === 'PUT') {
       const previousVersion = getPreviousVersion(content, request);
-      if (previousVersion.location !== location ) {
+      if (previousVersion.location !== location) {
         lockers_total++;
       }
-      if (previousVersion.__Status !== __Status ) {
+      if (previousVersion.__Status !== __Status) {
         if (__Status === 'Active') {
           lockers_total++;
         } else {
@@ -188,26 +190,26 @@ function updateLocation(content, request, {
       }
     }
 
-    const data = {
-      lockers_total
-    };
+    // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
+  }, function errorFunction(errorResponse) { // eslint-disable-line no-unused-vars
+    // mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);
+  });
 
-    ajax.request({
-      data: JSON.stringify(data),
-      headers: {
-        Authorization: request.getHeader('Authorization'),
-        'Content-Type': 'application/json; charset=UTF-8',
-        'X-HTTP-Method-Override': 'PATCH'
-      },
-      method: 'POST',
-      uri: `${common.DA_LOCATIONS_URL}('${location}')`
+  const data = {
+    lockers_total
+  };
 
-    }, function okFunction(okResponse) { // eslint-disable-line no-unused-vars
-      // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
-    }, function errorFunction(errorResponse) { // eslint-disable-line no-unused-vars
-      // mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);
-    });
+  ajax.request({
+    data: JSON.stringify(data),
+    headers: {
+      Authorization: request.getHeader('Authorization'),
+      'Content-Type': 'application/json; charset=UTF-8',
+      'X-HTTP-Method-Override': 'PATCH'
+    },
+    method: 'POST',
+    uri: `${common.DA_LOCATIONS_URL}('${location}')`
 
+  }, function okFunction(okResponse) { // eslint-disable-line no-unused-vars
     // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
   }, function errorFunction(errorResponse) { // eslint-disable-line no-unused-vars
     // mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);

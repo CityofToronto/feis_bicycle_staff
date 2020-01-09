@@ -167,6 +167,37 @@ function renderEntityLockerDetailsPage(app, $container, router, auth, opt, id, q
                 ]
               }
             ]
+          },
+          {
+            title: 'Details',
+            id: 'details',
+            postRender({ model, section }) {
+              function handler() {
+                if (model.isNew()) {
+                  $(`#${section.id}`).hide();
+                } else {
+                  $(`#${section.id}`).show();
+                }
+              }
+              handler();
+              model.on(`change:${model.idAttribute}`, handler);
+            },
+
+            rows: [
+              {
+                fields: [
+                  Object.assign({}, entityLockerDetails__fields.id(model), { className: 'col-sm-8' }),
+                  Object.assign({}, entityLockerDetails__fields.__Status(auth, model), { className: 'col-sm-4' })
+                ]
+              },
+              {
+                fields: [
+                  entityLockerDetails__fields.__CreatedOn(model),
+                  entityLockerDetails__fields.__ModifiedOn(model),
+                  entityLockerDetails__fields.__Owner(model)
+                ]
+              }
+            ]
           }
         ]
       };
@@ -194,7 +225,7 @@ function renderEntityLockerDetailsPage(app, $container, router, auth, opt, id, q
         } else {
           breadcrumbs.push({ name: `${data.location__site_name} ${data.number}`, link: `#${currentLockerView.fragment}/${data.id}` });
           app.setBreadcrumb(breadcrumbs, true);
-          app.setTitle(`${data.location__site_name} ${data.number}`);
+          app.setTitle(`${data.number}`);
         }
 
         return () => {

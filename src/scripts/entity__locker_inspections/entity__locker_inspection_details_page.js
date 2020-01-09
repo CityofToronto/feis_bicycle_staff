@@ -115,6 +115,37 @@ function renderEntityLockerInspectionDetailsPage(app, $container, router, auth, 
                 ]
               }
             ]
+          },
+          {
+            title: 'Details',
+            id: 'details',
+            postRender({ model, section }) {
+              function handler() {
+                if (model.isNew()) {
+                  $(`#${section.id}`).hide();
+                } else {
+                  $(`#${section.id}`).show();
+                }
+              }
+              handler();
+              model.on(`change:${model.idAttribute}`, handler);
+            },
+
+            rows: [
+              {
+                fields: [
+                  Object.assign({}, entityLockerInspectionDetails__fields.id(model), { className: 'col-sm-8' }),
+                  Object.assign({}, entityLockerInspectionDetails__fields.__Status(auth, model), { className: 'col-sm-4' })
+                ]
+              },
+              {
+                fields: [
+                  entityLockerInspectionDetails__fields.__CreatedOn(model),
+                  entityLockerInspectionDetails__fields.__ModifiedOn(model),
+                  entityLockerInspectionDetails__fields.__Owner(model)
+                ]
+              }
+            ]
           }
         ]
       };

@@ -26,10 +26,14 @@ const entityLockerInspections__columns = {
     className: 'minWidth',
     data: 'locker'
   },
-  locker__name: {
+  calc_locker_number: {
     title: 'Locker',
+    orderable: false,
+    searchable: false,
     className: 'minWidth',
-    data: 'locker__name'
+    render(data, type, row) {
+      return row.calc_locker_number;
+    }
   },
 
   date: {
@@ -111,15 +115,26 @@ const entityLockerInspections__columns = {
     data: '__Owner',
     type: 'string'
   },
-  __Status: {
+  __Status: (auth) => ({
     title: 'Status',
-    className: 'statusWidth',
     data: '__Status',
+
     type: 'string',
     searchType: 'equals',
-    choices: [{ text: 'Active' }, { text: 'Inactive' }],
+    choices: {
+      beforeSend(jqXHR) {
+        if (auth && auth.sId) {
+          jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+        }
+      },
+      contentType: 'application/json; charset=utf-8',
+      method: 'GET',
+      url: '/* @echo C3DATAMEDIA_STATUS_CHOICES */'
+    },
+
+    className: 'statusWidth',
     render(data) {
       return `<span class="label label-${data === 'Active' ? 'success' : data === 'Inactive' ? 'danger' : 'default'}" style="font-size: 90%;">${data}</span>`;
     }
-  }
+  })
 };

@@ -162,6 +162,8 @@ function updateLocation(content, request) {
       _ref$__Status = _ref.__Status,
       __Status = _ref$__Status === undefined ? content.get('__Status').getAsString() : _ref$__Status;
 
+  var lockers_total = void 0;
+
   var select = 'id';
   var filter = encodeURIComponent('location eq \'' + location + '\' and __Status eq \'Active\'');
   var top = 999;
@@ -172,7 +174,7 @@ function updateLocation(content, request) {
     uri: common.DA_LOCKERS_URL + '?$select=' + select + '&$filter=' + filter + '&$top=' + top
   }, function okFunction(okResponse) {
     var body = JSON.parse(okResponse.body);
-    var lockers_total = body.value.length;
+    lockers_total = body.value.length;
 
     var method = request.getMethod();
     if (method === 'DELETE') {
@@ -193,26 +195,26 @@ function updateLocation(content, request) {
       }
     }
 
-    var data = {
-      lockers_total: lockers_total
-    };
+    // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
+  }, function errorFunction(errorResponse) {// eslint-disable-line no-unused-vars
+    // mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);
+  });
 
-    ajax.request({
-      data: JSON.stringify(data),
-      headers: {
-        Authorization: request.getHeader('Authorization'),
-        'Content-Type': 'application/json; charset=UTF-8',
-        'X-HTTP-Method-Override': 'PATCH'
-      },
-      method: 'POST',
-      uri: common.DA_LOCATIONS_URL + '(\'' + location + '\')'
+  var data = {
+    lockers_total: lockers_total
+  };
 
-    }, function okFunction(okResponse) {// eslint-disable-line no-unused-vars
-      // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
-    }, function errorFunction(errorResponse) {// eslint-disable-line no-unused-vars
-      // mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);
-    });
+  ajax.request({
+    data: JSON.stringify(data),
+    headers: {
+      Authorization: request.getHeader('Authorization'),
+      'Content-Type': 'application/json; charset=UTF-8',
+      'X-HTTP-Method-Override': 'PATCH'
+    },
+    method: 'POST',
+    uri: common.DA_LOCATIONS_URL + '(\'' + location + '\')'
 
+  }, function okFunction(okResponse) {// eslint-disable-line no-unused-vars
     // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
   }, function errorFunction(errorResponse) {// eslint-disable-line no-unused-vars
     // mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);

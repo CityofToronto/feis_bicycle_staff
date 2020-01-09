@@ -61,8 +61,8 @@ const renderEntityLocationInspectionsPage__views = {
                 return acc;
               }, {});
 
-              response.value.forEach((locationNote) => {
-                locationNote.calc_location_site_name = locationMap[locationNote.location];
+              response.value.forEach((locationInspection) => {
+                locationInspection.calc_location_site_name = locationMap[locationInspection.location];
               });
 
               callback({
