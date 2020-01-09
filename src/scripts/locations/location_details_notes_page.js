@@ -2,7 +2,7 @@
 /* global ajaxes auth__checkLogin fixButtonLinks query__objectToString query__stringToObject
    renderAlert */
 /* global renderDatatable */
-/* global renderLocationNotesPage__columns renderLocationsPage__views renderLocationDetailsInspectionsPage__resetState
+/* global entityLocationNotes__columns renderLocationsPage__views renderLocationDetailsInspectionsPage__resetState
    renderLocationDetailsInspectionsPage__currentView */
 
 const renderLocationDetailsNotesPage__views = {
@@ -15,18 +15,14 @@ const renderLocationDetailsNotesPage__views = {
     definition: (auth, opt, id) => {
       const definition = {
         columns: [
-          renderLocationNotesPage__columns.action(renderLocationDetailsNotesPage__views.all.fragment(opt, id)),
+          entityLocationNotes__columns.action(renderLocationDetailsNotesPage__views.all.fragment(opt, id)),
 
-          renderLocationNotesPage__columns.date,
+          entityLocationNotes__columns.date,
+          entityLocationNotes__columns.note,
 
-          renderLocationNotesPage__columns.note,
+          entityLocationNotes__columns.__Status(auth),
 
-          renderLocationNotesPage__columns.__CreatedOn,
-          renderLocationNotesPage__columns.__ModifiedOn,
-          renderLocationNotesPage__columns.__Owner,
-          renderLocationNotesPage__columns.__Status,
-
-          Object.assign({}, renderLocationNotesPage__columns.location, { visible: false }),
+          Object.assign({}, entityLocationNotes__columns.location, { visible: false }),
         ],
 
         order: [

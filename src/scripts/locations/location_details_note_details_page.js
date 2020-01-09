@@ -3,7 +3,7 @@
    renderAlert toSnapShot */
 /* global renderForm */
 /* global renderLocationsPage__views renderLocationDetailsNotesPage__views
-   renderLocationDetailsNotesPage__currentView renderLocationNoteDetailsPage_fields
+   renderLocationDetailsNotesPage__currentView entityLocationNoteDetails__fields
    renderLocationDetailsInspectionsPage__currentView */
 
 
@@ -153,12 +153,43 @@ function renderLocationDetailsNoteDetailsPage(app, $container, router, auth, opt
             rows: [
               {
                 fields: [
-                  Object.assign({}, renderLocationNoteDetailsPage_fields.date, { className: 'col-sm-4' })
+                  Object.assign({}, entityLocationNoteDetails__fields.date, { className: 'col-sm-4' })
                 ]
               },
               {
                 fields: [
-                  renderLocationNoteDetailsPage_fields.note
+                  entityLocationNoteDetails__fields.note
+                ]
+              }
+            ]
+          },
+          {
+            title: 'Details',
+            id: 'details',
+            postRender({ model, section }) {
+              function handler() {
+                if (model.isNew()) {
+                  $(`#${section.id}`).hide();
+                } else {
+                  $(`#${section.id}`).show();
+                }
+              }
+              handler();
+              model.on(`change:${model.idAttribute}`, handler);
+            },
+
+            rows: [
+              {
+                fields: [
+                  Object.assign({}, entityLocationNoteDetails__fields.id(model), { className: 'col-sm-8' }),
+                  Object.assign({}, entityLocationNoteDetails__fields.__Status(auth, model), { className: 'col-sm-4' })
+                ]
+              },
+              {
+                fields: [
+                  entityLocationNoteDetails__fields.__CreatedOn(model),
+                  entityLocationNoteDetails__fields.__ModifiedOn(model),
+                  entityLocationNoteDetails__fields.__Owner(model)
                 ]
               }
             ]

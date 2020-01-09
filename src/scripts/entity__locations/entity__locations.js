@@ -139,6 +139,55 @@ const entityLocations__columns = {
     className: 'minWidth'
   },
 
+  contact: {
+    title: 'Contact',
+    data: 'primary_contact_first_name',
+    type: 'function',
+    select: ['primary_contact_last_name'],
+    filter(column) {
+      let filterColumns = `concat(concat(primary_contact_first_name,' '),primary_contact_last_name)`;
+
+      return column.search.value
+        .split(' ')
+        .filter((value, index, array) => value && array.indexOf(value) === index)
+        .map((value) => `contains(tolower(${filterColumns}),'${oData__escapeValue(value.toLowerCase())}')`)
+        .join(' and ');
+    },
+    orderBy(order) {
+      let orderColumns = `concat(concat(primary_contact_first_name,' '),primary_contact_last_name)`;
+
+      return `tolower(${orderColumns}) ${order.dir}`;
+    },
+    className: 'minWidth',
+    render(data, settings, row) {
+      return [data, row['primary_contact_last_name']].filter((value) => value).join(' ');
+    }
+  },
+  phone: {
+    title: 'Phone',
+    data: 'primary_contact_primary_phone',
+    type: 'function',
+    select: ['primary_contact_alternate_phone'],
+    filter(column) {
+      let filterColumns = `concat(concat(primary_contact_primary_phone,' '),primary_contact_alternate_phone)`;
+
+      return column.search.value
+        .split(' ')
+        .filter((value, index, array) => value && array.indexOf(value) === index)
+        .map((value) => `contains(tolower(${filterColumns}),'${oData__escapeValue(value.toLowerCase())}')`)
+        .join(' and ');
+    },
+    orderBy(order) {
+      let orderColumns = `concat(concat(primary_contact_primary_phone,' '),primary_contact_alternate_phone)`;
+
+      return `tolower(${orderColumns}) ${order.dir}`;
+    },
+    className: 'minWidth',
+    render(data, settings, row) {
+      return [data, row['primary_contact_alternate_phone']].filter((value) => value).join(' / ');
+    }
+  },
+
   alternate_contact_first_name: {
     title: 'First Name - Alternate Contact',
     data: 'alternate_contact_first_name',

@@ -1,4 +1,4 @@
-/* global auth__checkLogin fixButtonLinks */
+/* global auth__checkLogin fixButtonLinks query__objectToString */
 
 /* exported renderHomePage */
 function renderHomePage(app, $container, router, auth) {
@@ -7,7 +7,23 @@ function renderHomePage(app, $container, router, auth) {
       return router.navigateToLoginPage();
     }
 
+    /* global renderLocationsPage__views */
     $container.html(`
+      <h2>Lockers</h2>
+
+      <div class="row">
+        <div class="col-sm-4">
+          <h3>Locker Location</h3>
+
+          <div class="list-group">
+            <a href="#${renderLocationsPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+              <span class="badge badge-locations-all"></span>
+              All
+            </a>
+          </div>
+        </div>
+      </div>
+
       <h2>Others</h2>
 
       <div class="row">
@@ -20,6 +36,7 @@ function renderHomePage(app, $container, router, auth) {
         </div>
       </div>
     `);
+
     fixButtonLinks($container);
 
     const breadcrumbs = [

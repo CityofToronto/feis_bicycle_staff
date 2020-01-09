@@ -153,7 +153,7 @@ function renderEntityLocationInspectionDetailsPage(app, $container, router, auth
       return Promise.resolve().then(() => {
         return renderForm($('<div></div>').appendTo($container), definition, model, {
           auth,
-          url: '/* @echo C3DATA_INSPECTIONS_URL */',
+          url: '/* @echo C3DATA_LOCATION_INSPECTIONS_URL */',
 
           saveButtonLabel: (model) => model.isNew() ? 'Create Location Inspection' : 'Update Location Inspection',
 

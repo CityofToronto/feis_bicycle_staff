@@ -59,7 +59,7 @@ const entityLocationInspections__columns = {
       },
       contentType: 'application/json; charset=utf-8',
       method: 'GET',
-      url: '/* @echo C3DATAMEDIA_LOCATION_INSPECTION_CHOICES */'
+      url: '/* @echo C3DATAMEDIA_INSPECTION_CHOICES */'
     },
     render(data) {
       return `<span class="label label-${data === 'OK' ? 'success' : data === 'Problems' ? 'danger' : 'default'}" style="font-size: 90%;">${data}</span>`;

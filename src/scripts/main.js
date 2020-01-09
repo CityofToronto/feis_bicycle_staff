@@ -196,6 +196,29 @@ $(function () {
 
       // ---
 
+      ['locations/:opt1/:id1/inspections(/:opt2)(/)'](opt1, id1, opt2, query) {
+        /* global renderLocationDetailsInspectionsPage */
+        return renderLocationDetailsInspectionsPage(app, $container, router, auth, opt1, id1, opt2, query);
+      },
+      ['locations/:opt1/:id1/notes/:opt2/:id2(/)'](opt1, id1, opt2, id2, query) {
+        /* global renderLocationDetailsNoteDetailsPage */
+        return renderLocationDetailsNoteDetailsPage(app, $container, router, auth, opt1, id1, opt2, id2, query);
+      },
+      ['locations/:opt1/:id1/notes(/:opt2)(/)'](opt1, id1, opt2, query) {
+        /* global renderLocationDetailsNotesPage */
+        return renderLocationDetailsNotesPage(app, $container, router, auth, opt1, id1, opt2, query);
+      },
+      ['locations/:opt/:id(/)'](opt, id, query) {
+        /* global renderLocationDetailsPage */
+        return renderLocationDetailsPage(app, $container, router, auth, opt, id, query);
+      },
+      ['locations(/:opt)(/)'](opt, query) {
+        /* global renderLocationsPage */
+        return renderLocationsPage(app, $container, router, auth, opt, query);
+      },
+
+      // ---
+
       ['login(/)'](query) {
         /* global renderLoginPage */
         return renderLoginPage(app, $container, router, auth, query);

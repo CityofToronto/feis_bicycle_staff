@@ -1,163 +1,9 @@
-/* global $ Backbone moment */
+/* global $ Backbone */
 /* global ajaxes auth__checkLogin fixButtonLinks modal__showConfirm query__objectToString query__stringToObject
    renderAlert toSnapShot */
 /* global renderForm */
 /* global renderLocationsPage__views renderLocationDetailsNotesPage__currentView renderLocationDetailsNotesPage__resetState
-   renderLocationDetailsInspectionsPage__resetState renderLocationDetailsInspectionsPage__currentView */
-
-const renderLocationDetailsPage_fields = {
-  site_name: {
-    title: 'Site Name',
-    bindTo: 'site_name',
-    required: true
-  },
-
-  civic_address: {
-    title: 'Street Address',
-    bindTo: 'civic_address'
-  },
-  municipality: {
-    title: 'City',
-    bindTo: 'municipality'
-  },
-  province: (auth) => ({
-    title: 'Province',
-    bindTo: 'province',
-    type: 'dropdown',
-    choices: {
-      beforeSend(jqXHR) {
-        if (auth && auth.sId) {
-          jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
-        }
-      },
-      contentType: 'application/json; charset=utf-8',
-      method: 'GET',
-      url: '/* @echo C3DATAMEDIA_PROVINCE_CHOICES */'
-    },
-  }),
-  postal_code: {
-    title: 'Postal Code',
-    bindTo: 'postal_code'
-  },
-
-  primary_contact_first_name: {
-    title: 'First Name (Primary Contact)',
-    bindTo: 'primary_contact_first_name'
-  },
-  primary_contact_last_name: {
-    title: 'Last Name (Primary Contact)',
-    bindTo: 'primary_contact_last_name'
-  },
-  primary_contact_email: {
-    title: 'Email (Primary Contact)',
-    bindTo: 'primary_contact_email'
-  },
-  primary_contact_primary_phone: {
-    title: 'Primary Phone (Primary Contact)',
-    bindTo: 'primary_contact_primary_phone'
-  },
-  primary_contact_alternate_phone: {
-    title: 'Alternate Phone (Primary Contact)',
-    bindTo: 'primary_contact_alternate_phone'
-  },
-
-  alternate_contact_first_name: {
-    title: 'First Name (Alternate Contact)',
-    bindTo: 'alternate_contact_first_name'
-  },
-  alternate_contact_last_name: {
-    title: 'Last Name (Alternate Contact)',
-    bindTo: 'alternate_contact_last_name'
-  },
-  alternate_contact_email: {
-    title: 'Email (Alternate Contact)',
-    bindTo: 'alternate_contact_email'
-  },
-  alternate_contact_primary_phone: {
-    title: 'Primary Phone (Alternate Contact)',
-    bindTo: 'alternate_contact_primary_phone'
-  },
-  alternate_contact_alternate_phone: {
-    title: 'Alternate Phone (Alternate Contact)',
-    bindTo: 'alternate_contact_alternate_phone'
-  },
-
-  latest_note__date: (model) => ({
-    title: 'Latest Note Date',
-    htmlAttr: { readonly: true },
-
-    postRender({ field }) {
-      function handler() {
-        const momentDate = moment(model.get('latest_note__date'));
-        if (momentDate.isValid()) {
-          $(`#${field.id}`).val(momentDate.format('YYYY/MM/DD h:mm A'));
-        } else {
-          $(`#${field.id}`).val('');
-        }
-      }
-      model.on(`change:latest_note__date`, handler);
-      handler();
-    }
-  }),
-  latest_note__note: (model) => ({
-    title: 'Latest Note',
-    type: 'textarea',
-    rows: 5,
-    htmlAttr: { readonly: true },
-
-    postRender({ field }) {
-      function handler() {
-        $(`#${field.id}`).val(model.get('latest_note__note'));
-      }
-      model.on('change:latest_note__note', handler);
-      handler();
-    }
-  }),
-
-  latest_inspection__date: (model) => ({
-    title: 'Latest Inspection Date',
-    htmlAttr: { readonly: true },
-
-    postRender({ field }) {
-      function handler() {
-        const momentDate = moment(model.get('latest_inspection__date'));
-        if (momentDate.isValid()) {
-          $(`#${field.id}`).val(momentDate.format('YYYY/MM/DD h:mm A'));
-        } else {
-          $(`#${field.id}`).val('');
-        }
-      }
-      model.on(`change:latest_inspection__date`, handler);
-      handler();
-    }
-  }),
-  latest_inspection__result: (model) => ({
-    title: 'Latest Inspection Result',
-    htmlAttr: { readonly: true },
-
-    postRender({ field }) {
-      function handler() {
-        $(`#${field.id}`).val(model.get('latest_inspection__result'));
-      }
-      model.on('change:latest_inspection__result', handler);
-      handler();
-    }
-  }),
-  latest_inspection__note: (model) => ({
-    title: 'Latest Inspection Note',
-    type: 'textarea',
-    rows: 5,
-    htmlAttr: { readonly: true },
-
-    postRender({ field }) {
-      function handler() {
-        $(`#${field.id}`).val(model.get('latest_inspection__note'));
-      }
-      model.on('change:latest_inspection__note', handler);
-      handler();
-    }
-  })
-};
+   renderLocationDetailsInspectionsPage__resetState renderLocationDetailsInspectionsPage__currentView entityLocationDetails__fields */
 
 /* exported renderLocationDetailsPage */
 function renderLocationDetailsPage(app, $container, router, auth, opt, id, query) {
@@ -288,19 +134,20 @@ function renderLocationDetailsPage(app, $container, router, auth, opt, id, query
             rows: [
               {
                 fields: [
-                  Object.assign({}, renderLocationDetailsPage_fields.site_name, { className: 'col-sm-8' })
+                  Object.assign({}, entityLocationDetails__fields.site_name, { className: 'col-sm-4' }),
+                  Object.assign({}, entityLocationDetails__fields.description, { className: 'col-sm-8' })
                 ]
               },
               {
                 fields: [
-                  Object.assign({}, renderLocationDetailsPage_fields.civic_address, { className: 'col-sm-8' })
+                  Object.assign({}, entityLocationDetails__fields.civic_address, { className: 'col-sm-8' })
                 ]
               },
               {
                 fields: [
-                  renderLocationDetailsPage_fields.municipality,
-                  renderLocationDetailsPage_fields.province(auth),
-                  renderLocationDetailsPage_fields.postal_code
+                  entityLocationDetails__fields.municipality,
+                  entityLocationDetails__fields.province(auth),
+                  entityLocationDetails__fields.postal_code
                 ]
               }
             ]
@@ -319,15 +166,15 @@ function renderLocationDetailsPage(app, $container, router, auth, opt, id, query
               },
               {
                 fields: [
-                  Object.assign({}, renderLocationDetailsPage_fields.primary_contact_first_name, { title: 'First Name', className: 'col-sm-4' }),
-                  Object.assign({}, renderLocationDetailsPage_fields.primary_contact_last_name, { title: 'Last Name', className: 'col-sm-4' })
+                  Object.assign({}, entityLocationDetails__fields.primary_contact_first_name, { title: 'First Name', className: 'col-sm-4' }),
+                  Object.assign({}, entityLocationDetails__fields.primary_contact_last_name, { title: 'Last Name', className: 'col-sm-4' })
                 ]
               },
               {
                 fields: [
-                  Object.assign({}, renderLocationDetailsPage_fields.primary_contact_email, { title: 'Email' }),
-                  Object.assign({}, renderLocationDetailsPage_fields.primary_contact_primary_phone, { title: 'Primary Phone' }),
-                  Object.assign({}, renderLocationDetailsPage_fields.primary_contact_alternate_phone, { title: 'Alternate Phone' })
+                  Object.assign({}, entityLocationDetails__fields.primary_contact_email, { title: 'Email' }),
+                  Object.assign({}, entityLocationDetails__fields.primary_contact_primary_phone, { title: 'Primary Phone' }),
+                  Object.assign({}, entityLocationDetails__fields.primary_contact_alternate_phone, { title: 'Alternate Phone' })
                 ]
               },
               {
@@ -340,15 +187,15 @@ function renderLocationDetailsPage(app, $container, router, auth, opt, id, query
               },
               {
                 fields: [
-                  Object.assign({}, renderLocationDetailsPage_fields.alternate_contact_first_name, { title: 'First Name', className: 'col-sm-4' }),
-                  Object.assign({}, renderLocationDetailsPage_fields.alternate_contact_last_name, { title: 'Last Name', className: 'col-sm-4' })
+                  Object.assign({}, entityLocationDetails__fields.alternate_contact_first_name, { title: 'First Name', className: 'col-sm-4' }),
+                  Object.assign({}, entityLocationDetails__fields.alternate_contact_last_name, { title: 'Last Name', className: 'col-sm-4' })
                 ]
               },
               {
                 fields: [
-                  Object.assign({}, renderLocationDetailsPage_fields.alternate_contact_email, { title: 'Email' }),
-                  Object.assign({}, renderLocationDetailsPage_fields.alternate_contact_primary_phone, { title: 'Primary Phone' }),
-                  Object.assign({}, renderLocationDetailsPage_fields.alternate_contact_alternate_phone, { title: 'Alternate Phone' })
+                  Object.assign({}, entityLocationDetails__fields.alternate_contact_email, { title: 'Email' }),
+                  Object.assign({}, entityLocationDetails__fields.alternate_contact_primary_phone, { title: 'Primary Phone' }),
+                  Object.assign({}, entityLocationDetails__fields.alternate_contact_alternate_phone, { title: 'Alternate Phone' })
                 ]
               }
             ]
@@ -371,12 +218,12 @@ function renderLocationDetailsPage(app, $container, router, auth, opt, id, query
             rows: [
               {
                 fields: [
-                  Object.assign({}, renderLocationDetailsPage_fields.latest_note__date(model), { title: 'Date', className: 'col-sm-4' })
+                  Object.assign({}, entityLocationDetails__fields.latest_note__date(model), { title: 'Date', className: 'col-sm-4' })
                 ]
               },
               {
                 fields: [
-                  Object.assign({}, renderLocationDetailsPage_fields.latest_note__note(model), { title: 'Note' })
+                  Object.assign({}, entityLocationDetails__fields.latest_note__note(model), { title: 'Note' })
                 ]
               }
             ]
@@ -399,13 +246,44 @@ function renderLocationDetailsPage(app, $container, router, auth, opt, id, query
             rows: [
               {
                 fields: [
-                  Object.assign({}, renderLocationDetailsPage_fields.latest_inspection__date(model), { title: 'Date', className: 'col-sm-4' }),
-                  Object.assign({}, renderLocationDetailsPage_fields.latest_inspection__result(model), { title: 'Result', className: 'col-sm-4' })
+                  Object.assign({}, entityLocationDetails__fields.latest_inspection__date(model), { title: 'Date', className: 'col-sm-4' }),
+                  Object.assign({}, entityLocationDetails__fields.latest_inspection__result(model), { title: 'Result', className: 'col-sm-4' })
                 ]
               },
               {
                 fields: [
-                  Object.assign({}, renderLocationDetailsPage_fields.latest_inspection__note(model), { title: 'Note' })
+                  Object.assign({}, entityLocationDetails__fields.latest_inspection__note(model), { title: 'Note' })
+                ]
+              }
+            ]
+          },
+          {
+            title: 'Details',
+            id: 'details',
+            postRender({ model, section }) {
+              function handler() {
+                if (model.isNew()) {
+                  $(`#${section.id}`).hide();
+                } else {
+                  $(`#${section.id}`).show();
+                }
+              }
+              handler();
+              model.on(`change:${model.idAttribute}`, handler);
+            },
+
+            rows: [
+              {
+                fields: [
+                  Object.assign({}, entityLocationDetails__fields.id(model), { className: 'col-sm-8' }),
+                  Object.assign({}, entityLocationDetails__fields.__Status(auth, model), { className: 'col-sm-4' })
+                ]
+              },
+              {
+                fields: [
+                  entityLocationDetails__fields.__CreatedOn(model),
+                  entityLocationDetails__fields.__ModifiedOn(model),
+                  entityLocationDetails__fields.__Owner(model)
                 ]
               }
             ]

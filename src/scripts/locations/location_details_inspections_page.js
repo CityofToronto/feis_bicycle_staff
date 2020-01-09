@@ -2,7 +2,7 @@
 /* global ajaxes auth__checkLogin fixButtonLinks query__objectToString query__stringToObject
    renderAlert */
 /* global renderDatatable */
-/* global renderLocationInspectionsPage__columns renderLocationsPage__views renderLocationDetailsNotesPage__resetState
+/* global entityLocationInspections__columns renderLocationsPage__views renderLocationDetailsNotesPage__resetState
    renderLocationDetailsNotesPage__currentView */
 
 const renderLocationDetailsInspectionsPage__views = {
@@ -15,20 +15,15 @@ const renderLocationDetailsInspectionsPage__views = {
     definition: (auth, opt, id) => {
       const definition = {
         columns: [
-          renderLocationInspectionsPage__columns.action(renderLocationDetailsInspectionsPage__views.all.fragment(opt, id)),
+          entityLocationInspections__columns.action(renderLocationDetailsInspectionsPage__views.all.fragment(opt, id)),
 
-          renderLocationInspectionsPage__columns.date,
+          entityLocationInspections__columns.date,
+          entityLocationInspections__columns.result(auth),
+          entityLocationInspections__columns.note,
 
-          renderLocationInspectionsPage__columns.result(auth),
+          entityLocationInspections__columns.__Status(auth),
 
-          renderLocationInspectionsPage__columns.note,
-
-          renderLocationInspectionsPage__columns.__CreatedOn,
-          renderLocationInspectionsPage__columns.__ModifiedOn,
-          renderLocationInspectionsPage__columns.__Owner,
-          renderLocationInspectionsPage__columns.__Status,
-
-          Object.assign({}, renderLocationInspectionsPage__columns.location, { visible: false }),
+          Object.assign({}, entityLocationInspections__columns.location, { visible: false }),
         ],
 
         order: [
