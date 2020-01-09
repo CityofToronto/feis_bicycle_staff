@@ -1,5 +1,6 @@
 {
   "number": "string",
+  "description": "string",
   "stations": ["string"],
   "latest_note": "string",
   "latest_note__date": "2019-12-23T00:00:00.000-05:00",

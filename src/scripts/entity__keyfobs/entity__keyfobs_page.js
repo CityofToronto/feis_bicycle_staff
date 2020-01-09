@@ -1,5 +1,5 @@
 /* global $ */
-/* global auth__checkLogin query__objectToString query__stringToObject */
+/* global ajaxes auth__checkLogin query__objectToString query__stringToObject */
 /* global renderDatatable */
 /* global entityKeyfobs__columns */
 
@@ -12,23 +12,13 @@ const renderEntityKeyfobsPage__views = {
 
     definition: (auth, opt) => { // eslint-disable-line no-unused-vars
       const definition = {
-        columns: [
-          entityKeyfobs__columns.action(renderEntityKeyfobsPage__views.all.fragment),
-
-          entityKeyfobs__columns.id,
-          entityKeyfobs__columns.number,
-          entityKeyfobs__columns.description,
-          entityKeyfobs__columns.stations,
-          entityKeyfobs__columns.stations__site_name,
-          entityKeyfobs__columns.latest_note,
-          entityKeyfobs__columns.latest_note__date,
-          entityKeyfobs__columns.latest_note__note,
-
-          entityKeyfobs__columns.__CreatedOn,
-          entityKeyfobs__columns.__ModifiedOn,
-          entityKeyfobs__columns.__Owner,
-          entityKeyfobs__columns.__Status
-        ],
+        columns: Object.keys(entityKeyfobs__columns).map((key) => {
+          if (key === 'action') {
+            return entityKeyfobs__columns[key](renderEntityKeyfobsPage__views.all.fragment);
+          }
+          return typeof entityKeyfobs__columns[key] === 'function' ? entityKeyfobs__columns[key](auth)
+            : entityKeyfobs__columns[key];
+        }),
 
         order: [[1, 'asc']],
 
@@ -36,6 +26,68 @@ const renderEntityKeyfobsPage__views = {
       };
 
       definition.searchCols[definition.columns.length - 1] = { search: 'Active' };
+
+      definition.ajaxCore = definition.ajaxCore || function (data, callback, settings, queryObject, url, options = {}) {
+        const { auth } = options;
+
+        return ajaxes({
+          beforeSend(jqXHR) {
+            if (auth && auth.sId) {
+              jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+            }
+          },
+          contentType: 'application/json; charset=utf-8',
+          method: 'GET',
+          url: `${url}?${query__objectToString(queryObject)}`
+        }).then(({ data: response }) => {
+          const stations = [].concat(...response.value.map(({ stations }) => stations))
+            .filter((station, index, array) => array.indexOf(station) === index);
+
+          if (stations.length > 0) {
+            const filter = encodeURIComponent(stations.map((id) => `id eq '${id}'`).join(' or '));
+            return ajaxes({
+              beforeSend(jqXHR) {
+                if (auth && auth.sId) {
+                  jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+                }
+              },
+              contentType: 'application/json; charset=utf-8',
+              method: 'GET',
+              url: `/* @echo C3DATA_STATIONS_URL */?$filter=${filter}`,
+            }).then(({ data: response2 }) => {
+              const stationMap = response2.value.reduce((acc, { id, site_name }) => {
+                acc[id] = site_name;
+                return acc;
+              }, {});
+
+              response.value.forEach((keyfob) => {
+                keyfob.calc_stations_site_names = keyfob.stations.map((station) => stationMap[station]).join(', ');
+              });
+
+              callback({
+                data: response.value,
+                draw: data.draw,
+                recordsTotal: response['@odata.count'],
+                recordsFiltered: response['@odata.count']
+              });
+            });
+          } else {
+            response.value.forEach((locationNote) => {
+              locationNote.calc_stations_site_names = null;
+            });
+
+            callback({
+              data: response.value,
+              draw: data.draw,
+              recordsTotal: response['@odata.count'],
+              recordsFiltered: response['@odata.count']
+            });
+          }
+        }).catch((error) => {
+          callback({ data: [], draw: data.draw, recordsTotal: 0, recordsFiltered: 0 });
+          throw error;
+        });
+      };
 
       return definition;
     }
