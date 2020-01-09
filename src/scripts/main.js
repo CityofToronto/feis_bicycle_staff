@@ -196,6 +196,29 @@ $(function () {
 
       // ---
 
+      ['lockers/:opt1/:id1/inspections(/:opt2)(/)'](opt1, id1, opt2, query) {
+        /* global renderLockerDetailsInspectionsPage */
+        return renderLockerDetailsInspectionsPage(app, $container, router, auth, opt1, id1, opt2, query);
+      },
+      ['lockers/:opt1/:id1/notes/:opt2/:id2(/)'](opt1, id1, opt2, id2, query) {
+        /* global renderLockerDetailsNoteDetailsPage */
+        return renderLockerDetailsNoteDetailsPage(app, $container, router, auth, opt1, id1, opt2, id2, query);
+      },
+      ['lockers/:opt1/:id1/notes(/:opt2)(/)'](opt1, id1, opt2, query) {
+        /* global renderLockerDetailsNotesPage */
+        return renderLockerDetailsNotesPage(app, $container, router, auth, opt1, id1, opt2, query);
+      },
+      ['lockers/:opt/:id(/)'](opt, id, query) {
+        /* global renderLockerDetailsPage */
+        return renderLockerDetailsPage(app, $container, router, auth, opt, id, query);
+      },
+      ['lockers(/:opt)(/)'](opt, query) {
+        /* global renderLockersPage */
+        return renderLockersPage(app, $container, router, auth, opt, query);
+      },
+
+      // ---
+
       ['locations/:opt1/:id1/inspections(/:opt2)(/)'](opt1, id1, opt2, query) {
         /* global renderLocationDetailsInspectionsPage */
         return renderLocationDetailsInspectionsPage(app, $container, router, auth, opt1, id1, opt2, query);

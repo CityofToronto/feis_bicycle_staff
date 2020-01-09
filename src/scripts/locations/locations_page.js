@@ -35,6 +35,41 @@ const renderLocationsPage__views = {
 
       return definition;
     }
+  },
+  upforinspection: {
+    breadcrumb: 'Up For Inspection',
+
+    title: 'Up For Inspection',
+    fragment: `locations/upforinspection`,
+
+    definition: (auth) => {
+      const definition = {
+        columns: [
+          entityLocations__columns.action(renderLocationsPage__views.all.fragment),
+
+          entityLocations__columns.latest_inspection__date,
+          entityLocations__columns.latest_inspection__result(auth),
+
+          entityLocations__columns.site_name,
+          entityLocations__columns.address,
+
+          entityLocations__columns.lockers_total,
+
+          entityLocations__columns.contact,
+          entityLocations__columns.phone,
+
+          entityLocations__columns.__Status(auth)
+        ],
+
+        order: [[1, 'desc']],
+
+        searchCols: []
+      };
+
+      definition.searchCols[definition.columns.length - 1] = { search: 'Active' };
+
+      return definition;
+    }
   }
 };
 

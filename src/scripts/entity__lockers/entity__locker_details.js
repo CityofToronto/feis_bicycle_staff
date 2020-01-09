@@ -43,6 +43,7 @@ const entityLockerDetails__fields = {
   number: {
     title: 'Number',
     bindTo: 'number',
+    required: true
   },
   description: {
     title: 'Description',

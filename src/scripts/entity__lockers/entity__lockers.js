@@ -28,6 +28,7 @@ const entityLockers__columns = {
   },
   calc_location_site_name: {
     title: 'Location',
+    data: 'location',
     orderable: false,
     searchable: false,
     className: 'minWidth',
