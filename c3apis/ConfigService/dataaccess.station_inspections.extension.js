@@ -18,7 +18,6 @@ function beforeContentParse(content, request, uriInfo, response) {
 
   cleanupStation(content, request);
 
-  setStationSiteName(content, request);
   setStatus(content, request);
 }
 
@@ -47,28 +46,6 @@ function afterDelete(content, request, uriInfo, response) {
   }
 
   updateStation(content, request);
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-function setStationSiteName(content, request) {
-  if (content.has('station__site_name')) {
-    content.remove('station__site_name');
-  }
-
-  var select = encodeURIComponent('site_name');
-  ajax.request({
-    headers: { Authorization: request.getHeader('Authorization') },
-    method: 'GET',
-    uri: common.DA_STATIONS_URL + '(\'' + content.get('station').getAsString() + '\')?$select=' + select
-  }, function okFunction(okResponse) {
-    var body = JSON.parse(okResponse.body);
-    content.addProperty('station__site_name', body.site_name);
-
-    // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
-  }, function errorFunction(errorResponse) {// eslint-disable-line no-unused-vars
-    // mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);
-  });
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
