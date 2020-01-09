@@ -31,6 +31,7 @@
   "subscription_end_date": "2019-01-01T00:00:00.000-05:00",
 
   "locker": "string",
+
   "locker_key_date_assigned": "string",
   "locker_key_date_returned": "string",
 
