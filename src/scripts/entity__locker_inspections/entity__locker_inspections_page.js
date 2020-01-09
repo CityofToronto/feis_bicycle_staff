@@ -61,8 +61,8 @@ const renderEntityLockerInspectionsPage__views = {
                 return acc;
               }, {});
 
-              response.value.forEach((lockerNote) => {
-                lockerNote.calc_locker_number = lockerMap[lockerNote.locker];
+              response.value.forEach((lockerInspection) => {
+                lockerInspection.calc_locker_number = lockerMap[lockerInspection.locker];
               });
 
               callback({
