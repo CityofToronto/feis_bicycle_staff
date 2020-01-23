@@ -67,7 +67,8 @@ const entityLocations__columns = {
       },
       contentType: 'application/json; charset=utf-8',
       method: 'GET',
-      url: '/* @echo C3DATAMEDIA_PROVINCE_CHOICES */'
+      url: '/* @echo C3DATAMEDIA_PROVINCE_CHOICES */',
+      webStorage: sessionStorage
     },
     className: 'minWidth'
   }),
@@ -293,7 +294,8 @@ const entityLocations__columns = {
       },
       contentType: 'application/json; charset=utf-8',
       method: 'GET',
-      url: '/* @echo C3DATAMEDIA_INSPECTION_CHOICES */'
+      url: '/* @echo C3DATAMEDIA_INSPECTION_CHOICES */',
+      webStorage: sessionStorage
     },
     className: 'minWidth',
     render(data) {
@@ -365,7 +367,8 @@ const entityLocations__columns = {
       },
       contentType: 'application/json; charset=utf-8',
       method: 'GET',
-      url: '/* @echo C3DATAMEDIA_STATUS_CHOICES */'
+      url: '/* @echo C3DATAMEDIA_STATUS_CHOICES */',
+      webStorage: sessionStorage
     },
     className: 'statusWidth',
     render(data) {

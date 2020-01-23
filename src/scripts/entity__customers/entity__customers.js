@@ -15,12 +15,6 @@ const entityCustomers__columns = {
     searchable: false
   }),
 
-  id: {
-    title: 'ID',
-    className: 'minWidth',
-    data: 'id'
-  },
-
   first_name: {
     title: 'First Name',
     className: 'minWidth',
@@ -115,14 +109,6 @@ const entityCustomers__columns = {
     }
   },
 
-  request_type: {},
-  request_locker_choice_1: {},
-  request_locker_choice_2: {},
-  request_locker_choice_3: {},
-  request_station_choice_1: {},
-  request_station_choice_2: {},
-  request_station_choice_3: {},
-
   bicycle_1_make: {
     title: 'Bicycle 1 Make',
     className: 'minWidth',
@@ -154,32 +140,85 @@ const entityCustomers__columns = {
     data: 'bicycle_2_colour'
   },
 
-  subscription_start_date: {},
-  subscription_expiration_date: {},
-  subscription_end_date: {},
+  request_type: {
+    title: 'request_type',
+    data: 'request_type',
+    className: 'minWidth',
+    choices: [{ text: 'Bicyle Locker' }, { text: 'Bicycle Station' }]
+  },
+  request_locker_choice_1: {
+    title: 'request_locker_choice_1',
+    data: 'request_locker_choice_1',
+    className: 'minWidth'
+  },
+  request_locker_choice_2: {
+    title: 'request_locker_choice_2',
+    data: 'request_locker_choice_1',
+    className: 'minWidth'
+  },
+  request_locker_choice_3: {
+    title: 'request_locker_choice_3',
+    data: 'request_locker_choice_3',
+    className: 'minWidth'
+  },
+  request_station_choice_1: {
+    title: 'request_station_choice_1',
+    data: 'request_station_choice_1',
+    className: 'minWidth'
+  },
+  request_station_choice_2: {
+    title: 'request_station_choice_1',
+    data: 'request_station_choice_1',
+    className: 'minWidth'
+  },
+  request_station_choice_3: {
+    title: 'request_station_choice_1',
+    data: 'request_station_choice_1',
+    className: 'minWidth'
+  },
+
+  subscription_type: {
+    title: 'request_station_choice_1',
+    data: 'request_station_choice_1',
+    className: 'minWidth'
+  },
+  subscription_start_date: {
+    title: 'request_station_choice_1',
+    data: 'request_station_choice_1',
+    className: 'minWidth'
+  },
+  subscription_expiration_date: {
+    title: 'request_station_choice_1',
+    data: 'request_station_choice_1',
+    className: 'minWidth'
+  },
+  subscription_end_date: {
+    title: 'request_station_choice_1',
+    data: 'request_station_choice_1',
+    className: 'minWidth'
+  },
 
   locker: {
     title: 'Locker ID',
-    className: 'minWidth',
-    data: 'locker'
+    data: 'locker',
+    className: 'minWidth'
   },
-  locker__name: {
-    title: 'Locker',
-    className: 'minWidth',
-    data: 'locker__name'
+
+  locker_key_date_assigned: {
+    title: 'Locker Assigned Date',
+    data: 'locker',
+    className: 'minWidth'
   },
-  locker_key_date_assigned: {},
-  locker_key_date_returned: {},
+  locker_key_date_returned: {
+    title: 'Locker Return Date',
+    data: 'locker_key_date_returned',
+    className: 'minWidth'
+  },
 
   station: {
     title: 'Station ID',
     className: 'minWidth',
     data: 'station'
-  },
-  station__site_name: {
-    title: 'Station',
-    className: 'minWidth',
-    data: 'station__site_name'
   },
 
   keyfob: {
@@ -187,11 +226,7 @@ const entityCustomers__columns = {
     className: 'minWidth',
     data: 'keyfob'
   },
-  keyfob__number: {
-    title: 'Key Fob',
-    className: 'minWidth',
-    data: 'keyfob__number'
-  },
+
   keyfob_date_assigned: {
     title: 'Key Fob Date Assigned',
     className: 'minWidth',

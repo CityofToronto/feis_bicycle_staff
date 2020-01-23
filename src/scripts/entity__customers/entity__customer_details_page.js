@@ -94,13 +94,21 @@ function renderEntityCustomerDetailsPage(app, $container, router, auth, opt, id,
 
         sections: [
           {
-            title: 'Details',
+            title: 'Contact',
 
             rows: [
               {
                 fields: [
-                  Object.assign({}, entityCustomerDetails__fields.site_name, { className: 'col-sm-4' }),
-                  Object.assign({}, entityCustomerDetails__fields.description, { className: 'col-sm-8' })
+                  entityCustomerDetails__fields.first_name,
+                  entityCustomerDetails__fields.last_name,
+                  entityCustomerDetails__fields.title
+                ]
+              },
+              {
+                fields: [
+                  entityCustomerDetails__fields.email,
+                  entityCustomerDetails__fields.primary_phone,
+                  entityCustomerDetails__fields.alternate_phone
                 ]
               },
               {
@@ -118,110 +126,100 @@ function renderEntityCustomerDetailsPage(app, $container, router, auth, opt, id,
             ]
           },
           {
-            title: 'Contacts',
+            title: 'Bicycles',
 
             rows: [
               {
                 fields: [
                   {
                     type: 'html',
-                    html: '<h4>Primary Contact</h4>'
+                    html: '<h4>Bicycle 1</h4>'
                   }
                 ]
               },
               {
                 fields: [
-                  Object.assign({}, entityCustomerDetails__fields.primary_contact_first_name, { title: 'First Name', className: 'col-sm-4' }),
-                  Object.assign({}, entityCustomerDetails__fields.primary_contact_last_name, { title: 'Last Name', className: 'col-sm-4' })
-                ]
-              },
-              {
-                fields: [
-                  Object.assign({}, entityCustomerDetails__fields.primary_contact_email, { title: 'Email' }),
-                  Object.assign({}, entityCustomerDetails__fields.primary_contact_primary_phone, { title: 'Primary Phone' }),
-                  Object.assign({}, entityCustomerDetails__fields.primary_contact_alternate_phone, { title: 'Alternate Phone' })
+                  Object.assign({}, entityCustomerDetails__fields.bicycle_1_make, { title: 'Make' }),
+                  Object.assign({}, entityCustomerDetails__fields.bicycle_1_model, { title: 'Model' }),
+                  Object.assign({}, entityCustomerDetails__fields.bicycle_1_colour, { title: 'Colour' })
                 ]
               },
               {
                 fields: [
                   {
                     type: 'html',
-                    html: '<h4>Alternate Contact</h4>'
+                    html: '<h4>Bicycle 2</h4>'
                   }
                 ]
               },
               {
                 fields: [
-                  Object.assign({}, entityCustomerDetails__fields.alternate_contact_first_name, { title: 'First Name', className: 'col-sm-4' }),
-                  Object.assign({}, entityCustomerDetails__fields.alternate_contact_last_name, { title: 'Last Name', className: 'col-sm-4' })
+                  Object.assign({}, entityCustomerDetails__fields.bicycle_2_make, { title: 'Make' }),
+                  Object.assign({}, entityCustomerDetails__fields.bicycle_2_model, { title: 'Model' }),
+                  Object.assign({}, entityCustomerDetails__fields.bicycle_2_colour, { title: 'Colour' })
+                ]
+              },
+            ]
+          },
+          {
+            title: 'Request',
+
+            rows: [
+              {
+                fields: [
+                  Object.assign({}, entityCustomerDetails__fields.request_type, { className: 'col-sm-4' })
                 ]
               },
               {
                 fields: [
-                  Object.assign({}, entityCustomerDetails__fields.alternate_contact_email, { title: 'Email' }),
-                  Object.assign({}, entityCustomerDetails__fields.alternate_contact_primary_phone, { title: 'Primary Phone' }),
-                  Object.assign({}, entityCustomerDetails__fields.alternate_contact_alternate_phone, { title: 'Alternate Phone' })
+                  {
+                    type: 'html',
+                    html: '<h4>Bicycle Locker</h4>'
+                  }
+                ]
+              },
+              {
+                fields: [
+                  Object.assign({}, entityCustomerDetails__fields.request_locker_choice_1, { title: 'Choice 1' }),
+                  Object.assign({}, entityCustomerDetails__fields.request_locker_choice_2, { title: 'Choice 2' }),
+                  Object.assign({}, entityCustomerDetails__fields.request_locker_choice_3, { title: 'Choice 3' })
+                ]
+              },
+              {
+                fields: [
+                  {
+                    type: 'html',
+                    html: '<h4>Bicycle Station</h4>'
+                  }
+                ]
+              },
+              {
+                fields: [
+                  Object.assign({}, entityCustomerDetails__fields.request_station_choice_1, { title: 'Choice 1' }),
+                  Object.assign({}, entityCustomerDetails__fields.request_station_choice_2, { title: 'Choice 2' }),
+                  Object.assign({}, entityCustomerDetails__fields.request_station_choice_3, { title: 'Choice 3' })
                 ]
               }
             ]
           },
           {
-            title: 'Latest Note',
-            id: 'latest_note',
-            postRender({ model, section }) {
-              function handler() {
-                if (model.isNew()) {
-                  $(`#${section.id}`).hide();
-                } else {
-                  $(`#${section.id}`).show();
-                }
-              }
-              handler();
-              model.on(`change:${model.idAttribute}`, handler);
-            },
+            title: 'Subscription',
 
             rows: [
               {
                 fields: [
-                  Object.assign({}, entityCustomerDetails__fields.latest_note__date(model), { title: 'Date', className: 'col-sm-4' })
+                  Object.assign({}, entityCustomerDetails__fields.subscription_type, { className: 'col-sm-4' })
                 ]
               },
               {
                 fields: [
-                  Object.assign({}, entityCustomerDetails__fields.latest_note__note(model), { title: 'Note' })
+                  entityCustomerDetails__fields.subscription_start_date,
+                  entityCustomerDetails__fields.subscription_expiration_date,
+                  entityCustomerDetails__fields.subscription_end_date
                 ]
               }
             ]
           },
-          {
-            title: 'Latest Inspection',
-            id: 'latest_inspection',
-            postRender({ model, section }) {
-              function handler() {
-                if (model.isNew()) {
-                  $(`#${section.id}`).hide();
-                } else {
-                  $(`#${section.id}`).show();
-                }
-              }
-              handler();
-              model.on(`change:${model.idAttribute}`, handler);
-            },
-
-            rows: [
-              {
-                fields: [
-                  Object.assign({}, entityCustomerDetails__fields.latest_inspection__date(model), { title: 'Date', className: 'col-sm-4' }),
-                  Object.assign({}, entityCustomerDetails__fields.latest_inspection__result(model), { title: 'Result', className: 'col-sm-4' })
-                ]
-              },
-              {
-                fields: [
-                  Object.assign({}, entityCustomerDetails__fields.latest_inspection__note(model), { title: 'Note' })
-                ]
-              }
-            ]
-          }
         ]
       };
 

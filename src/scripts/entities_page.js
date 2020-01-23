@@ -159,238 +159,16 @@ function renderEntitiesPage(app, $container, router, auth) {
       </div>
     `).appendTo($container);
 
+    /* global renderEntityCustomersPage__views */
     $(`
-    <h2>Customer Enitities</h2>
-
-    <div class="row">
-      <div class="col-sm-3">
-        <h3>Customers</h3>
-
-        <div class="list-group">
-          <a href="#${renderEntityLocationsPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-            <span class="badge badge-locations-all"></span>
-            All
-          </a>
-        </div>
-      </div>
-
-      <div class="col-sm-3">
-        <h3>Customer Notes</h3>
-
-        <div class="list-group">
-          <a href="#${renderEntityLocationsPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-            <span class="badge badge-locations-all"></span>
-            All
-          </a>
-        </div>
-      </div>
-
-      <div class="col-sm-3">
-        <h3>Customer Notifications</h3>
-
-        <div class="list-group">
-          <a href="#${renderEntityLocationsPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-            <span class="badge badge-locations-all"></span>
-            All
-          </a>
-        </div>
-      </div>
-    </div>
-  `).appendTo($container);
-
-  $(`
-    <h2>Payment Enitities</h2>
-
-    <div class="row">
-      <div class="col-sm-3">
-        <h3>Payments</h3>
-
-        <div class="list-group">
-          <a href="#${renderEntityLocationsPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-            <span class="badge badge-locations-all"></span>
-            All
-          </a>
-        </div>
-      </div>
-
-      <div class="col-sm-3">
-        <h3>Payment Notes</h3>
-
-        <div class="list-group">
-          <a href="#${renderEntityLocationsPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-            <span class="badge badge-locations-all"></span>
-            All
-          </a>
-        </div>
-      </div>
-
-      <div class="col-sm-3">
-        <h3>Payment Notification</h3>
-
-        <div class="list-group">
-          <a href="#${renderEntityLocationsPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-            <span class="badge badge-locations-all"></span>
-            All
-          </a>
-        </div>
-      </div>
-    </div>
-  `).appendTo($container);
-
-
-
-    const $container2 = $('<div></div>');
-    $container2.html(`
-      <h2>Locations</h2>
-
-      <div class="row">
-        <div class="col-sm-3">
-          <h3>Locations Entity</h3>
-
-          <div class="list-group">
-            <a href="#entities/locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-              <span class="badge badge-locations-all"></span>
-              All
-            </a>
-          </div>
-        </div>
-
-        <div class="col-sm-3">
-          <h3>Location Notes</h3>
-
-          <div class="list-group">
-            <a href="#location_notes/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-              <span class="badge badge-locations-all"></span>
-              All
-            </a>
-          </div>
-        </div>
-
-        <div class="col-sm-3">
-          <h3>Location Inspections</h3>
-
-          <div class="list-group">
-            <a href="#location_inspections/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-              <span class="badge badge-locations-all"></span>
-              All
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <h2>Lockers</h2>
-
-      <div class="row">
-        <div class="col-sm-3">
-          <h3>Lockers</h3>
-
-          <div class="list-group">
-            <a href="#lockers/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-              <span class="badge badge-locations-all"></span>
-              All
-            </a>
-          </div>
-        </div>
-
-        <div class="col-sm-3">
-          <h3>Locker Notes</h3>
-
-          <div class="list-group">
-            <a href="#locker_notes/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-              <span class="badge badge-locations-all"></span>
-              All
-            </a>
-          </div>
-        </div>
-
-        <div class="col-sm-3">
-          <h3>Locker Inspections</h3>
-
-          <div class="list-group">
-            <a href="#locker_inspections/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-              <span class="badge badge-locations-all"></span>
-              All
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-sm-3">
-          <h3>Stations</h3>
-
-          <div class="list-group">
-            <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-              <span class="badge badge-locations-all"></span>
-              All
-            </a>
-          </div>
-        </div>
-
-        <div class="col-sm-3">
-          <h3>Station Notes</h3>
-
-          <div class="list-group">
-            <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-              <span class="badge badge-locations-all"></span>
-              All
-            </a>
-          </div>
-        </div>
-
-        <div class="col-sm-3">
-          <h3>Station Inspections</h3>
-
-          <div class="list-group">
-            <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-              <span class="badge badge-locations-all"></span>
-              All
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-sm-3">
-          <h3>Key Fobs</h3>
-
-          <div class="list-group">
-            <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-              <span class="badge badge-locations-all"></span>
-              All
-            </a>
-          </div>
-        </div>
-
-        <div class="col-sm-3">
-          <h3>Key Fob Notes</h3>
-
-          <div class="list-group">
-            <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-              <span class="badge badge-locations-all"></span>
-              All
-            </a>
-          </div>
-        </div>
-
-        <div class="col-sm-3">
-          <h3>Key Fob Inspections</h3>
-
-          <div class="list-group">
-            <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-              <span class="badge badge-locations-all"></span>
-              All
-            </a>
-          </div>
-        </div>
-      </div>
+      <h2>Customer Enitities</h2>
 
       <div class="row">
         <div class="col-sm-3">
           <h3>Customers</h3>
 
           <div class="list-group">
-            <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+            <a href="#${renderEntityCustomersPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
               <span class="badge badge-locations-all"></span>
               All
             </a>
@@ -401,7 +179,7 @@ function renderEntitiesPage(app, $container, router, auth) {
           <h3>Customer Notes</h3>
 
           <div class="list-group">
-            <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+            <a href="#${renderEntityCustomersPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
               <span class="badge badge-locations-all"></span>
               All
             </a>
@@ -412,20 +190,24 @@ function renderEntitiesPage(app, $container, router, auth) {
           <h3>Customer Notifications</h3>
 
           <div class="list-group">
-            <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+            <a href="#${renderEntityLocationsPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
               <span class="badge badge-locations-all"></span>
               All
             </a>
           </div>
         </div>
       </div>
+    `).appendTo($container);
+
+    $(`
+      <h2>Payment Enitities</h2>
 
       <div class="row">
         <div class="col-sm-3">
           <h3>Payments</h3>
 
           <div class="list-group">
-            <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+            <a href="#${renderEntityLocationsPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
               <span class="badge badge-locations-all"></span>
               All
             </a>
@@ -436,7 +218,7 @@ function renderEntitiesPage(app, $container, router, auth) {
           <h3>Payment Notes</h3>
 
           <div class="list-group">
-            <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+            <a href="#${renderEntityLocationsPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
               <span class="badge badge-locations-all"></span>
               All
             </a>
@@ -444,17 +226,18 @@ function renderEntitiesPage(app, $container, router, auth) {
         </div>
 
         <div class="col-sm-3">
-          <h3>Payment Notifications</h3>
+          <h3>Payment Notification</h3>
 
           <div class="list-group">
-            <a href="#locations/all?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+            <a href="#${renderEntityLocationsPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
               <span class="badge badge-locations-all"></span>
               All
             </a>
           </div>
         </div>
       </div>
-    `);
+    `).appendTo($container);
+
     fixButtonLinks($container);
 
     const breadcrumbs = [

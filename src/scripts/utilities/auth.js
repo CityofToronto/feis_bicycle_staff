@@ -38,7 +38,8 @@ function auth__login(auth, user, pwd) {
       data: JSON.stringify({ app, user, pwd }),
       dataType: 'json',
       method: 'POST',
-      url
+      url,
+      webStorage: null
     }).then((result) => {
       const { data: { sid, userID } } = result;
 
@@ -71,7 +72,8 @@ function auth__logout(auth = {}) {
     return ajaxes({
       headers: { Authorization: userId },
       method: 'DELETE',
-      url: `${url}('${sId}')`
+      url: `${url}('${sId}')`,
+      webStorage: null
     }).catch((error) => {
       console.error(error); // eslint-disable-line no-console
     });
@@ -101,7 +103,8 @@ function auth__checkLogin(auth = {}, options = {}) {
 
       return ajaxes({
         method: 'GET',
-        url: `${url}('${sId}')`
+        url: `${url}('${sId}')`,
+        webStorage: null
       }).then(() => {
         return true;
       }, () => {
@@ -130,7 +133,8 @@ function auth__checkAccess(auth = {}, applicationName, resource, action) {
       contentType: 'application/json',
       data: JSON.stringify({ ApplicationName: applicationName, Resource: resource, Action: action }),
       method: 'POST',
-      url: checkAccessUrl
+      url: checkAccessUrl,
+      webStorage: null
     }).then(({ data = {} }) => {
       const { Authorized } = data;
       return Authorized;

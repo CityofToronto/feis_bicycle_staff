@@ -68,6 +68,17 @@ $(function () {
     },
 
     routes: {
+      ['entities/customers/:opt/:id(/)'](opt, id, query) {
+        /* global renderEntityCustomerDetailsPage */
+        return renderEntityCustomerDetailsPage(app, $container, router, auth, opt, id, query);
+      },
+      ['entities/customers(/:opt)(/)'](opt, query) {
+        /* global renderEntityCustomersPage */
+        return renderEntityCustomersPage(app, $container, router, auth, opt, query);
+      },
+
+      // ---
+
       ['entities/keyfob_notes/:opt/:id(/)'](opt, id, query) {
         /* global renderEntityKeyfobNoteDetailsPage */
         return renderEntityKeyfobNoteDetailsPage(app, $container, router, auth, opt, id, query);

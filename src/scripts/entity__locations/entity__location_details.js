@@ -33,7 +33,8 @@ const entityLocationDetails__fields = {
       },
       contentType: 'application/json; charset=utf-8',
       method: 'GET',
-      url: '/* @echo C3DATAMEDIA_PROVINCE_CHOICES */'
+      url: '/* @echo C3DATAMEDIA_PROVINCE_CHOICES */',
+      webStorage: sessionStorage
     }
   }),
   postal_code: {
@@ -179,7 +180,8 @@ const entityLocationDetails__fields = {
       },
       contentType: 'application/json; charset=utf-8',
       method: 'GET',
-      url: '/* @echo C3DATAMEDIA_STATUS_CHOICES */'
+      url: '/* @echo C3DATAMEDIA_STATUS_CHOICES */',
+      webStorage: sessionStorage
     },
     orientation: 'horizontal',
     postRender({ field }) {
