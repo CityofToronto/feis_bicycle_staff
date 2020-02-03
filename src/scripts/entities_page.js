@@ -15,7 +15,7 @@ function renderEntitiesPage(app, $container, router, auth) {
       <h2>Location Enitities</h2>
 
       <div class="row">
-        <div class="col-sm-3">
+        <div class="col-sm-4">
           <h3>Locations</h3>
 
           <div class="list-group">
@@ -26,7 +26,7 @@ function renderEntitiesPage(app, $container, router, auth) {
           </div>
         </div>
 
-        <div class="col-sm-3">
+        <div class="col-sm-4">
           <h3>Location Notes</h3>
 
           <div class="list-group">
@@ -37,7 +37,7 @@ function renderEntitiesPage(app, $container, router, auth) {
           </div>
         </div>
 
-        <div class="col-sm-3">
+        <div class="col-sm-4">
           <h3>Location Inspections</h3>
 
           <div class="list-group">
@@ -55,7 +55,7 @@ function renderEntitiesPage(app, $container, router, auth) {
       <h2>Locker Enitities</h2>
 
       <div class="row">
-        <div class="col-sm-3">
+        <div class="col-sm-4">
           <h3>Lockers</h3>
 
           <div class="list-group">
@@ -66,7 +66,7 @@ function renderEntitiesPage(app, $container, router, auth) {
           </div>
         </div>
 
-        <div class="col-sm-3">
+        <div class="col-sm-4">
           <h3>Locker Notes</h3>
 
           <div class="list-group">
@@ -77,7 +77,7 @@ function renderEntitiesPage(app, $container, router, auth) {
           </div>
         </div>
 
-        <div class="col-sm-3">
+        <div class="col-sm-4">
           <h3>Locker Inspections</h3>
 
           <div class="list-group">
@@ -95,7 +95,7 @@ function renderEntitiesPage(app, $container, router, auth) {
       <h2>Station Enitities</h2>
 
       <div class="row">
-        <div class="col-sm-3">
+        <div class="col-sm-4">
           <h3>Stations</h3>
 
           <div class="list-group">
@@ -106,7 +106,7 @@ function renderEntitiesPage(app, $container, router, auth) {
           </div>
         </div>
 
-        <div class="col-sm-3">
+        <div class="col-sm-4">
           <h3>Station Notes</h3>
 
           <div class="list-group">
@@ -117,7 +117,7 @@ function renderEntitiesPage(app, $container, router, auth) {
           </div>
         </div>
 
-        <div class="col-sm-3">
+        <div class="col-sm-4">
           <h3>Station Inspections</h3>
 
           <div class="list-group">
@@ -135,7 +135,7 @@ function renderEntitiesPage(app, $container, router, auth) {
       <h2>Key Fob Enitities</h2>
 
       <div class="row">
-        <div class="col-sm-3">
+        <div class="col-sm-4">
           <h3>Key Fobs</h3>
 
           <div class="list-group">
@@ -146,7 +146,7 @@ function renderEntitiesPage(app, $container, router, auth) {
           </div>
         </div>
 
-        <div class="col-sm-3">
+        <div class="col-sm-4">
           <h3>Key Fob Notes</h3>
 
           <div class="list-group">
@@ -164,7 +164,7 @@ function renderEntitiesPage(app, $container, router, auth) {
       <h2>Customer Enitities</h2>
 
       <div class="row">
-        <div class="col-sm-3">
+        <div class="col-sm-4">
           <h3>Customers</h3>
 
           <div class="list-group">
@@ -175,7 +175,7 @@ function renderEntitiesPage(app, $container, router, auth) {
           </div>
         </div>
 
-        <div class="col-sm-3">
+        <div class="col-sm-4">
           <h3>Customer Notes</h3>
 
           <div class="list-group">
@@ -186,7 +186,7 @@ function renderEntitiesPage(app, $container, router, auth) {
           </div>
         </div>
 
-        <div class="col-sm-3">
+        <div class="col-sm-4">
           <h3>Customer Notifications</h3>
 
           <div class="list-group">
@@ -203,7 +203,7 @@ function renderEntitiesPage(app, $container, router, auth) {
       <h2>Payment Enitities</h2>
 
       <div class="row">
-        <div class="col-sm-3">
+        <div class="col-sm-4">
           <h3>Payments</h3>
 
           <div class="list-group">
@@ -214,7 +214,7 @@ function renderEntitiesPage(app, $container, router, auth) {
           </div>
         </div>
 
-        <div class="col-sm-3">
+        <div class="col-sm-4">
           <h3>Payment Notes</h3>
 
           <div class="list-group">
@@ -225,7 +225,7 @@ function renderEntitiesPage(app, $container, router, auth) {
           </div>
         </div>
 
-        <div class="col-sm-3">
+        <div class="col-sm-4">
           <h3>Payment Notification</h3>
 
           <div class="list-group">

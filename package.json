@@ -40,7 +40,7 @@
     "run-sequence": "^1.2.2"
   },
   "dependencies": {
-    "core": "git+https://github.com/CityofToronto/corejs.git#9.3.7",
+    "core": "git+https://github.com/CityofToronto/corejs.git#9.3.9",
     "cotui": "git+https://github.com/CityofToronto/COT_UI.git#1.0.2",
     "datatables": "github:CityofToronto/fepe_datatables",
     "datatables.net-buttons": "^1.6.1",

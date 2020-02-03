@@ -15,6 +15,18 @@
       position: relative;
     }
 
+    .form-control {
+      border-color: #949494;
+    }
+
+    .has-error .form-control {
+      border-color: #a94442;
+    }
+
+    .has-success .form-control {
+      border-color: #2B542C;
+    }
+
     .dataTables_wrapper {
       margin-bottom: 5px;
       margin-top: 5px;
@@ -203,8 +215,24 @@
       margin-bottom: 1rem;
 
       .form-control {
+        border-color: #949494;
+
         .horizontal {
           padding: 0 1rem 0 0;
+        }
+      }
+
+      &.has-error .form-control {
+        border-color: #a94442;
+      }
+
+      &.has-success .form-control {
+        border-color: #2B542C;
+      }
+
+      @media (max-width: 767px) {
+        .entryField.input-group {
+          padding: 0;
         }
       }
     }
@@ -337,6 +365,18 @@
 
 .modal-body {
   form.cot-form {
+    .form-control {
+      border-color: #949494;
+    }
+
+    .has-error .form-control {
+      border-color: #a94442;
+    }
+
+    .has-success .form-control {
+      border-color: #2B542C;
+    }
+
     .dropdown-menu .active a {
       text-decoration: underline;
     }
