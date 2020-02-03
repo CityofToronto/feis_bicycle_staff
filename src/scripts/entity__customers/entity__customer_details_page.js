@@ -205,14 +205,15 @@ function renderEntityCustomerDetailsPage(app, $container, router, auth, opt, id,
                               method: 'GET',
                               url: '/* @echo C3DATA_LOCATIONS_URL */?$orderby=site_name'
                             }).then(({ data }) => {
-                              const siteNames = data.value.map((location) => location.site_name);
                               const locationOptions = `
                                 <option value="">- Select -</option>
-                                ${siteNames.map((siteName) => `<option value="${siteName}">${siteName}</option>`).join('')}
+                                ${data.value.map((location) => `<option value="${location.id}">${location.site_name} - ? of ${location.lockers_total} lockers available</option>`).join('')}
                               `;
 
+                              const ids = data.value.map((location) => location.id);
+
                               const choice1 = model.get('request_locker_choice_1');
-                              const choice1Options = choice1 && siteNames.indexOf(choice1) == -1
+                              const choice1Options = choice1 && ids.indexOf(choice1) == -1
                                 ? `<option value="${choice1}">${choice1}</option>${locationOptions}`
                                 : locationOptions;
                               section.$requestChoice1Element.html(choice1Options);
@@ -223,7 +224,7 @@ function renderEntityCustomerDetailsPage(app, $container, router, auth, opt, id,
                               }
 
                               const choice2 = model.get('request_locker_choice_2');
-                              const choice2Options = choice2 && siteNames.indexOf(choice2) == -1
+                              const choice2Options = choice2 && ids.indexOf(choice2) == -1
                                 ? `<option value="${choice2}">${choice2}</option>${locationOptions}`
                                 : locationOptions;
                               section.$requestChoice2Element.html(choice2Options);
@@ -234,7 +235,7 @@ function renderEntityCustomerDetailsPage(app, $container, router, auth, opt, id,
                               }
 
                               const choice3 = model.get('request_locker_choice_3');
-                              const choice3Options = choice3 && siteNames.indexOf(choice3) == -1
+                              const choice3Options = choice3 && ids.indexOf(choice3) == -1
                                 ? `<option value="${choice3}">${choice3}</option>${locationOptions}`
                                 : locationOptions;
                               section.$requestChoice3Element.html(choice3Options);
@@ -257,14 +258,15 @@ function renderEntityCustomerDetailsPage(app, $container, router, auth, opt, id,
                               method: 'GET',
                               url: '/* @echo C3DATA_STATIONS_URL */?$orderby=site_name'
                             }).then(({ data }) => {
-                              const siteNames = data.value.map((location) => location.site_name);
                               const stationOptions = `
                                 <option value="">- Select -</option>
-                                ${siteNames.map((siteName) => `<option value="${siteName}">${siteName}</option>`).join('')}
+                                ${data.value.map((station) => `<option value="${station.id}">${station.site_name}</option>`).join('')}
                               `;
 
+                              const ids = data.value.map((station) => station.id);
+
                               const choice1 = model.get('request_station_choice_1');
-                              const choice1Options = choice1 && siteNames.indexOf(choice1) == -1
+                              const choice1Options = choice1 && ids.indexOf(choice1) == -1
                                 ? `<option value="${choice1}">${choice1}</option>${stationOptions}`
                                 : stationOptions;
                               section.$requestChoice1Element.html(choice1Options);
@@ -275,7 +277,7 @@ function renderEntityCustomerDetailsPage(app, $container, router, auth, opt, id,
                               }
 
                               const choice2 = model.get('request_station_choice_2');
-                              const choice2Options = choice2 && siteNames.indexOf(choice2) == -1
+                              const choice2Options = choice2 && ids.indexOf(choice2) == -1
                                 ? `<option value="${choice2}">${choice2}</option>${stationOptions}`
                                 : stationOptions;
                               section.$requestChoice2Element.html(choice2Options);
@@ -286,7 +288,7 @@ function renderEntityCustomerDetailsPage(app, $container, router, auth, opt, id,
                               }
 
                               const choice3 = model.get('request_station_choice_3');
-                              const choice3Options = choice3 && siteNames.indexOf(choice3) == -1
+                              const choice3Options = choice3 && ids.indexOf(choice3) == -1
                                 ? `<option value="${choice3}">${choice3}</option>${stationOptions}`
                                 : stationOptions;
                               section.$requestChoice3Element.html(choice3Options);
