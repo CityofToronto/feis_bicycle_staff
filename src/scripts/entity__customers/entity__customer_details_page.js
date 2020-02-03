@@ -177,8 +177,9 @@ function renderEntityCustomerDetailsPage(app, $container, router, auth, opt, id,
           },
           {
             title: 'Request',
-            postRender: ({ section } = {}) => {
+            postRender: ({ section, formValidator } = {}) => {
               section.$requestTypeElement.trigger('change');
+              formValidator.updateStatus(section.$requestTypeElement.attr('id'), 'NOT_VALIDATED');
             },
 
             rows: [
