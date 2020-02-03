@@ -400,8 +400,8 @@ function renderForm($container, definition, model, options = {}) {
       }
 
       if ($leftColumn.children().length > 0 && $rightColumn.children().length > 0) {
-        $leftColumn.addClass('col-sm-6');
-        $rightColumn.addClass('col-sm-6');
+        $leftColumn.addClass('col-md-6');
+        $rightColumn.addClass('col-md-6');
         $buttons.append($leftColumn, $rightColumn);
       } else if ($leftColumn.children().length > 0) {
         $leftColumn.addClass('col-xs-12');

@@ -100,13 +100,13 @@ function renderEntityLockerDetailsPage(app, $container, router, auth, opt, id, q
             rows: [
               {
                 fields: [
-                  Object.assign({}, entityLockerDetails__fields.location(auth), { className: 'col-sm-4' })
+                  Object.assign({}, entityLockerDetails__fields.location(auth), { className: 'col-md-4' })
                 ]
               },
               {
                 fields: [
-                  Object.assign({}, entityLockerDetails__fields.number, { className: 'col-sm-4' }),
-                  Object.assign({}, entityLockerDetails__fields.description, { className: 'col-sm-8' })
+                  Object.assign({}, entityLockerDetails__fields.number, { className: 'col-md-4' }),
+                  Object.assign({}, entityLockerDetails__fields.description, { className: 'col-md-8' })
                 ]
               }
             ]
@@ -129,7 +129,7 @@ function renderEntityLockerDetailsPage(app, $container, router, auth, opt, id, q
             rows: [
               {
                 fields: [
-                  Object.assign({}, entityLockerDetails__fields.latest_note__date(model), { title: 'Date', className: 'col-sm-4' })
+                  Object.assign({}, entityLockerDetails__fields.latest_note__date(model), { title: 'Date', className: 'col-md-4' })
                 ]
               },
               {
@@ -157,8 +157,8 @@ function renderEntityLockerDetailsPage(app, $container, router, auth, opt, id, q
             rows: [
               {
                 fields: [
-                  Object.assign({}, entityLockerDetails__fields.latest_inspection__date(model), { title: 'Date', className: 'col-sm-4' }),
-                  Object.assign({}, entityLockerDetails__fields.latest_inspection__result(model), { title: 'Result', className: 'col-sm-4' })
+                  Object.assign({}, entityLockerDetails__fields.latest_inspection__date(model), { title: 'Date', className: 'col-md-4' }),
+                  Object.assign({}, entityLockerDetails__fields.latest_inspection__result(model), { title: 'Result', className: 'col-md-4' })
                 ]
               },
               {
@@ -186,8 +186,8 @@ function renderEntityLockerDetailsPage(app, $container, router, auth, opt, id, q
             rows: [
               {
                 fields: [
-                  Object.assign({}, entityLockerDetails__fields.id(model), { className: 'col-sm-8' }),
-                  Object.assign({}, entityLockerDetails__fields.__Status(auth, model), { className: 'col-sm-4' })
+                  Object.assign({}, entityLockerDetails__fields.id(model), { className: 'col-md-8' }),
+                  Object.assign({}, entityLockerDetails__fields.__Status(auth, model), { className: 'col-md-4' })
                 ]
               },
               {

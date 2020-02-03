@@ -103,8 +103,8 @@ function renderEntityStationNoteDetailsPage(app, $container, router, auth, opt, 
             rows: [
               {
                 fields: [
-                  Object.assign({}, entityStationNoteDetails__fields.station(auth), { className: 'col-sm-4' }),
-                  Object.assign({}, entityStationNoteDetails__fields.date, { className: 'col-sm-4' })
+                  Object.assign({}, entityStationNoteDetails__fields.station(auth), { className: 'col-md-4' }),
+                  Object.assign({}, entityStationNoteDetails__fields.date, { className: 'col-md-4' })
                 ]
               },
               {
@@ -132,8 +132,8 @@ function renderEntityStationNoteDetailsPage(app, $container, router, auth, opt, 
             rows: [
               {
                 fields: [
-                  Object.assign({}, entityStationNoteDetails__fields.id(model), { className: 'col-sm-8' }),
-                  Object.assign({}, entityStationNoteDetails__fields.__Status(auth, model), { className: 'col-sm-4' })
+                  Object.assign({}, entityStationNoteDetails__fields.id(model), { className: 'col-md-8' }),
+                  Object.assign({}, entityStationNoteDetails__fields.__Status(auth, model), { className: 'col-md-4' })
                 ]
               },
               {

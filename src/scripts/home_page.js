@@ -12,7 +12,7 @@ function renderHomePage(app, $container, router, auth) {
       <h2>Bicycle Lockers</h2>
 
       <div class="row">
-        <div class="col-sm-3">
+        <div class="col-md-3">
           <h3>Locations</h3>
 
           <div class="list-group">
@@ -27,7 +27,7 @@ function renderHomePage(app, $container, router, auth) {
           </div>
         </div>
 
-        <div class="col-sm-3">
+        <div class="col-md-3">
           <h3>Lockers</h3>
 
           <div class="list-group">
@@ -38,7 +38,7 @@ function renderHomePage(app, $container, router, auth) {
           </div>
         </div>
 
-        <div class="col-sm-3">
+        <div class="col-md-3">
           <h3>Customers</h3>
 
           <div class="list-group">
@@ -49,7 +49,7 @@ function renderHomePage(app, $container, router, auth) {
           </div>
         </div>
 
-        <div class="col-sm-3">
+        <div class="col-md-3">
           <h3>Payments</h3>
 
           <div class="list-group">
@@ -64,7 +64,7 @@ function renderHomePage(app, $container, router, auth) {
       <h2>Bicycle Stations</h2>
 
       <div class="row">
-        <div class="col-sm-3">
+        <div class="col-md-3">
           <h3>Stations</h3>
 
           <div class="list-group">
@@ -75,7 +75,7 @@ function renderHomePage(app, $container, router, auth) {
           </div>
         </div>
 
-        <div class="col-sm-3">
+        <div class="col-md-3">
           <h3>Key Fobs</h3>
 
           <div class="list-group">
@@ -86,7 +86,7 @@ function renderHomePage(app, $container, router, auth) {
           </div>
         </div>
 
-        <div class="col-sm-3">
+        <div class="col-md-3">
           <h3>Customers</h3>
 
           <div class="list-group">
@@ -97,7 +97,7 @@ function renderHomePage(app, $container, router, auth) {
           </div>
         </div>
 
-        <div class="col-sm-3">
+        <div class="col-md-3">
           <h3>Payments</h3>
 
           <div class="list-group">
@@ -112,7 +112,7 @@ function renderHomePage(app, $container, router, auth) {
       <h2>Others</h2>
 
       <div class="row">
-        <div class="col-sm-3">
+        <div class="col-md-3">
           <h3>Entities</h3>
 
           <p><a href="#entities" class="btn btn-default">View Entities</a></p>

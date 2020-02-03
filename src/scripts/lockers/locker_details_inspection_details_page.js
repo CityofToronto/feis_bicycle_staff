@@ -153,8 +153,8 @@ function renderLocationDetailsInspectionDetailsPage(app, $container, router, aut
             rows: [
               {
                 fields: [
-                  Object.assign({}, renderLocationInspectionDetailsPage_fields.date, { className: 'col-sm-4' }),
-                  Object.assign({}, renderLocationInspectionDetailsPage_fields.result, { className: 'col-sm-4' })
+                  Object.assign({}, renderLocationInspectionDetailsPage_fields.date, { className: 'col-md-4' }),
+                  Object.assign({}, renderLocationInspectionDetailsPage_fields.result, { className: 'col-md-4' })
                 ]
               },
               {

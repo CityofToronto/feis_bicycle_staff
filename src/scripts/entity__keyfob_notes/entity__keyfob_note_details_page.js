@@ -103,8 +103,8 @@ function renderEntityKeyfobNoteDetailsPage(app, $container, router, auth, opt, i
             rows: [
               {
                 fields: [
-                  Object.assign({}, entityKeyfobNoteDetails__fields.keyfob(auth), { className: 'col-sm-4' }),
-                  Object.assign({}, entityKeyfobNoteDetails__fields.date, { className: 'col-sm-4' })
+                  Object.assign({}, entityKeyfobNoteDetails__fields.keyfob(auth), { className: 'col-md-4' }),
+                  Object.assign({}, entityKeyfobNoteDetails__fields.date, { className: 'col-md-4' })
                 ]
               },
               {
@@ -132,8 +132,8 @@ function renderEntityKeyfobNoteDetailsPage(app, $container, router, auth, opt, i
             rows: [
               {
                 fields: [
-                  Object.assign({}, entityKeyfobNoteDetails__fields.id(model), { className: 'col-sm-8' }),
-                  Object.assign({}, entityKeyfobNoteDetails__fields.__Status(auth, model), { className: 'col-sm-4' })
+                  Object.assign({}, entityKeyfobNoteDetails__fields.id(model), { className: 'col-md-8' }),
+                  Object.assign({}, entityKeyfobNoteDetails__fields.__Status(auth, model), { className: 'col-md-4' })
                 ]
               },
               {

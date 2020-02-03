@@ -134,13 +134,13 @@ function renderLocationDetailsPage(app, $container, router, auth, opt, id, query
             rows: [
               {
                 fields: [
-                  Object.assign({}, entityLocationDetails__fields.site_name, { className: 'col-sm-4' }),
-                  Object.assign({}, entityLocationDetails__fields.description, { className: 'col-sm-8' })
+                  Object.assign({}, entityLocationDetails__fields.site_name, { className: 'col-md-4' }),
+                  Object.assign({}, entityLocationDetails__fields.description, { className: 'col-md-8' })
                 ]
               },
               {
                 fields: [
-                  Object.assign({}, entityLocationDetails__fields.civic_address, { className: 'col-sm-8' })
+                  Object.assign({}, entityLocationDetails__fields.civic_address, { className: 'col-md-8' })
                 ]
               },
               {
@@ -166,8 +166,8 @@ function renderLocationDetailsPage(app, $container, router, auth, opt, id, query
               },
               {
                 fields: [
-                  Object.assign({}, entityLocationDetails__fields.primary_contact_first_name, { title: 'First Name', className: 'col-sm-4' }),
-                  Object.assign({}, entityLocationDetails__fields.primary_contact_last_name, { title: 'Last Name', className: 'col-sm-4' })
+                  Object.assign({}, entityLocationDetails__fields.primary_contact_first_name, { title: 'First Name', className: 'col-md-4' }),
+                  Object.assign({}, entityLocationDetails__fields.primary_contact_last_name, { title: 'Last Name', className: 'col-md-4' })
                 ]
               },
               {
@@ -187,8 +187,8 @@ function renderLocationDetailsPage(app, $container, router, auth, opt, id, query
               },
               {
                 fields: [
-                  Object.assign({}, entityLocationDetails__fields.alternate_contact_first_name, { title: 'First Name', className: 'col-sm-4' }),
-                  Object.assign({}, entityLocationDetails__fields.alternate_contact_last_name, { title: 'Last Name', className: 'col-sm-4' })
+                  Object.assign({}, entityLocationDetails__fields.alternate_contact_first_name, { title: 'First Name', className: 'col-md-4' }),
+                  Object.assign({}, entityLocationDetails__fields.alternate_contact_last_name, { title: 'Last Name', className: 'col-md-4' })
                 ]
               },
               {
@@ -218,7 +218,7 @@ function renderLocationDetailsPage(app, $container, router, auth, opt, id, query
             rows: [
               {
                 fields: [
-                  Object.assign({}, entityLocationDetails__fields.latest_note__date(model), { title: 'Date', className: 'col-sm-4' })
+                  Object.assign({}, entityLocationDetails__fields.latest_note__date(model), { title: 'Date', className: 'col-md-4' })
                 ]
               },
               {
@@ -246,8 +246,8 @@ function renderLocationDetailsPage(app, $container, router, auth, opt, id, query
             rows: [
               {
                 fields: [
-                  Object.assign({}, entityLocationDetails__fields.latest_inspection__date(model), { title: 'Date', className: 'col-sm-4' }),
-                  Object.assign({}, entityLocationDetails__fields.latest_inspection__result(model), { title: 'Result', className: 'col-sm-4' })
+                  Object.assign({}, entityLocationDetails__fields.latest_inspection__date(model), { title: 'Date', className: 'col-md-4' }),
+                  Object.assign({}, entityLocationDetails__fields.latest_inspection__result(model), { title: 'Result', className: 'col-md-4' })
                 ]
               },
               {
@@ -275,8 +275,8 @@ function renderLocationDetailsPage(app, $container, router, auth, opt, id, query
             rows: [
               {
                 fields: [
-                  Object.assign({}, entityLocationDetails__fields.id(model), { className: 'col-sm-8' }),
-                  Object.assign({}, entityLocationDetails__fields.__Status(auth, model), { className: 'col-sm-4' })
+                  Object.assign({}, entityLocationDetails__fields.id(model), { className: 'col-md-8' }),
+                  Object.assign({}, entityLocationDetails__fields.__Status(auth, model), { className: 'col-md-4' })
                 ]
               },
               {

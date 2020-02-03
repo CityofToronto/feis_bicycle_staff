@@ -134,8 +134,8 @@ function renderEntityStationInspectionDetailsPage(app, $container, router, auth,
             rows: [
               {
                 fields: [
-                  Object.assign({}, entityStationInspectionDetails__fields.id(model), { className: 'col-sm-8' }),
-                  Object.assign({}, entityStationInspectionDetails__fields.__Status(auth, model), { className: 'col-sm-4' })
+                  Object.assign({}, entityStationInspectionDetails__fields.id(model), { className: 'col-md-8' }),
+                  Object.assign({}, entityStationInspectionDetails__fields.__Status(auth, model), { className: 'col-md-4' })
                 ]
               },
               {

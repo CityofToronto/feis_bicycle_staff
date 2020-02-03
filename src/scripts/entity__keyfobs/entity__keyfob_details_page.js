@@ -100,13 +100,13 @@ function renderEntityKeyfobDetailsPage(app, $container, router, auth, opt, id, q
             rows: [
               {
                 fields: [
-                  Object.assign({}, entityKeyfobDetails__fields.number, { className: 'col-sm-4' }),
-                  Object.assign({}, entityKeyfobDetails__fields.description, { className: 'col-sm-8' })
+                  Object.assign({}, entityKeyfobDetails__fields.number, { className: 'col-md-4' }),
+                  Object.assign({}, entityKeyfobDetails__fields.description, { className: 'col-md-8' })
                 ]
               },
               {
                 fields: [
-                  Object.assign({}, entityKeyfobDetails__fields.stations(auth), { className: 'col-sm-8' })
+                  Object.assign({}, entityKeyfobDetails__fields.stations(auth), { className: 'col-md-8' })
                 ]
               }
             ]
@@ -129,7 +129,7 @@ function renderEntityKeyfobDetailsPage(app, $container, router, auth, opt, id, q
             rows: [
               {
                 fields: [
-                  Object.assign({}, entityKeyfobDetails__fields.latest_note__date(model), { title: 'Date', className: 'col-sm-4' })
+                  Object.assign({}, entityKeyfobDetails__fields.latest_note__date(model), { title: 'Date', className: 'col-md-4' })
                 ]
               },
               {
@@ -157,8 +157,8 @@ function renderEntityKeyfobDetailsPage(app, $container, router, auth, opt, id, q
             rows: [
               {
                 fields: [
-                  Object.assign({}, entityKeyfobDetails__fields.id(model), { className: 'col-sm-8' }),
-                  Object.assign({}, entityKeyfobDetails__fields.__Status(auth, model), { className: 'col-sm-4' })
+                  Object.assign({}, entityKeyfobDetails__fields.id(model), { className: 'col-md-8' }),
+                  Object.assign({}, entityKeyfobDetails__fields.__Status(auth, model), { className: 'col-md-4' })
                 ]
               },
               {

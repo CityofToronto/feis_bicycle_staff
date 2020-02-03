@@ -315,7 +315,7 @@ function renderDatatable($container, definition, options = {}) {
     }
   ];
 
-  definition.dom = definition.dom || `<'row'<'col-sm-8 col-md-9'f><'col-sm-4 col-md-3'l>><'row'<'col-sm-12'<'table-responsive'tr>>><'row'<'col-sm-5'i><'col-sm-7'p>><'hide'B>`;
+  definition.dom = definition.dom || `<'row'<'col-sm-8 col-md-9'f><'col-sm-4 col-md-3'l>><'row'<'col-xs-12'<'table-responsive'tr>>><'row'<'col-md-5'i><'col-md-7'p>><'hide'B>`;
 
   definition.language = definition.Language || {};
   definition.language.lengthMenu = definition.language.lengthMenu || 'Show _MENU_ Entries';
@@ -343,10 +343,10 @@ function renderDatatable($container, definition, options = {}) {
 
   $innerContainer.append(`
     <div class="row row-btn-top">
-      <div class="col-sm-6">
+      <div class="col-md-6">
         ${newButtonFragment != null ? `<a class="btn btn-default btn-new" href="#${newButtonFragment}">${newButtonLabel}</a>` : ''}
       </div>
-      <div class="col-sm-6 text-right">
+      <div class="col-md-6 text-right">
         <button class="btn btn-default btn-reset">Reset Filters</button>
         <div class="dropdown btn-action">
           <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -399,7 +399,7 @@ function renderDatatable($container, definition, options = {}) {
   if (newButtonFragment != null) {
     $innerContainer.append(`
       <div class="row">
-        <div class="col-sm-12">
+        <div class="col-md-12">
           <p><a class="btn btn-default btn-new" href="#${newButtonFragment}">${newButtonLabel}</a></p>
         </div>
       </div>
