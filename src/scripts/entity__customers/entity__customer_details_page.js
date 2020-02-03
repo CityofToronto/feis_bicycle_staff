@@ -65,6 +65,20 @@ function renderEntityCustomerDetailsPage(app, $container, router, auth, opt, id,
         successCore(data, options = {}) {
           const { auth, id, url } = options;
 
+          switch (data.request_type) {
+            case 'Bicycle Lockers':
+              delete data.request_station_choice_1;
+              delete data.request_station_choice_2;
+              delete data.request_station_choice_3;
+              break;
+
+            case 'Bicycle Stations':
+              delete data.request_locker_choice_1;
+              delete data.request_locker_choice_2;
+              delete data.request_locker_choice_3;
+              break;
+          }
+
           return ajaxes({
             url: `${url}${id ? `('${id}')` : ''}`,
             contentType: 'application/json; charset=utf-8',
@@ -249,36 +263,36 @@ function renderEntityCustomerDetailsPage(app, $container, router, auth, opt, id,
                               `;
 
                               const choice1 = model.get('request_station_choice_1');
-                              const choice1Options = choice1 && siteNames.indexOf(choice1) !== -1
-                                ? `<option value=${choice1}>${choice1}</option>${stationOptions}`
+                              const choice1Options = choice1 && siteNames.indexOf(choice1) == -1
+                                ? `<option value="${choice1}">${choice1}</option>${stationOptions}`
                                 : stationOptions;
                               section.$requestChoice1Element.html(choice1Options);
                               if (choice1) {
-                                section.$requestChoice1Element.val('');
-                              } else {
                                 section.$requestChoice1Element.val(choice1);
+                              } else {
+                                section.$requestChoice1Element.val('');
                               }
 
                               const choice2 = model.get('request_station_choice_2');
-                              const choice2Options = siteNames.indexOf(choice2) !== -1
-                                ? `<option value=${choice2}>${choice2}</option>${stationOptions}`
+                              const choice2Options = choice2 && siteNames.indexOf(choice2) == -1
+                                ? `<option value="${choice2}">${choice2}</option>${stationOptions}`
                                 : stationOptions;
                               section.$requestChoice2Element.html(choice2Options);
                               if (choice2) {
-                                section.$requestChoice2Element.val('');
-                              } else {
                                 section.$requestChoice2Element.val(choice2);
+                              } else {
+                                section.$requestChoice2Element.val('');
                               }
 
                               const choice3 = model.get('request_station_choice_3');
-                              const choice3Options = siteNames.indexOf(choice3) !== -1
-                                ? `<option value=${choice3}>${choice3}</option>${stationOptions}`
+                              const choice3Options = choice3 && siteNames.indexOf(choice3) == -1
+                                ? `<option value="${choice3}">${choice3}</option>${stationOptions}`
                                 : stationOptions;
                               section.$requestChoice3Element.html(choice3Options);
                               if (choice3) {
-                                section.$requestChoice3Element.val('');
-                              } else {
                                 section.$requestChoice3Element.val(choice3);
+                              } else {
+                                section.$requestChoice3Element.val('');
                               }
                             });
                             break;
