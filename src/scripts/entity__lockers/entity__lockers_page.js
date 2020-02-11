@@ -40,12 +40,13 @@ const renderEntityLockersPage__views = {
           method: 'GET',
           url: `${url}?${query__objectToString(queryObject)}`
         }).then(({ data: response }) => {
+          const promises = [];
+
           const locations = response.value.map(({ location }) => location)
             .filter((location, index, array) => array.indexOf(location) === index);
-
           if (locations.length > 0) {
             const filter = encodeURIComponent(locations.map((id) => `id eq '${id}'`).join(' or '));
-            return ajaxes({
+            promises.push(ajaxes({
               beforeSend(jqXHR) {
                 if (auth && auth.sId) {
                   jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
@@ -59,30 +60,44 @@ const renderEntityLockersPage__views = {
                 acc[id] = site_name;
                 return acc;
               }, {});
-
-              response.value.forEach((locationNote) => {
-                locationNote.calc_location_site_name = locationMap[locationNote.location];
-              });
-
-              callback({
-                data: response.value,
-                draw: data.draw,
-                recordsTotal: response['@odata.count'],
-                recordsFiltered: response['@odata.count']
-              });
-            });
+              response.value.forEach((location) => location.calc_location_site_name = locationMap[location.location]);
+            }));
           } else {
-            response.value.forEach((locationNote) => {
-              locationNote.calc_location_site_name = null;
-            });
+            response.value.forEach((location) => location.calc_location_site_name = null);
+          }
 
+          const customers = response.value.map(({ customer }) => customer)
+            .filter((customer, index, array) => array.indexOf(customer) === index);
+          if (customers.length > 0) {
+            const filter = encodeURIComponent(customers.map((id) => `id eq '${id}'`).join(' or '));
+            promises.push(ajaxes({
+              beforeSend(jqXHR) {
+                if (auth && auth.sId) {
+                  jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+                }
+              },
+              contentType: 'application/json; charset=utf-8',
+              method: 'GET',
+              url: `/* @echo C3DATA_CUSTOMERS_URL */?$filter=${filter}`,
+            }).then(({ data: response3 }) => {
+              const customerMap = response3.value.reduce((acc, { id, first_name, last_name }) => {
+                acc[id] = `${first_name} ${last_name}`;
+                return acc;
+              }, {});
+              response.value.forEach((customer) => customer.calc_customer_name = customerMap[customer.customer]);
+            }));
+          } else {
+            response.value.forEach((location) => location.calc_customer_name = null);
+          }
+
+          Promise.all(promises).then(() => {
             callback({
               data: response.value,
               draw: data.draw,
               recordsTotal: response['@odata.count'],
               recordsFiltered: response['@odata.count']
             });
-          }
+          });
         }).catch((error) => {
           callback({ data: [], draw: data.draw, recordsTotal: 0, recordsFiltered: 0 });
           throw error;

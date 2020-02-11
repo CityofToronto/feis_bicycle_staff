@@ -42,6 +42,7 @@ function afterDelete(content, request, uriInfo, response) { // eslint-disable-li
 
   assertLockerNotes(content, request);
   assertLockerInspections(content, request);
+  assertCustomers(content, request);
 
   updateLocation(content, request);
 }
@@ -98,6 +99,27 @@ function assertLockerInspections(content, request) {
     headers: { Authorization: request.getHeader('Authorization') },
     method: 'GET',
     uri: `${common.DA_LOCKER_INSPECTIONS_URL}?$filter=${filter}&$select=${select}&$top=${top}`
+  }, function okFunction(okResponse) {
+    const body = JSON.parse(okResponse.body);
+    if (body.value && body.value.length > 0) {
+      throw 'This entity cannot be deleted.';
+    }
+
+    // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
+  }, function errorFunction(errorResponse) { // eslint-disable-line no-unused-vars
+    // mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);
+  });
+}
+
+function assertCustomers(content, request) {
+  const filter = encodeURIComponent(`locker eq '${content.get('id').getAsString()}'`);
+  const select = encodeURIComponent('id');
+  const top = encodeURIComponent('1');
+
+  ajax.request({
+    headers: { Authorization: request.getHeader('Authorization') },
+    method: 'GET',
+    uri: `${common.DA_CUSTOMERS_URL}?$filter=${filter}&$select=${select}&$top=${top}`
   }, function okFunction(okResponse) {
     const body = JSON.parse(okResponse.body);
     if (body.value && body.value.length > 0) {

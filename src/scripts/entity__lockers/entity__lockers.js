@@ -33,7 +33,7 @@ const entityLockers__columns = {
     searchable: false,
     className: 'minWidth',
     render(data, type, row) {
-      return row.calc_location_site_name;
+      return row.calc_location_site_name || '';
     }
   },
 
@@ -52,6 +52,22 @@ const entityLockers__columns = {
       } else {
         return '';
       }
+    }
+  },
+
+  customer: {
+    title: 'Customer',
+    className: 'minWidth',
+    data: 'customer'
+  },
+  calc_customer_name: {
+    title: 'Customer',
+    data: 'customer',
+    orderable: false,
+    searchable: false,
+    className: 'minWidth',
+    render(data, type, row) {
+      return row.calc_customer_name || '';
     }
   },
 

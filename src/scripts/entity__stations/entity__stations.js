@@ -159,6 +159,18 @@ const entityStations__columns = {
     data: 'capacity',
     type: 'number'
   },
+  occupied: {
+    title: 'Occupied',
+    className: 'minWidth',
+    data: 'occupied',
+    type: 'number'
+  },
+  available: {
+    title: 'Available',
+    className: 'minWidth',
+    data: 'available',
+    type: 'number'
+  },
 
   latest_note: {
     title: 'Latest Note ID',

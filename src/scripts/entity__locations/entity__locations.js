@@ -226,6 +226,19 @@ const entityLocations__columns = {
     type: 'number',
     className: 'minWidth'
   },
+  occupied: {
+    title: 'Occupied',
+    data: 'occupied',
+    type: 'number',
+    className: 'minWidth'
+  },
+
+  available: {
+    title: 'Available',
+    data: 'available',
+    type: 'number',
+    className: 'minWidth'
+  },
 
   latest_note: {
     title: 'Latest Note ID',

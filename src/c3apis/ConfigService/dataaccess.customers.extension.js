@@ -52,6 +52,8 @@ function afterDelete(content, request, uriInfo, response) { // eslint-disable-li
     return;
   }
 
+  // Assert payment
+
   updateLocker(content, request);
   updateLocation(content, request);
   updateKeyfob(content, request);
@@ -109,15 +111,23 @@ function cleanupLocker(content, request) {
     return;
   }
 
-  if (previousVersion.locker !== content.get('locker').getAsString()) {
+  const locker = content.has('locker') && content.get('locker') != null && !content.get('locker').isJsonNull()
+    ? content.get('locker').getAsString() : null;
+
+  if (previousVersion.locker !== locker) {
     updateLocker(content, request, { locker: previousVersion.locker, __Status: 'Inactive' });
   }
 }
 
 function updateLocker(content, request, {
-  locker = content.get('locker').getAsString(),
+  locker = content.has('locker') && content.get('locker') != null && !content.get('locker').isJsonNull() ?
+    content.get('locker').getAsString() : null,
   __Status = content.get('__Status').getAsString()
-}) {
+} = {}) {
+  if (!locker) {
+    return;
+  }
+
   const subscriptionEnded = content.has('subscription_end_date') && content.get('subscription_end_date') != null
     && !content.get('subscription_end_date').isJsonNull();
 
@@ -145,19 +155,26 @@ function updateLocker(content, request, {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function cleanupLocation(content, request) {
-  if (request.getMethod() !== 'PUT' && previousVersion != null) {
+  if (request.getMethod() !== 'PUT') {
     return;
   }
 
-  if (previousVersion.location !== content.get('location').getAsString()) {
+  const location = content.has('location') && content.get('location') != null && !content.get('location').isJsonNull()
+    ? content.get('location').getAsString() : null;
+
+  if (previousVersion.location !== location) {
     updateLocation(content, request, { location: previousVersion.location, __Status: 'Inactive' });
   }
 }
 
 function updateLocation(content, request, {
-  location = content.get('location').getAsString(),
+  location = content.has('location') && content.get('location') != null && !content.get('location').isJsonNull() ?
+    content.get('location').getAsString() : null,
   __Status = content.get('__Status').getAsString()
 } = {}) {
+  if (!location) {
+    return;
+  }
 
   // Get Occupied
   let occupied = 0;
@@ -188,6 +205,8 @@ function updateLocation(content, request, {
         occupied++;
       }
     }
+
+    mailClient.send(`${common.DA_CUSTOMERS_URL}?$select=${select}&$filter=${filter}&$top=${top}`, occupied, ['jngo2@toronto.ca']);
 
     // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
   }, function errorFunction(errorResponse) { // eslint-disable-line no-unused-vars
@@ -244,15 +263,23 @@ function cleanupKeyfob(content, request) {
     return;
   }
 
-  if (previousVersion.keyfob !== content.get('keyfob').getAsString()) {
+  const keyfob = content.has('keyfob') && content.get('keyfob') != null && !content.get('keyfob').isJsonNull()
+    ? content.get('keyfob').getAsString() : null;
+
+  if (previousVersion.keyfob !== keyfob) {
     updateKeyfob(content, request, { keyfob: previousVersion.keyfob, __Status: 'Inactive' });
   }
 }
 
 function updateKeyfob(content, request, {
-  keyfob = content.get('keyfob').getAsString(),
+  keyfob = content.has('keyfob') && content.get('keyfob') != null && !content.get('keyfob').isJsonNull() ?
+    content.get('keyfob').getAsString() : null,
   __Status = content.get('__Status').getAsString()
-}) {
+} = {}) {
+  if (!keyfob) {
+    return;
+  }
+
   const subscriptionEnded = content.has('subscription_end_date') && content.get('subscription_end_date') != null
     && !content.get('subscription_end_date').isJsonNull();
 
@@ -278,20 +305,27 @@ function updateKeyfob(content, request, {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function cleanupStation(content, request, previousVersion) {
+function cleanupStation(content, request) {
   if (request.getMethod() !== 'PUT') {
     return;
   }
 
-  if (previousVersion.station !== content.get('station').getAsString()) {
+  const station = content.has('station') && content.get('station') != null && !content.get('station').isJsonNull()
+    ? content.get('station').getAsString() : null;
+
+  if (previousVersion.station !== station) {
     updateStation(content, request, { station: previousVersion.station, __Status: 'Inactive' });
   }
 }
 
 function updateStation(content, request, {
-  station = content.get('station').getAsString(),
+  station = content.has('station') && content.get('station') != null && !content.get('station').isJsonNull() ?
+    content.get('station').getAsString() : null,
   __Status = content.get('__Status').getAsString()
-}) {
+} = {}) {
+  if (!station) {
+    return;
+  }
 
   // Get Occupied
   let occupied = 0;

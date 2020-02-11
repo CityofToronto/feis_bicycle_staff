@@ -251,7 +251,7 @@ function renderEntityCustomerDetailsPage(app, $container, router, auth, opt, id,
 
                       section.$subscriptionTypeElement = $element;
 
-                      $element.on('change', () => {
+                      $element.on('init change', () => {
                         switch ($element.val()) {
                           case 'Bicycle Locker':
                             $('.locationItem').removeClass('hide');

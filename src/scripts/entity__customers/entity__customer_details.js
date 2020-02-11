@@ -468,8 +468,6 @@ const entityCustomerDetails__fields = {
     type: 'datetimepicker'
   },
 
-
-
   latest_note__date: (model) => ({
     title: 'Latest Note Date',
     htmlAttr: { readonly: true },
