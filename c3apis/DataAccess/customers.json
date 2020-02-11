@@ -16,6 +16,7 @@
   "bicycle_2_model": "string",
   "bicycle_2_colour": "string",
   "request_type": "string",
+  "request_date": "2019-01-01T00:00:00.000-05:00",
   "request_locker_choice_1": "string",
   "request_locker_choice_2": "string",
   "request_locker_choice_3": "string",
