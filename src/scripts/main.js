@@ -68,6 +68,16 @@ $(function () {
     },
 
     routes: {
+      ['entities/payments/:opt/:id(/)'](opt, id, query) {
+        /* global renderEntityPaymentDetailsPage */
+        return renderEntityPaymentDetailsPage(app, $container, router, auth, opt, id, query);
+      },
+      ['entities/payments(/:opt)(/)'](opt, query) {
+        /* global renderEntityPaymentsPage */
+        return renderEntityPaymentsPage(app, $container, router, auth, opt, query);
+      },
+
+      // ---
       ['entities/customers/:opt/:id(/)'](opt, id, query) {
         /* global renderEntityCustomerDetailsPage */
         return renderEntityCustomerDetailsPage(app, $container, router, auth, opt, id, query);

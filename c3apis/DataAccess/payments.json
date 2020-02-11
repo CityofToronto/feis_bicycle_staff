@@ -1,0 +1,27 @@
+{
+  "date": "2019-01-01T00:00:00.000-05:00",
+  "customer": "string",
+  "customer_first_name": "string",
+  "customer_last_name": "string",
+  "customer_title": "string",
+  "customer_email": "string",
+  "customer_primary_phone": "string",
+  "customer_alternate_phone": "string",
+  "customer_civic_address": "string",
+  "customer_municipality": "string",
+  "customer_province": "string",
+  "customer_postal_code": "string",
+  "items": [
+    {
+      "details": "string",
+      "quantity": 0,
+      "quantity_unit": "string",
+      "price": 0.00,
+      "total": 0.00
+    }
+  ],
+  "subTotal": 0.00,
+  "tax": 0.00,
+  "total": 0.00,
+  "paymentType": "string"
+}
