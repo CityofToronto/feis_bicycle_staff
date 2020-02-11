@@ -78,7 +78,7 @@
     "c3api-config-common": "gulp c3api_config --suffix common.js",
     "c3api-config-item": "gulp c3api_config --suffix dataaccess.customers.extension.js",
     "c3api-dataaccess": "gulp c3api_dataaccess --deleteEntity --truncateEntityAfter",
-    "c3api-dataaccess-item": "gulp c3api_dataaccess --localPath c3apis/DataAccess/lockers.json --deleteEntity --truncateEntityAfter",
+    "c3api-dataaccess-item": "gulp c3api_dataaccess --localPath c3apis/DataAccess/payments.json --deleteEntity --truncateEntityAfter",
     "c3api-media": "gulp c3api_dataaccess_media"
   }
 }

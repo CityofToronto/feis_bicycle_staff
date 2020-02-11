@@ -11,6 +11,7 @@
   "customer_municipality": "string",
   "customer_province": "string",
   "customer_postal_code": "string",
+  "subscription_type": "string",
   "items": [
     {
       "details": "string",
