@@ -2,7 +2,6 @@
   "first_name": "string",
   "last_name": "string",
   "title": "string",
-
   "email": "string",
   "primary_phone": "string",
   "alternate_phone": "string",
@@ -10,7 +9,12 @@
   "municipality": "string",
   "province": "string",
   "postal_code": "string",
-
+  "bicycle_1_make": "string",
+  "bicycle_1_model": "string",
+  "bicycle_1_colour": "string",
+  "bicycle_2_make": "string",
+  "bicycle_2_model": "string",
+  "bicycle_2_colour": "string",
   "request_type": "string",
   "request_locker_choice_1": "string",
   "request_locker_choice_2": "string",
@@ -18,29 +22,17 @@
   "request_station_choice_1": "string",
   "request_station_choice_2": "string",
   "request_station_choice_3": "string",
-
-  "bicycle_1_make": "string",
-  "bicycle_1_model": "string",
-  "bicycle_1_colour": "string",
-  "bicycle_2_make": "string",
-  "bicycle_2_model": "string",
-  "bicycle_2_colour": "string",
-
-  "subscription_start_date": "2019-01-01T00:00:00.000-05:00",
-  "subscription_expiration_date": "2019-01-01T00:00:00.000-05:00",
-  "subscription_end_date": "2019-01-01T00:00:00.000-05:00",
-
+  "subscription_type": "string",
   "locker": "string",
-
   "locker_key_date_assigned": "string",
   "locker_key_date_returned": "string",
-
   "station": "string",
-
   "keyfob": "string",
   "keyfob_date_assigned": "string",
   "keyfob_date_returned": "string",
-
+  "subscription_start_date": "2019-01-01T00:00:00.000-05:00",
+  "subscription_expiration_date": "2019-01-01T00:00:00.000-05:00",
+  "subscription_end_date": "2019-01-01T00:00:00.000-05:00",
   "latest_note": "string",
   "latest_note__date": "2019-12-23T00:00:00.000-05:00",
   "latest_note__note": "string"

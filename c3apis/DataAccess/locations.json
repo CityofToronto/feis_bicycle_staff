@@ -16,6 +16,8 @@
   "alternate_contact_primary_phone": "416-555-5555",
   "alternate_contact_alternate_phone": "416-555-5555",
   "lockers_total": 0,
+  "occupied": 0,
+  "available": 0,
   "latest_note": "string",
   "latest_note__date": "2019-12-23T00:00:00.000-05:00",
   "latest_note__note": "string",

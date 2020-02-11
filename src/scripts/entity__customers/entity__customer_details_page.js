@@ -55,6 +55,9 @@ function renderEntityCustomerDetailsPage(app, $container, router, auth, opt, id,
         defaults: {
           municipality: 'Toronto',
           province: 'Ontario',
+
+          first_name: 'First Name',
+          last_name: 'Last Name',
         }
       });
       const model = new Model(data);
@@ -77,6 +80,40 @@ function renderEntityCustomerDetailsPage(app, $container, router, auth, opt, id,
               delete data.request_locker_choice_2;
               delete data.request_locker_choice_3;
               break;
+
+            default:
+              delete data.request_locker_choice_1;
+              delete data.request_locker_choice_2;
+              delete data.request_locker_choice_3;
+              delete data.request_station_choice_1;
+              delete data.request_station_choice_2;
+              delete data.request_station_choice_3;
+          }
+
+          switch (data.subscription_type) {
+            case 'Bicycle Locker':
+              delete data.station;
+              delete data.keyfob;
+              delete data.keyfob_date_assigned;
+              delete data.keyfob_date_returned;
+              break;
+
+            case 'Bicycle Station':
+              delete data.location;
+              delete data.locker;
+              delete data.locker_key_date_assigned;
+              delete data.locker_key_date_returned;
+              break;
+
+            default:
+              delete data.location;
+              delete data.locker;
+              delete data.locker_key_date_assigned;
+              delete data.locker_key_date_returned;
+              delete data.station;
+              delete data.keyfob;
+              delete data.keyfob_date_assigned;
+              delete data.keyfob_date_returned;
           }
 
           return ajaxes({
@@ -177,152 +214,130 @@ function renderEntityCustomerDetailsPage(app, $container, router, auth, opt, id,
           },
           {
             title: 'Request',
-            postRender: ({ section, formValidator } = {}) => {
-              section.$requestTypeElement.trigger('change');
-              formValidator.updateStatus(section.$requestTypeElement.attr('id'), 'NOT_VALIDATED');
+            postRender: ({ section } = {}) => {
+              section.$requestTypeElement.trigger('init');
             },
 
             rows: [
               {
                 fields: [
-                  Object.assign({}, entityCustomerDetails__fields.request_type, {
-                    className: 'col-md-4',
-
-                    postRender: ({ field, section, model } = {}) => {
-                      const $element = $(`#${field.id}`);
-                      section.$requestTypeElement = $element;
-
-                      $element.on('change', () => {
-                        switch (model.get('request_type')) {
-                          case 'Bicycle Lockers':
-                            ajaxes({
-                              beforeSend(jqXHR) {
-                                if (auth && auth.sId) {
-                                  jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
-                                }
-                              },
-                              contentType: 'application/json; charset=utf-8',
-                              method: 'GET',
-                              url: '/* @echo C3DATA_LOCATIONS_URL */?$orderby=site_name'
-                            }).then(({ data }) => {
-                              const locationOptions = `
-                                <option value="">- Select -</option>
-                                ${data.value.map((location) => `<option value="${location.id}">${location.site_name} - ? of ${location.lockers_total} lockers available</option>`).join('')}
-                              `;
-
-                              const ids = data.value.map((location) => location.id);
-
-                              const choice1 = model.get('request_locker_choice_1');
-                              const choice1Options = choice1 && ids.indexOf(choice1) == -1
-                                ? `<option value="${choice1}">${choice1}</option>${locationOptions}`
-                                : locationOptions;
-                              section.$requestChoice1Element.html(choice1Options);
-                              if (choice1) {
-                                section.$requestChoice1Element.val(choice1);
-                              } else {
-                                section.$requestChoice1Element.val('');
-                              }
-
-                              const choice2 = model.get('request_locker_choice_2');
-                              const choice2Options = choice2 && ids.indexOf(choice2) == -1
-                                ? `<option value="${choice2}">${choice2}</option>${locationOptions}`
-                                : locationOptions;
-                              section.$requestChoice2Element.html(choice2Options);
-                              if (choice2) {
-                                section.$requestChoice2Element.val(choice2);
-                              } else {
-                                section.$requestChoice2Element.val('');
-                              }
-
-                              const choice3 = model.get('request_locker_choice_3');
-                              const choice3Options = choice3 && ids.indexOf(choice3) == -1
-                                ? `<option value="${choice3}">${choice3}</option>${locationOptions}`
-                                : locationOptions;
-                              section.$requestChoice3Element.html(choice3Options);
-                              if (choice3) {
-                                section.$requestChoice3Element.val(choice3);
-                              } else {
-                                section.$requestChoice3Element.val('');
-                              }
-                            });
-                            break;
-
-                          case 'Bicycle Stations':
-                            ajaxes({
-                              beforeSend(jqXHR) {
-                                if (auth && auth.sId) {
-                                  jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
-                                }
-                              },
-                              contentType: 'application/json; charset=utf-8',
-                              method: 'GET',
-                              url: '/* @echo C3DATA_STATIONS_URL */?$orderby=site_name'
-                            }).then(({ data }) => {
-                              const stationOptions = `
-                                <option value="">- Select -</option>
-                                ${data.value.map((station) => `<option value="${station.id}">${station.site_name}</option>`).join('')}
-                              `;
-
-                              const ids = data.value.map((station) => station.id);
-
-                              const choice1 = model.get('request_station_choice_1');
-                              const choice1Options = choice1 && ids.indexOf(choice1) == -1
-                                ? `<option value="${choice1}">${choice1}</option>${stationOptions}`
-                                : stationOptions;
-                              section.$requestChoice1Element.html(choice1Options);
-                              if (choice1) {
-                                section.$requestChoice1Element.val(choice1);
-                              } else {
-                                section.$requestChoice1Element.val('');
-                              }
-
-                              const choice2 = model.get('request_station_choice_2');
-                              const choice2Options = choice2 && ids.indexOf(choice2) == -1
-                                ? `<option value="${choice2}">${choice2}</option>${stationOptions}`
-                                : stationOptions;
-                              section.$requestChoice2Element.html(choice2Options);
-                              if (choice2) {
-                                section.$requestChoice2Element.val(choice2);
-                              } else {
-                                section.$requestChoice2Element.val('');
-                              }
-
-                              const choice3 = model.get('request_station_choice_3');
-                              const choice3Options = choice3 && ids.indexOf(choice3) == -1
-                                ? `<option value="${choice3}">${choice3}</option>${stationOptions}`
-                                : stationOptions;
-                              section.$requestChoice3Element.html(choice3Options);
-                              if (choice3) {
-                                section.$requestChoice3Element.val(choice3);
-                              } else {
-                                section.$requestChoice3Element.val('');
-                              }
-                            });
-                            break;
-
-                          default:
-                            section.$requestChoice1Element.html('<option value="">- Select a Request Type -</option>');
-                            section.$requestChoice2Element.html('<option value="">- Select a Request Type -</option>');
-                            section.$requestChoice3Element.html('<option value="">- Select a Request Type -</option>');
-                        }
-                      });
-                    }
-                  })
+                  Object.assign({}, entityCustomerDetails__fields.request_type(auth), { className: 'col-md-4' })
                 ]
               },
               {
                 fields: [
-                  {
-                    title: 'Choice 1',
-                    required: true,
-                    type: 'dropdown',
-                    choices: [{ text: '- Select a Request Type -', value: '' }],
+                  entityCustomerDetails__fields.choice_1,
+                  entityCustomerDetails__fields.choice_2,
+                  entityCustomerDetails__fields.choice_3
+                ]
+              }
+            ]
+          },
+          {
+            title: 'Subscription',
+            postRender: ({ section } = {}) => {
+              section.$subscriptionTypeElement.trigger('init');
+              section.$subscriptionLocationElement.trigger('init');
+            },
 
-                    postRender: ({ field, section }) => {
+            rows: [
+              {
+                fields: [
+                  Object.assign({}, entityCustomerDetails__fields.subscription_type, {
+                    className: 'col-md-4',
+
+                    postRender: ({ section, field } = {}) => {
                       const $element = $(`#${field.id}`);
-                      section.$requestChoice1Element = $element;
+
+                      section.$subscriptionTypeElement = $element;
 
                       $element.on('change', () => {
+                        switch ($element.val()) {
+                          case 'Bicycle Locker':
+                            $('.locationItem').removeClass('hide');
+                            $('.stationItem').addClass('hide');
+                            break;
+
+                          case 'Bicycle Station':
+                            $('.locationItem').addClass('hide');
+                            $('.stationItem').removeClass('hide');
+                            break;
+
+                          default:
+                            $('.locationItem').addClass('hide');
+                            $('.stationItem').addClass('hide');
+                        }
+                      });
+                    }
+                  }),
+                  Object.assign({}, entityCustomerDetails__fields.location(auth), {
+                    className: 'col-md-4 hide locationItem',
+
+                    postRender: ({ section, field, model } = {}) => {
+                      const $element = $(`#${field.id}`);
+
+                      section.$subscriptionLocationElement = $element;
+
+                      $element.on('init change', () => {
+                        if (model.get(field.bindTo)) {
+                          ajaxes({
+                            beforeSend(jqXHR) {
+                              if (auth && auth.sId) {
+                                jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+                              }
+                            },
+                            contentType: 'application/json; charset=utf-8',
+                            method: 'GET',
+                            url: `/* @echo C3DATA_LOCKERS_URL */?$filter=location eq '${model.get(field.bindTo)}'&$orderby=number`
+                          }).then(({ data }) => {
+                            const lockerOptions = `
+                              <option value="">- Select -</option>
+                              ${data.value.map((locker) => `<option value="${locker.id}">${locker.number}</option>`).join('')}
+                            `;
+
+                            const ids = data.value.map((locker) => locker.id);
+
+                            const locker = model.get('locker');
+                            const options = locker && ids.indexOf(locker) == -1
+                              ? `<option value="${locker}">${locker}</option>${lockerOptions}`
+                              : lockerOptions;
+                            section.$subscriptionLockerElement.html(options);
+                            if (locker) {
+                              section.$subscriptionLockerElement.val(locker);
+                            } else {
+                              section.$subscriptionLockerElement.val('');
+                            }
+                          });
+                        } else {
+                          section.$subscriptionLockerElement.html('<option value="">- Select a Location -</option>');
+                        }
+
+                        section.$subscriptionLockerElement.trigger('init');
+                      });
+                    }
+                  }),
+                  {
+                    title: 'Locker',
+                    required: true,
+                    bindTo: 'locker',
+                    type: 'dropdown',
+                    choices: [{ text: '- Select a Location -', value: '' }],
+                    className: 'col-md-4 hide locationItem',
+
+                    postRender: (({ section, field, formValidator } = {}) => {
+                      const $element = $(`#${field.id}`);
+
+                      section.$subscriptionLockerElement = $element;
+
+                      $element.on('init', () => {
+                        if ($element.val()) {
+                          formValidator.validateField(field.id);
+                        } else {
+                          formValidator.updateStatus(field.id, 'NOT_VALIDATED');
+                        }
+                      });
+
+                      $element.on('init change', () => {
                         const val = $element.val();
                         switch (model.get('request_type')) {
                           case 'Bicycle Lockers':
@@ -342,125 +357,59 @@ function renderEntityCustomerDetailsPage(app, $container, router, auth, opt, id,
                             break;
                         }
                       });
-                    }
+                    })
                   },
-                  {
-                    title: 'Choice 2',
-                    required: false,
-                    type: 'dropdown',
-                    choices: [{ text: '- Select a Request Type -', value: '' }],
+                  Object.assign({}, entityCustomerDetails__fields.station(auth), {
+                    className: 'col-md-4 hide stationItem',
 
-                    postRender: ({ field, section }) => {
-                      const $element = $(`#${field.id}`);
-                      section.$requestChoice2Element = $element;
-
-                      $element.on('change', () => {
-                        const val = $element.val();
-                        switch (model.get('request_type')) {
-                          case 'Bicycle Lockers':
-                            if (val) {
-                              model.set('request_locker_choice_2', val);
-                            } else {
-                              model.unset('request_locker_choice_2');
-                            }
-                            break;
-
-                          case 'Bicycle Stations':
-                            if (val) {
-                              model.set('request_station_choice_2', val);
-                            } else {
-                              model.unset('request_station_choice_2');
-                            }
-                            break;
-                        }
-                      });
-                    }
-                  },
-                  {
-                    title: 'Choice 3',
-                    required: false,
-                    type: 'dropdown',
-                    choices: [{ text: '- Select a Request Type -', value: '' }],
-
-                    postRender: ({ field, section }) => {
-                      const $element = $(`#${field.id}`);
-                      section.$requestChoice3Element = $element;
-
-                      $element.on('change', () => {
-                        const val = $element.val();
-                        switch (model.get('request_type')) {
-                          case 'Bicycle Lockers':
-                            if (val) {
-                              model.set('request_locker_choice_3', val);
-                            } else {
-                              model.unset('request_locker_choice_3');
-                            }
-                            break;
-
-                          case 'Bicycle Stations':
-                            if (val) {
-                              model.set('request_station_choice_3', val);
-                            } else {
-                              model.unset('request_station_choice_3');
-                            }
-                            break;
-                        }
-                      });
-                    }
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            title: 'Subscription',
-
-            rows: [
-              {
-                fields: [
-                  Object.assign({}, entityCustomerDetails__fields.subscription_type, {
-                    className: 'col-md-4',
-
-                    postRender: ({ field } = {}) => {
+                    postRender: ({ section, field, model } = {}) => {
                       const $element = $(`#${field.id}`);
 
-                      $element.on('change', () => {
-                        switch ($element.val()) {
-                          case 'Bicycle Lockers':
-                            $('.locationItem').removeClass('hide');
-                            $('.stationItem').addClass('hide');
-                            $('.subscriptionItem').removeClass('hide');
-                            break;
+                      section.$subscriptionStationElement = $element;
 
-                          case 'Bicycle Stations':
-                            $('.locationItem').addClass('hide');
-                            $('.stationItem').removeClass('hide');
-                            $('.subscriptionItem').removeClass('hide');
-                            break;
+                      $element.on('init change', () => {
+                        if (model.get(field.bindTo)) {
+                          ajaxes({
+                            beforeSend(jqXHR) {
+                              if (auth && auth.sId) {
+                                jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+                              }
+                            },
+                            contentType: 'application/json; charset=utf-8',
+                            method: 'GET',
+                            url: `/* @echo C3DATA_KEYFOBS_URL */?$filter=stations/any(s:s eq '${$element.val()}')&$orderby=number`
+                          }).then(({ data }) => {
+                            const keyfobOptions = `
+                              <option value="">- Select -</option>
+                              ${data.value.map((keyfob) => `<option value="${keyfob.id}">${keyfob.number}</option>`).join('')}
+                            `;
 
-                          default:
-                            $('.locationItem').addClass('hide');
-                            $('.stationItem').addClass('hide');
-                            $('.subscriptionItem').addClass('hide');
+                            const ids = data.value.map((keyfob) => keyfob.id);
+
+                            const keyfob = model.get('keyfob');
+                            const options = keyfob && ids.indexOf(keyfob) == -1
+                              ? `<option value="${keyfob}">${keyfob}</option>${keyfobOptions}`
+                              : keyfobOptions;
+                            section.$subscriptionKeyfobElement.html(options);
+                            if (keyfob) {
+                              section.$subscriptionKeyfobElement.val(keyfob);
+                            } else {
+                              section.$subscriptionKeyfobElement.val('');
+                            }
+                          });
+                        } else {
+                          section.$subscriptionKeyfobElement.html('<option value="">- Select a Location -</option>');
                         }
+
+                        section.$subscriptionKeyfobElement.trigger('init');
                       });
                     }
-                  }),
-                  Object.assign({}, entityCustomerDetails__fields.location(auth), { className: 'col-md-4 hide locationItem' }),
-                  Object.assign({}, entityCustomerDetails__fields.locker, { className: 'col-md-4 hide locationItem' }),
-                  Object.assign({}, entityCustomerDetails__fields.station(auth), { className: 'col-md-4 hide stationItem' })
+                  })
                 ]
               },
               {
                 fields: [
-                  Object.assign({}, entityCustomerDetails__fields.subscription_start_date, {
-                    postRender: ({ field } = {}) => {
-                      const $element = $(`#${field.id}`);
-
-                      const $rowElement = $element.closest('.row');
-                      $rowElement.addClass('hide subscriptionItem');
-                    }
-                  }),
+                  entityCustomerDetails__fields.subscription_start_date,
                   entityCustomerDetails__fields.subscription_expiration_date,
                   entityCustomerDetails__fields.subscription_end_date
                 ]
@@ -482,20 +431,88 @@ function renderEntityCustomerDetailsPage(app, $container, router, auth, opt, id,
               },
               {
                 fields: [
-                  Object.assign({}, entityCustomerDetails__fields.keyfob(auth), {
-                    postRender: ({ field } = {}) => {
+                  {
+                    title: 'Key Fob',
+                    required: false,
+                    bindTo: 'keyfob',
+                    type: 'dropdown',
+                    choices: [{ text: '- Select a Station -', value: '' }],
+
+                    postRender: (({ section, field, formValidator } = {}) => {
                       const $element = $(`#${field.id}`);
+
+                      section.$subscriptionKeyfobElement = $element;
 
                       const $rowElement = $element.closest('.row');
                       $rowElement.addClass('hide stationItem');
-                    }
-                  }),
+
+                      $element.on('init', () => {
+                        if ($element.val()) {
+                          formValidator.validateField(field.id);
+                        } else {
+                          formValidator.updateStatus(field.id, 'NOT_VALIDATED');
+                        }
+                      });
+
+                      $element.on('init change', () => {
+                        const val = $element.val();
+                        switch (model.get('request_type')) {
+                          case 'Bicycle Lockers':
+                            if (val) {
+                              model.set('request_locker_choice_1', val);
+                            } else {
+                              model.unset('request_locker_choice_1');
+                            }
+                            break;
+
+                          case 'Bicycle Stations':
+                            if (val) {
+                              model.set('request_station_choice_1', val);
+                            } else {
+                              model.unset('request_station_choice_1');
+                            }
+                            break;
+                        }
+                      });
+                    })
+                  },
                   entityCustomerDetails__fields.keyfob_date_assigned,
                   entityCustomerDetails__fields.keyfob_date_returned
                 ]
               }
             ]
           },
+          {
+            title: 'Meta',
+            id: 'meta',
+            postRender({ model, section }) {
+              function handler() {
+                if (model.isNew()) {
+                  $(`#${section.id}`).hide();
+                } else {
+                  $(`#${section.id}`).show();
+                }
+              }
+              handler();
+              model.on(`change:${model.idAttribute}`, handler);
+            },
+
+            rows: [
+              {
+                fields: [
+                  Object.assign({}, entityCustomerDetails__fields.id(model), { className: 'col-md-8' }),
+                  Object.assign({}, entityCustomerDetails__fields.__Status(auth, model), { className: 'col-md-4' })
+                ]
+              },
+              {
+                fields: [
+                  entityCustomerDetails__fields.__CreatedOn(model),
+                  entityCustomerDetails__fields.__ModifiedOn(model),
+                  entityCustomerDetails__fields.__Owner(model)
+                ]
+              }
+            ]
+          }
         ]
       };
 

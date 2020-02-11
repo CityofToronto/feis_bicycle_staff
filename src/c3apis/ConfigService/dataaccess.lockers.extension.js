@@ -178,15 +178,14 @@ function updateLocation(content, request, {
       lockers_total++;
     } else if (method === 'PUT') {
       const previousVersion = getPreviousVersion(content, request);
-      if (previousVersion.location !== location) {
-        lockers_total++;
-      }
       if (previousVersion.__Status !== __Status) {
         if (__Status === 'Active') {
           lockers_total++;
         } else {
           lockers_total--;
         }
+      } else if (previousVersion.location !== location) {
+        lockers_total++;
       }
     }
 
