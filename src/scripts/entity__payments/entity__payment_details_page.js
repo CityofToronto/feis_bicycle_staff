@@ -52,9 +52,7 @@ function renderEntityPaymentDetailsPage(app, $container, router, auth, opt, id, 
       return { data: {} };
     }).then(({ data }) => {
       const Model = Backbone.Model.extend({
-        defaults: {
-          number: '0000'
-        }
+        defaults: {}
       });
       const model = new Model(data);
 
@@ -95,82 +93,71 @@ function renderEntityPaymentDetailsPage(app, $container, router, auth, opt, id, 
 
         sections: [
           {
-            title: 'Details',
+            title: 'Customer',
 
             rows: [
               {
                 fields: [
-                  Object.assign({}, entityPaymentDetails__fields.location(auth), { className: 'col-md-4' })
+                  Object.assign({}, entityPaymentDetails__fields.customer(auth), { className: 'col-md-4' }),
+                  Object.assign({}, entityPaymentDetails__fields.customer_subscription_type, { className: 'col-md-4' }),
                 ]
               },
               {
                 fields: [
-                  Object.assign({}, entityPaymentDetails__fields.number, { className: 'col-md-4' }),
-                  Object.assign({}, entityPaymentDetails__fields.description, { className: 'col-md-8' })
+                  entityPaymentDetails__fields.customer_first_name,
+                  entityPaymentDetails__fields.customer_last_name,
+                  entityPaymentDetails__fields.customer_title
+                ]
+              },
+              {
+                fields: [
+                  entityPaymentDetails__fields.customer_email,
+                  entityPaymentDetails__fields.customer_primary_phone,
+                  entityPaymentDetails__fields.customer_alternate_phone
+                ]
+              },
+              {
+                fields: [
+                  Object.assign({}, entityPaymentDetails__fields.customer_civic_address, { className: 'col-md-8' })
+                ]
+              },
+              {
+                fields: [
+                  entityPaymentDetails__fields.customer_municipality,
+                  entityPaymentDetails__fields.customer_province,
+                  entityPaymentDetails__fields.customer_postal_code
                 ]
               }
             ]
           },
           {
-            title: 'Latest Note',
-            id: 'latest_note',
-            postRender({ model, section }) {
-              function handler() {
-                if (model.isNew()) {
-                  $(`#${section.id}`).hide();
-                } else {
-                  $(`#${section.id}`).show();
-                }
-              }
-              handler();
-              model.on(`change:${model.idAttribute}`, handler);
-            },
+            title: 'Payment',
 
             rows: [
               {
                 fields: [
-                  Object.assign({}, entityPaymentDetails__fields.latest_note__date(model), { title: 'Date', className: 'col-md-4' })
+                  Object.assign({}, entityPaymentDetails__fields.locker_item, { className: 'hide col-md-4' }),
+                  Object.assign({}, entityPaymentDetails__fields.lockerkey_item, { className: 'hide col-md-4' })
                 ]
               },
               {
                 fields: [
-                  Object.assign({}, entityPaymentDetails__fields.latest_note__note(model), { title: 'Note' })
+                  entityPaymentDetails__fields.station_item,
+                  entityPaymentDetails__fields.keyfob_item,
+                  entityPaymentDetails__fields.registration
+                ]
+              },
+              {
+                fields: [
+                  // entityPaymentDetails__fields.cart
+                  entityPaymentDetails__fields.cart
                 ]
               }
             ]
           },
           {
-            title: 'Latest Inspection',
-            id: 'latest_inspection',
-            postRender({ model, section }) {
-              function handler() {
-                if (model.isNew()) {
-                  $(`#${section.id}`).hide();
-                } else {
-                  $(`#${section.id}`).show();
-                }
-              }
-              handler();
-              model.on(`change:${model.idAttribute}`, handler);
-            },
-
-            rows: [
-              {
-                fields: [
-                  Object.assign({}, entityPaymentDetails__fields.latest_inspection__date(model), { title: 'Date', className: 'col-md-4' }),
-                  Object.assign({}, entityPaymentDetails__fields.latest_inspection__result(model), { title: 'Result', className: 'col-md-4' })
-                ]
-              },
-              {
-                fields: [
-                  Object.assign({}, entityPaymentDetails__fields.latest_inspection__note(model), { title: 'Note' })
-                ]
-              }
-            ]
-          },
-          {
-            title: 'Details',
-            id: 'details',
+            title: 'Meta',
+            id: 'meta',
             postRender({ model, section }) {
               function handler() {
                 if (model.isNew()) {
@@ -207,12 +194,12 @@ function renderEntityPaymentDetailsPage(app, $container, router, auth, opt, id, 
           auth,
           url: '/* @echo C3DATA_PAYMENTS_URL */',
 
-          saveButtonLabel: (model) => model.isNew() ? 'Create Payment' : 'Update Payment',
+          saveButtonLabel: (model) => model.isNew() ? 'Make Payment' : null, //'Update Payment',
 
           cancelButtonLabel: 'Cancel',
           cancelButtonFragment: currentPaymentView.fragment,
 
-          removeButtonLabel: 'Remove Payment',
+          removeButtonLabel: null, //'Remove Payment',
           removePromptValue: 'DELETE'
         });
       }).then(() => {

@@ -8,43 +8,42 @@ function renderEntitiesPage(app, $container, router, auth) {
       return router.navigateToLoginPage();
     }
 
+    function listGroupItem(views) {
+      return Object.keys(views).map((key) => {
+        return `
+          <a href="#${views[key].fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+            ${views[key].title}
+          </a>
+        `;
+      }).join('');
+    }
+
     $container.html('<p><a href="#home">Back to Home</a></p>');
 
-    /* global renderEntityLocationsPage__views renderEntityLocationNotesPage__views renderEntityLocationInspectionsPage__views */
+    /* global entity__locations__views renderEntityLocationNotesPage__views renderEntityLocationInspectionsPage__views */
     $(`
-      <h2>Location Enitities</h2>
-
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3">
           <h3>Locations</h3>
 
           <div class="list-group">
-            <a href="#${renderEntityLocationsPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-              <span class="badge badge-locations-all"></span>
-              All
-            </a>
+            ${listGroupItem(entity__locations__views)}
           </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
           <h3>Location Notes</h3>
 
           <div class="list-group">
-            <a href="#${renderEntityLocationNotesPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-              <span class="badge badge-locations-all"></span>
-              All
-            </a>
+            ${listGroupItem(renderEntityLocationNotesPage__views)}
           </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
           <h3>Location Inspections</h3>
 
           <div class="list-group">
-            <a href="#${renderEntityLocationInspectionsPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-              <span class="badge badge-locations-all"></span>
-              All
-            </a>
+            ${listGroupItem(renderEntityLocationInspectionsPage__views)}
           </div>
         </div>
       </div>
@@ -52,39 +51,28 @@ function renderEntitiesPage(app, $container, router, auth) {
 
     /* global renderEntityLockersPage__views renderEntityLockerNotesPage__views renderEntityLockerInspectionsPage__views */
     $(`
-      <h2>Locker Enitities</h2>
-
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3">
           <h3>Lockers</h3>
 
           <div class="list-group">
-            <a href="#${renderEntityLockersPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-              <span class="badge badge-locations-all"></span>
-              All
-            </a>
+            ${listGroupItem(renderEntityLockersPage__views)}
           </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
           <h3>Locker Notes</h3>
 
           <div class="list-group">
-            <a href="#${renderEntityLockerNotesPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-              <span class="badge badge-locations-all"></span>
-              All
-            </a>
+            ${listGroupItem(renderEntityLockerNotesPage__views)}
           </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
           <h3>Locker Inspections</h3>
 
           <div class="list-group">
-            <a href="#${renderEntityLockerInspectionsPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-              <span class="badge badge-locations-all"></span>
-              All
-            </a>
+            ${listGroupItem(renderEntityLockerInspectionsPage__views)}
           </div>
         </div>
       </div>
@@ -92,39 +80,28 @@ function renderEntitiesPage(app, $container, router, auth) {
 
     /* global renderEntityStationsPage__views renderEntityStationNotesPage__views renderEntityStationInspectionsPage__views */
     $(`
-      <h2>Station Enitities</h2>
-
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3">
           <h3>Stations</h3>
 
           <div class="list-group">
-            <a href="#${renderEntityStationsPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-              <span class="badge badge-locations-all"></span>
-              All
-            </a>
+            ${listGroupItem(renderEntityStationsPage__views)}
           </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
           <h3>Station Notes</h3>
 
           <div class="list-group">
-            <a href="#${renderEntityStationNotesPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-              <span class="badge badge-locations-all"></span>
-              All
-            </a>
+            ${listGroupItem(renderEntityStationNotesPage__views)}
           </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
           <h3>Station Inspections</h3>
 
           <div class="list-group">
-            <a href="#${renderEntityStationInspectionsPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-              <span class="badge badge-locations-all"></span>
-              All
-            </a>
+            ${listGroupItem(renderEntityStationInspectionsPage__views)}
           </div>
         </div>
       </div>
@@ -132,28 +109,20 @@ function renderEntitiesPage(app, $container, router, auth) {
 
     /* global renderEntityKeyfobsPage__views renderEntityKeyfobNotesPage__views */
     $(`
-      <h2>Key Fob Enitities</h2>
-
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3">
           <h3>Key Fobs</h3>
 
           <div class="list-group">
-            <a href="#${renderEntityKeyfobsPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-              <span class="badge badge-locations-all"></span>
-              All
-            </a>
+            ${listGroupItem(renderEntityKeyfobsPage__views)}
           </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
           <h3>Key Fob Notes</h3>
 
           <div class="list-group">
-            <a href="#${renderEntityKeyfobNotesPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-              <span class="badge badge-locations-all"></span>
-              All
-            </a>
+            ${listGroupItem(renderEntityKeyfobNotesPage__views)}
           </div>
         </div>
       </div>
@@ -161,78 +130,64 @@ function renderEntitiesPage(app, $container, router, auth) {
 
     /* global renderEntityCustomersPage__views renderEntityPaymentsPage__views */
     $(`
-      <h2>Customer Enitities</h2>
-
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3">
           <h3>Customers</h3>
 
           <div class="list-group">
-            <a href="#${renderEntityCustomersPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-              <span class="badge badge-locations-all"></span>
-              All
-            </a>
+            ${listGroupItem(renderEntityCustomersPage__views)}
           </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
           <h3>Customer Notes</h3>
 
           <div class="list-group">
-            <a href="#${renderEntityCustomersPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-              <span class="badge badge-locations-all"></span>
-              All
-            </a>
+            ${listGroupItem(renderEntityCustomersPage__views)}
           </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
           <h3>Customer Notifications</h3>
 
           <div class="list-group">
-            <a href="#${renderEntityLocationsPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-              <span class="badge badge-locations-all"></span>
-              All
-            </a>
+            ${listGroupItem(renderEntityCustomersPage__views)}
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <h3>Customer Emails</h3>
+
+          <div class="list-group">
+            ${listGroupItem(renderEntityCustomersPage__views)}
           </div>
         </div>
       </div>
     `).appendTo($container);
 
     $(`
-      <h2>Payment Enitities</h2>
-
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3">
           <h3>Payments</h3>
 
           <div class="list-group">
-            <a href="#${renderEntityPaymentsPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-              <span class="badge badge-locations-all"></span>
-              All
-            </a>
+            ${listGroupItem(renderEntityPaymentsPage__views)}
           </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
           <h3>Payment Notes</h3>
 
           <div class="list-group">
-            <a href="#${renderEntityLocationsPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-              <span class="badge badge-locations-all"></span>
-              All
-            </a>
+            ${listGroupItem(entity__locations__views)}
           </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
           <h3>Payment Notification</h3>
 
           <div class="list-group">
-            <a href="#${renderEntityLocationsPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
-              <span class="badge badge-locations-all"></span>
-              All
-            </a>
+            ${listGroupItem(entity__locations__views)}
           </div>
         </div>
       </div>

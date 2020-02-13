@@ -200,12 +200,12 @@ $(function () {
       // ---
 
       ['entities/locations/:opt/:id(/)'](opt, id, query) {
-        /* global renderEntityLocationDetailsPage */
-        return renderEntityLocationDetailsPage(app, $container, router, auth, opt, id, query);
+        /* global entity__locationDetails */
+        return entity__locationDetails(app, $container, router, auth, opt, id, query);
       },
       ['entities/locations(/:opt)(/)'](opt, query) {
-        /* global renderEntityLocationsPage */
-        return renderEntityLocationsPage(app, $container, router, auth, opt, query);
+        /* global entity__locations */
+        return entity__locations(app, $container, router, auth, opt, query);
       },
 
       // ---
