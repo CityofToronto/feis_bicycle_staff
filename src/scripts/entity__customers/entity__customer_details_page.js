@@ -54,10 +54,7 @@ function renderEntityCustomerDetailsPage(app, $container, router, auth, opt, id,
       const Model = Backbone.Model.extend({
         defaults: {
           municipality: 'Toronto',
-          province: 'Ontario',
-
-          first_name: 'First Name',
-          last_name: 'Last Name',
+          province: 'Ontario'
         }
       });
       const model = new Model(data);

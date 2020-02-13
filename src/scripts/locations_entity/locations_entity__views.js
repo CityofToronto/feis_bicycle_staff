@@ -8,7 +8,7 @@ const locationsEntity__views = {
     fragment: 'entities/locations/all',
     stateSaveWebStorageKey: 'entity_locations_all',
 
-    definition(auth) { // eslint-disable-line no-unused-vars
+    definition(auth) {
       return {
         columns: Object.keys(locationsEntity__columns).map(
           (key) => typeof locationsEntity__columns[key] === 'function'

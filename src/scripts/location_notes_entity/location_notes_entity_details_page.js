@@ -103,7 +103,7 @@ function renderEntityLocationNoteDetailsPage(app, $container, router, auth, opt,
             rows: [
               {
                 fields: [
-                  Object.assign({}, entityLocationNoteDetails__fields.location(auth), { className: 'col-md-4' }),
+                  Object.assign({}, entityLocationNoteDetails__fields.location({ auth }), { className: 'col-md-4' }),
                   Object.assign({}, entityLocationNoteDetails__fields.date, { className: 'col-md-4' })
                 ]
               },
@@ -132,15 +132,15 @@ function renderEntityLocationNoteDetailsPage(app, $container, router, auth, opt,
             rows: [
               {
                 fields: [
-                  Object.assign({}, entityLocationNoteDetails__fields.id(model), { className: 'col-md-8' }),
-                  Object.assign({}, entityLocationNoteDetails__fields.__Status(auth, model), { className: 'col-md-4' })
+                  Object.assign({}, entityLocationNoteDetails__fields.id({model}), { className: 'col-md-8' }),
+                  Object.assign({}, entityLocationNoteDetails__fields.__Status({ auth, model }), { className: 'col-md-4' })
                 ]
               },
               {
                 fields: [
-                  entityLocationNoteDetails__fields.__CreatedOn(model),
-                  entityLocationNoteDetails__fields.__ModifiedOn(model),
-                  entityLocationNoteDetails__fields.__Owner(model)
+                  entityLocationNoteDetails__fields.__CreatedOn({ model }),
+                  entityLocationNoteDetails__fields.__ModifiedOn({ model }),
+                  entityLocationNoteDetails__fields.__Owner({ model })
                 ]
               }
             ]

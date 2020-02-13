@@ -9,42 +9,43 @@ const locationNotesEntity__views = {
     fragment: 'entities/location_notes/all',
     stateSaveWebStorageKey: 'entity_location_notes_all',
 
-    definition: (auth) => ({
-      columns: Object.keys(locationNotesEntity__columns).map(
-        (key) => typeof locationNotesEntity__columns[key] === 'function'
-          ? locationNotesEntity__columns[key]({ auth, view: this })
-          : locationNotesEntity__columns[key]
-      ),
+    definition(auth) {
+      return {
+        columns: Object.keys(locationNotesEntity__columns).map(
+          (key) => typeof locationNotesEntity__columns[key] === 'function'
+            ? locationNotesEntity__columns[key]({ auth, view: this })
+            : locationNotesEntity__columns[key]
+        ),
 
-      order: [[1, 'asc']],
+        order: [[1, 'asc']],
 
-      searchCols: [],
+        searchCols: [],
 
-      ajaxCore(data, callback, settings, queryObject, url, options = {}) {
-        const { auth } = options;
+        ajaxCore(data, callback, settings, queryObject, url, options = {}) {
+          const { auth } = options;
 
-        return ajaxes({
-          beforeSend(jqXHR) {
-            if (auth && auth.sId) {
-              jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
-            }
-          },
-          contentType: 'application/json; charset=utf-8',
-          method: 'GET',
-          url: `${url}?${query__objectToString(queryObject)}`
-        }).then(({ data: response }) => {
-          response.value.forEach((locationNote) => {
-            locationNote.calc_location_site_name = null;
-          });
+          return ajaxes({
+            beforeSend(jqXHR) {
+              if (auth && auth.sId) {
+                jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+              }
+            },
+            contentType: 'application/json; charset=utf-8',
+            method: 'GET',
+            url: `${url}?${query__objectToString(queryObject)}`
+          }).then(({ data: response }) => {
+            response.value.forEach((locationNote) => {
+              locationNote.calc_location_site_name = null;
+            });
 
-          const promises = [];
+            const promises = [];
 
-          const locations = response.value.map(({ location }) => location)
-            .filter((location, index, array) => array.indexOf(location) === index);
-          if (locations.length > 0) {
-            promises.push(() => {
+            const locations = response.value.map(({ location }) => location)
+              .filter((location, index, array) => array.indexOf(location) === index);
+
+            if (locations.length > 0) {
               const filter = encodeURIComponent(locations.map((id) => `id eq '${id}'`).join(' or '));
-              return ajaxes({
+              promises.push(ajaxes({
                 beforeSend(jqXHR) {
                   if (auth && auth.sId) {
                     jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
@@ -62,23 +63,23 @@ const locationNotesEntity__views = {
                 response.value.forEach((locationNote) => {
                   locationNote.calc_location_site_name = locationMap[locationNote.location];
                 });
+              }));
+            }
+
+            Promise.all(promises).then(() => {
+              callback({
+                data: response.value,
+                draw: data.draw,
+                recordsTotal: response['@odata.count'],
+                recordsFiltered: response['@odata.count']
               });
             });
-          }
-
-          promises.then(() => {
-            callback({
-              data: response.value,
-              draw: data.draw,
-              recordsTotal: response['@odata.count'],
-              recordsFiltered: response['@odata.count']
-            });
+          }).catch((error) => {
+            callback({ data: [], draw: data.draw, recordsTotal: 0, recordsFiltered: 0 });
+            throw error;
           });
-        }).catch((error) => {
-          callback({ data: [], draw: data.draw, recordsTotal: 0, recordsFiltered: 0 });
-          throw error;
-        });
-      }
-    })
+        }
+      };
+    }
   }
 };

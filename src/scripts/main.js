@@ -200,8 +200,8 @@ $(function () {
       // ---
 
       ['entities/locations/:opt/:id(/)'](opt, id, query) {
-        /* global entity__locationDetails */
-        return entity__locationDetails(app, $container, router, auth, opt, id, query);
+        /* global locationsEntityDetailsPage */
+        return locationsEntityDetailsPage(app, $container, router, auth, opt, id, query);
       },
       ['entities/locations(/:opt)(/)'](opt, query) {
         /* global locationsEntityPage */

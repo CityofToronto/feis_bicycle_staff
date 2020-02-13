@@ -115,7 +115,7 @@ function renderHomePage(app, $container, router, auth) {
         <div class="col-md-3">
           <h3>Entities</h3>
 
-          <p><a href="#entities" class="btn btn-default">View Entities</a></p>
+          <p><a href="#entities" class="btn btn-default btn-lg btn-block">View Entities</a></p>
         </div>
       </div>
     `);

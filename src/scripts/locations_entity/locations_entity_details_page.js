@@ -4,8 +4,8 @@
 /* global renderForm */
 /* global locationsEntity__views locationsEntity__fields */
 
-/* exported entity__locationDetails */
-function entity__locationDetails(app, $container, router, auth, opt, id, query) {
+/* exported locationsEntityDetailsPage */
+function locationsEntityDetailsPage(app, $container, router, auth, opt, id, query) {
   if (!(opt in locationsEntity__views)) {
     const fragment = locationsEntity__views.all.fragment;
     const query = query__objectToString({ resetState: 'yes' });

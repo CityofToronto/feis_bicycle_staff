@@ -38,6 +38,7 @@ const locationNotesEntity__columns = {
       }
     }
   },
+
   note: {
     title: 'Note',
     data: 'note',
