@@ -23,7 +23,7 @@ function renderEntitiesPage(app, $container, router, auth) {
     /* global locationsEntity__views locationNotesEntity__views locationInspectionsEntity__views */
     $(`
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-4">
           <h3>Locations</h3>
 
           <div class="list-group">
@@ -31,7 +31,7 @@ function renderEntitiesPage(app, $container, router, auth) {
           </div>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-4">
           <h3>Location Notes</h3>
 
           <div class="list-group">
@@ -39,7 +39,7 @@ function renderEntitiesPage(app, $container, router, auth) {
           </div>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-4">
           <h3>Location Inspections</h3>
 
           <div class="list-group">
@@ -52,7 +52,7 @@ function renderEntitiesPage(app, $container, router, auth) {
     /* global renderEntityLockersPage__views renderEntityLockerNotesPage__views renderEntityLockerInspectionsPage__views */
     $(`
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-4">
           <h3>Lockers</h3>
 
           <div class="list-group">
@@ -60,7 +60,7 @@ function renderEntitiesPage(app, $container, router, auth) {
           </div>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-4">
           <h3>Locker Notes</h3>
 
           <div class="list-group">
@@ -68,7 +68,7 @@ function renderEntitiesPage(app, $container, router, auth) {
           </div>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-4">
           <h3>Locker Inspections</h3>
 
           <div class="list-group">
@@ -81,7 +81,7 @@ function renderEntitiesPage(app, $container, router, auth) {
     /* global renderEntityStationsPage__views renderEntityStationNotesPage__views renderEntityStationInspectionsPage__views */
     $(`
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-4">
           <h3>Stations</h3>
 
           <div class="list-group">
@@ -89,7 +89,7 @@ function renderEntitiesPage(app, $container, router, auth) {
           </div>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-4">
           <h3>Station Notes</h3>
 
           <div class="list-group">
@@ -97,7 +97,7 @@ function renderEntitiesPage(app, $container, router, auth) {
           </div>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-4">
           <h3>Station Inspections</h3>
 
           <div class="list-group">
@@ -110,7 +110,7 @@ function renderEntitiesPage(app, $container, router, auth) {
     /* global renderEntityKeyfobsPage__views renderEntityKeyfobNotesPage__views */
     $(`
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-4">
           <h3>Key Fobs</h3>
 
           <div class="list-group">
@@ -118,7 +118,7 @@ function renderEntitiesPage(app, $container, router, auth) {
           </div>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-4">
           <h3>Key Fob Notes</h3>
 
           <div class="list-group">
@@ -131,7 +131,7 @@ function renderEntitiesPage(app, $container, router, auth) {
     /* global renderEntityCustomersPage__views renderEntityPaymentsPage__views */
     $(`
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-4">
           <h3>Customers</h3>
 
           <div class="list-group">
@@ -139,7 +139,7 @@ function renderEntitiesPage(app, $container, router, auth) {
           </div>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-4">
           <h3>Customer Notes</h3>
 
           <div class="list-group">
@@ -147,16 +147,8 @@ function renderEntitiesPage(app, $container, router, auth) {
           </div>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-4">
           <h3>Customer Notifications</h3>
-
-          <div class="list-group">
-            ${listGroupItem(renderEntityCustomersPage__views)}
-          </div>
-        </div>
-
-        <div class="col-md-3">
-          <h3>Customer Emails</h3>
 
           <div class="list-group">
             ${listGroupItem(renderEntityCustomersPage__views)}
@@ -167,7 +159,7 @@ function renderEntitiesPage(app, $container, router, auth) {
 
     $(`
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-4">
           <h3>Payments</h3>
 
           <div class="list-group">
@@ -175,7 +167,7 @@ function renderEntitiesPage(app, $container, router, auth) {
           </div>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-4">
           <h3>Payment Notes</h3>
 
           <div class="list-group">
@@ -183,7 +175,7 @@ function renderEntitiesPage(app, $container, router, auth) {
           </div>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-4">
           <h3>Payment Notification</h3>
 
           <div class="list-group">
