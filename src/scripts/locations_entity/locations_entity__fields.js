@@ -1,8 +1,8 @@
 /* global $ moment */
 /* global entity__fields */
 
-/* exported entity__locationDetails__fields */
-const entity__locationDetails__fields = {
+/* exported locationsEntity__fields */
+const locationsEntity__fields = {
   site_name: {
     title: 'Site Name',
     type: 'text',

@@ -1,29 +1,28 @@
 /* global */
 /* global auth__checkLogin query__objectToString query__stringToObject */
 /* global renderDatatable */
-/* global entityLocations__columns */
+/* global entity__columns locationsEntity__columns */
 
-const renderLocationsPage__views = {
+const page__locations__views = {
   all: {
     breadcrumb: 'All',
-
     title: 'All Locations',
     fragment: `locations/all`,
 
-    definition: (auth) => {
+    definition(auth) {
       const definition = {
         columns: [
-          entityLocations__columns.action(renderLocationsPage__views.all.fragment),
+          locationsEntity__columns.action({ view: this }),
 
-          entityLocations__columns.site_name,
-          entityLocations__columns.address,
+          locationsEntity__columns.site_name,
+          locationsEntity__columns.address,
 
-          entityLocations__columns.lockers_total,
+          locationsEntity__columns.lockers_total,
 
-          entityLocations__columns.contact,
-          entityLocations__columns.phone,
+          locationsEntity__columns.contact,
+          locationsEntity__columns.phone,
 
-          entityLocations__columns.__Status(auth)
+          entity__columns.__Status({ auth })
         ],
 
         order: [[1, 'asc']],
@@ -38,27 +37,26 @@ const renderLocationsPage__views = {
   },
   upforinspection: {
     breadcrumb: 'Up For Inspection',
-
     title: 'Up For Inspection',
     fragment: `locations/upforinspection`,
 
-    definition: (auth) => {
+    definition(auth) {
       const definition = {
         columns: [
-          entityLocations__columns.action(renderLocationsPage__views.all.fragment),
+          locationsEntity__columns.action({ view: this }),
 
-          entityLocations__columns.latest_inspection__date,
-          entityLocations__columns.latest_inspection__result(auth),
+          locationsEntity__columns.latest_inspection__date,
+          locationsEntity__columns.latest_inspection__result({ auth }),
 
-          entityLocations__columns.site_name,
-          entityLocations__columns.address,
+          locationsEntity__columns.site_name,
+          locationsEntity__columns.address,
 
-          entityLocations__columns.lockers_total,
+          locationsEntity__columns.lockers_total,
 
-          entityLocations__columns.contact,
-          entityLocations__columns.phone,
+          locationsEntity__columns.contact,
+          locationsEntity__columns.phone,
 
-          entityLocations__columns.__Status(auth)
+          locationsEntity__columns.__Status({ auth })
         ],
 
         order: [[1, 'desc']],
@@ -73,11 +71,11 @@ const renderLocationsPage__views = {
   }
 };
 
-/* exported renderLocationsPage */
-function renderLocationsPage(app, $container, router, auth, opt, query) {
-  if (!(opt in renderLocationsPage__views)) {
+/* exported page__locations */
+function page__locations(app, $container, router, auth, opt, query) {
+  if (!(opt in page__locations__views)) {
     const query = query__objectToString({ resetState: 'yes' });
-    router.navigate(`${renderLocationsPage__views.all.fragment}?${query}`, { trigger: true, replace: true });
+    router.navigate(`${page__locations__views.all.fragment}?${query}`, { trigger: true, replace: true });
     return;
   }
 
@@ -98,13 +96,13 @@ function renderLocationsPage(app, $container, router, auth, opt, query) {
     }
 
     $container.html(`<p><a href="#${redirectToFragment}">Back to ${redirectTo}</a></p>`);
-    $container.append(`<h2>${renderLocationsPage__views[opt].title}</h2>`);
+    $container.append(`<h2>${page__locations__views[opt].title}</h2>`);
 
-    const definition = renderLocationsPage__views[opt].definition(auth, opt);
+    const definition = page__locations__views[opt].definition(auth, opt);
 
-    const views = Object.keys(renderLocationsPage__views).map((key) => ({
-      title: renderLocationsPage__views[key].title,
-      fragment: `${renderLocationsPage__views[key].fragment}?${query__objectToString({ resetState: 'yes' })}`,
+    const views = Object.keys(page__locations__views).map((key) => ({
+      title: page__locations__views[key].title,
+      fragment: `${page__locations__views[key].fragment}?${query__objectToString({ resetState: 'yes' })}`,
       isCurrent: key === opt
     }));
 
@@ -123,8 +121,8 @@ function renderLocationsPage(app, $container, router, auth, opt, query) {
     }).then(() => {
       const breadcrumbs = [
         { name: app.name, link: '#home' },
-        { name: 'Locations', link: `#${renderLocationsPage__views.all.fragment}` },
-        { name: renderLocationsPage__views[opt].breadcrumb, link: `#${renderLocationsPage__views[opt].fragment}` }
+        { name: 'Locations', link: `#${page__locations__views.all.fragment}` },
+        { name: page__locations__views[opt].breadcrumb, link: `#${page__locations__views[opt].fragment}` }
       ];
       app.setBreadcrumb(breadcrumbs, true);
 

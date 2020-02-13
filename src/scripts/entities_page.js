@@ -20,14 +20,14 @@ function renderEntitiesPage(app, $container, router, auth) {
 
     $container.html('<p><a href="#home">Back to Home</a></p>');
 
-    /* global entity__locations__views renderEntityLocationNotesPage__views renderEntityLocationInspectionsPage__views */
+    /* global locationsEntity__views renderEntityLocationNotesPage__views renderEntityLocationInspectionsPage__views */
     $(`
       <div class="row">
         <div class="col-md-3">
           <h3>Locations</h3>
 
           <div class="list-group">
-            ${listGroupItem(entity__locations__views)}
+            ${listGroupItem(locationsEntity__views)}
           </div>
         </div>
 
@@ -179,7 +179,7 @@ function renderEntitiesPage(app, $container, router, auth) {
           <h3>Payment Notes</h3>
 
           <div class="list-group">
-            ${listGroupItem(entity__locations__views)}
+            ${listGroupItem(locationsEntity__views)}
           </div>
         </div>
 
@@ -187,7 +187,7 @@ function renderEntitiesPage(app, $container, router, auth) {
           <h3>Payment Notification</h3>
 
           <div class="list-group">
-            ${listGroupItem(entity__locations__views)}
+            ${listGroupItem(locationsEntity__views)}
           </div>
         </div>
       </div>

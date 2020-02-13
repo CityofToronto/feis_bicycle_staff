@@ -1,12 +1,12 @@
 /* global $ */
 /* global auth__checkLogin query__objectToString query__stringToObject */
 /* global renderDatatable */
-/* global entity__locations__views */
+/* global locationsEntity__views */
 
-/* exported entity__locations */
-function entity__locations(app, $container, router, auth, opt, query) {
-  if (!(opt in entity__locations__views)) {
-    const fragment = entity__locations__views.all.fragment;
+/* exported locationsEntityPage */
+function locationsEntityPage(app, $container, router, auth, opt, query) {
+  if (!(opt in locationsEntity__views)) {
+    const fragment = locationsEntity__views.all.fragment;
     const query = query__objectToString({ resetState: 'yes' });
     router.navigate(`${fragment}?${query}`, { trigger: true, replace: true });
     return;
@@ -20,7 +20,7 @@ function entity__locations(app, $container, router, auth, opt, query) {
     $container.empty();
     const $containerTop = $('<div></div>').appendTo($container);
 
-    const currentView = entity__locations__views[opt];
+    const currentView = locationsEntity__views[opt];
 
     const {
       redirectTo = 'Entities',
@@ -34,9 +34,9 @@ function entity__locations(app, $container, router, auth, opt, query) {
 
     const definition = currentView.definition(auth);
 
-    const views = Object.keys(entity__locations__views).map((key) => ({
-      title: entity__locations__views[key].title,
-      fragment: `${entity__locations__views[key].fragment}?${query__objectToString({ resetState: 'yes' })}`,
+    const views = Object.keys(locationsEntity__views).map((key) => ({
+      title: locationsEntity__views[key].title,
+      fragment: `${locationsEntity__views[key].fragment}?${query__objectToString({ resetState: 'yes' })}`,
       isCurrent: key === opt
     }));
 
@@ -59,7 +59,7 @@ function entity__locations(app, $container, router, auth, opt, query) {
       const breadcrumbs = [
         { name: app.name, link: '#home' },
         { name: 'Entities', link: '#entities' },
-        { name: 'Locations', link: `#${entity__locations__views.all.fragment}` },
+        { name: 'Locations', link: `#${locationsEntity__views.all.fragment}` },
         { name: currentView.breadcrumb, link: `#${currentView.fragment}` }
       ];
       app.setBreadcrumb(breadcrumbs, true);

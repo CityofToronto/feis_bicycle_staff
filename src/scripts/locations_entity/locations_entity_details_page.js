@@ -2,12 +2,12 @@
 /* global ajaxes auth__checkLogin modal__showConfirm query__objectToString query__stringToObject
    renderAlert toSnapShot */
 /* global renderForm */
-/* global entity__locations__views entity__locationDetails__fields */
+/* global locationsEntity__views locationsEntity__fields */
 
 /* exported entity__locationDetails */
 function entity__locationDetails(app, $container, router, auth, opt, id, query) {
-  if (!(opt in entity__locations__views)) {
-    const fragment = entity__locations__views.all.fragment;
+  if (!(opt in locationsEntity__views)) {
+    const fragment = locationsEntity__views.all.fragment;
     const query = query__objectToString({ resetState: 'yes' });
     router.navigate(`${fragment}?${query}`, { trigger: true, replace: true });
     return;
@@ -18,7 +18,7 @@ function entity__locationDetails(app, $container, router, auth, opt, id, query) 
       return router.navigateToLoginPage();
     }
 
-    const currentLocationView = entity__locations__views[opt];
+    const currentLocationView = locationsEntity__views[opt];
 
     const {
       redirectTo = 'Locations',
@@ -31,7 +31,7 @@ function entity__locationDetails(app, $container, router, auth, opt, id, query) 
     const breadcrumbs = [
       { name: app.name, link: '#home' },
       { name: 'Entities', link: '#entities' },
-      { name: 'Locations', link: `#${entity__locations__views.all.fragment}` },
+      { name: 'Locations', link: `#${locationsEntity__views.all.fragment}` },
       { name: currentLocationView.breadcrumb, link: `#${currentLocationView.fragment}` }
     ];
 
@@ -99,20 +99,20 @@ function entity__locationDetails(app, $container, router, auth, opt, id, query) 
             rows: [
               {
                 fields: [
-                  Object.assign({}, entity__locationDetails__fields.site_name, { className: 'col-md-4' }),
-                  Object.assign({}, entity__locationDetails__fields.description, { className: 'col-md-8' })
+                  Object.assign({}, locationsEntity__fields.site_name, { className: 'col-md-4' }),
+                  Object.assign({}, locationsEntity__fields.description, { className: 'col-md-8' })
                 ]
               },
               {
                 fields: [
-                  Object.assign({}, entity__locationDetails__fields.civic_address, { className: 'col-md-8' })
+                  Object.assign({}, locationsEntity__fields.civic_address, { className: 'col-md-8' })
                 ]
               },
               {
                 fields: [
-                  entity__locationDetails__fields.municipality,
-                  entity__locationDetails__fields.province({ auth, model }),
-                  entity__locationDetails__fields.postal_code
+                  locationsEntity__fields.municipality,
+                  locationsEntity__fields.province({ auth, model }),
+                  locationsEntity__fields.postal_code
                 ]
               }
             ]
@@ -123,38 +123,38 @@ function entity__locationDetails(app, $container, router, auth, opt, id, query) 
             rows: [
               {
                 fields: [
-                  entity__locationDetails__fields.primary_contact_heading
+                  locationsEntity__fields.primary_contact_heading
                 ]
               },
               {
                 fields: [
-                  Object.assign({}, entity__locationDetails__fields.primary_contact_first_name, { title: 'First Name', className: 'col-md-4' }),
-                  Object.assign({}, entity__locationDetails__fields.primary_contact_last_name, { title: 'Last Name', className: 'col-md-4' })
+                  Object.assign({}, locationsEntity__fields.primary_contact_first_name, { title: 'First Name', className: 'col-md-4' }),
+                  Object.assign({}, locationsEntity__fields.primary_contact_last_name, { title: 'Last Name', className: 'col-md-4' })
                 ]
               },
               {
                 fields: [
-                  Object.assign({}, entity__locationDetails__fields.primary_contact_email, { title: 'Email' }),
-                  Object.assign({}, entity__locationDetails__fields.primary_contact_primary_phone, { title: 'Primary Phone' }),
-                  Object.assign({}, entity__locationDetails__fields.primary_contact_alternate_phone, { title: 'Alternate Phone' })
+                  Object.assign({}, locationsEntity__fields.primary_contact_email, { title: 'Email' }),
+                  Object.assign({}, locationsEntity__fields.primary_contact_primary_phone, { title: 'Primary Phone' }),
+                  Object.assign({}, locationsEntity__fields.primary_contact_alternate_phone, { title: 'Alternate Phone' })
                 ]
               },
               {
                 fields: [
-                  entity__locationDetails__fields.alternate_contact_heading
+                  locationsEntity__fields.alternate_contact_heading
                 ]
               },
               {
                 fields: [
-                  Object.assign({}, entity__locationDetails__fields.alternate_contact_first_name, { title: 'First Name', className: 'col-md-4' }),
-                  Object.assign({}, entity__locationDetails__fields.alternate_contact_last_name, { title: 'Last Name', className: 'col-md-4' })
+                  Object.assign({}, locationsEntity__fields.alternate_contact_first_name, { title: 'First Name', className: 'col-md-4' }),
+                  Object.assign({}, locationsEntity__fields.alternate_contact_last_name, { title: 'Last Name', className: 'col-md-4' })
                 ]
               },
               {
                 fields: [
-                  Object.assign({}, entity__locationDetails__fields.alternate_contact_email, { title: 'Email' }),
-                  Object.assign({}, entity__locationDetails__fields.alternate_contact_primary_phone, { title: 'Primary Phone' }),
-                  Object.assign({}, entity__locationDetails__fields.alternate_contact_alternate_phone, { title: 'Alternate Phone' })
+                  Object.assign({}, locationsEntity__fields.alternate_contact_email, { title: 'Email' }),
+                  Object.assign({}, locationsEntity__fields.alternate_contact_primary_phone, { title: 'Primary Phone' }),
+                  Object.assign({}, locationsEntity__fields.alternate_contact_alternate_phone, { title: 'Alternate Phone' })
                 ]
               }
             ]
@@ -177,12 +177,12 @@ function entity__locationDetails(app, $container, router, auth, opt, id, query) 
             rows: [
               {
                 fields: [
-                  Object.assign({}, entity__locationDetails__fields.latest_note__date({ auth, model }), { title: 'Date', className: 'col-md-4' })
+                  Object.assign({}, locationsEntity__fields.latest_note__date({ auth, model }), { title: 'Date', className: 'col-md-4' })
                 ]
               },
               {
                 fields: [
-                  Object.assign({}, entity__locationDetails__fields.latest_note__note({ auth, model }), { title: 'Note' })
+                  Object.assign({}, locationsEntity__fields.latest_note__note({ auth, model }), { title: 'Note' })
                 ]
               }
             ]
@@ -205,13 +205,13 @@ function entity__locationDetails(app, $container, router, auth, opt, id, query) 
             rows: [
               {
                 fields: [
-                  Object.assign({}, entity__locationDetails__fields.latest_inspection__date({ auth, model }), { title: 'Date', className: 'col-md-4' }),
-                  Object.assign({}, entity__locationDetails__fields.latest_inspection__result({ auth, model }), { title: 'Result', className: 'col-md-4' })
+                  Object.assign({}, locationsEntity__fields.latest_inspection__date({ auth, model }), { title: 'Date', className: 'col-md-4' }),
+                  Object.assign({}, locationsEntity__fields.latest_inspection__result({ auth, model }), { title: 'Result', className: 'col-md-4' })
                 ]
               },
               {
                 fields: [
-                  Object.assign({}, entity__locationDetails__fields.latest_inspection__note({ auth, model }), { title: 'Note' })
+                  Object.assign({}, locationsEntity__fields.latest_inspection__note({ auth, model }), { title: 'Note' })
                 ]
               }
             ]
@@ -234,15 +234,15 @@ function entity__locationDetails(app, $container, router, auth, opt, id, query) 
             rows: [
               {
                 fields: [
-                  Object.assign({}, entity__locationDetails__fields.id({ auth, model }), { className: 'col-md-8' }),
-                  Object.assign({}, entity__locationDetails__fields.__Status({ auth, model }), { className: 'col-md-4' })
+                  Object.assign({}, locationsEntity__fields.id({ auth, model }), { className: 'col-md-8' }),
+                  Object.assign({}, locationsEntity__fields.__Status({ auth, model }), { className: 'col-md-4' })
                 ]
               },
               {
                 fields: [
-                  entity__locationDetails__fields.__CreatedOn({ auth, model }),
-                  entity__locationDetails__fields.__ModifiedOn({ auth, model }),
-                  entity__locationDetails__fields.__Owner({ auth, model })
+                  locationsEntity__fields.__CreatedOn({ auth, model }),
+                  locationsEntity__fields.__ModifiedOn({ auth, model }),
+                  locationsEntity__fields.__Owner({ auth, model })
                 ]
               }
             ]

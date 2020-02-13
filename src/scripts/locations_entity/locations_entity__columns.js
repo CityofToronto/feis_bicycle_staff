@@ -2,8 +2,8 @@
 /* global oData__escapeValue */
 /* global entity__columns */
 
-/* exported entity__locations__columns */
-const entity__locations__columns = {
+/* exported locationsEntity__columns */
+const locationsEntity__columns = {
   action: entity__columns.action,
 
   id: entity__columns.id,

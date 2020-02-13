@@ -7,7 +7,7 @@ function renderHomePage(app, $container, router, auth) {
       return router.navigateToLoginPage();
     }
 
-    /* global renderLocationsPage__views renderLockersPage__views */
+    /* global page__locations__views renderLockersPage__views */
     $container.html(`
       <h2>Bicycle Lockers</h2>
 
@@ -16,13 +16,13 @@ function renderHomePage(app, $container, router, auth) {
           <h3>Locations</h3>
 
           <div class="list-group">
-            <a href="#${renderLocationsPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+            <a href="#${page__locations__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
               <span class="badge badge-locations-all"></span>
-              ${renderLocationsPage__views.all.title}
+              ${page__locations__views.all.title}
             </a>
-            <a href="#${renderLocationsPage__views.upforinspection.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+            <a href="#${page__locations__views.upforinspection.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
               <span class="badge badge-locations-upforinspection"></span>
-              ${renderLocationsPage__views.upforinspection.title}
+              ${page__locations__views.upforinspection.title}
             </a>
           </div>
         </div>
@@ -44,7 +44,7 @@ function renderHomePage(app, $container, router, auth) {
           <div class="list-group">
             <a href="#${renderLockersPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
               <span class="badge badge-locations-all"></span>
-              ${renderLocationsPage__views.all.title}
+              ${page__locations__views.all.title}
             </a>
           </div>
         </div>
@@ -53,9 +53,9 @@ function renderHomePage(app, $container, router, auth) {
           <h3>Payments</h3>
 
           <div class="list-group">
-            <a href="#${renderLocationsPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+            <a href="#${page__locations__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
               <span class="badge badge-locations-all"></span>
-              ${renderLocationsPage__views.all.title}
+              ${page__locations__views.all.title}
             </a>
           </div>
         </div>
@@ -68,9 +68,9 @@ function renderHomePage(app, $container, router, auth) {
           <h3>Stations</h3>
 
           <div class="list-group">
-            <a href="#${renderLocationsPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+            <a href="#${page__locations__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
               <span class="badge badge-locations-all"></span>
-              ${renderLocationsPage__views.all.title}
+              ${page__locations__views.all.title}
             </a>
           </div>
         </div>
@@ -79,9 +79,9 @@ function renderHomePage(app, $container, router, auth) {
           <h3>Key Fobs</h3>
 
           <div class="list-group">
-            <a href="#${renderLocationsPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+            <a href="#${page__locations__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
               <span class="badge badge-locations-all"></span>
-              ${renderLocationsPage__views.all.title}
+              ${page__locations__views.all.title}
             </a>
           </div>
         </div>
@@ -90,9 +90,9 @@ function renderHomePage(app, $container, router, auth) {
           <h3>Customers</h3>
 
           <div class="list-group">
-            <a href="#${renderLocationsPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+            <a href="#${page__locations__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
               <span class="badge badge-locations-all"></span>
-              ${renderLocationsPage__views.all.title}
+              ${page__locations__views.all.title}
             </a>
           </div>
         </div>
@@ -101,9 +101,9 @@ function renderHomePage(app, $container, router, auth) {
           <h3>Payments</h3>
 
           <div class="list-group">
-            <a href="#${renderLocationsPage__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
+            <a href="#${page__locations__views.all.fragment}?${query__objectToString({ resetState: 'yes' })}" class="list-group-item">
               <span class="badge badge-locations-all"></span>
-              ${renderLocationsPage__views.all.title}
+              ${page__locations__views.all.title}
             </a>
           </div>
         </div>

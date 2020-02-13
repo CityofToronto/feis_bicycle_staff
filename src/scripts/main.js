@@ -204,8 +204,8 @@ $(function () {
         return entity__locationDetails(app, $container, router, auth, opt, id, query);
       },
       ['entities/locations(/:opt)(/)'](opt, query) {
-        /* global entity__locations */
-        return entity__locations(app, $container, router, auth, opt, query);
+        /* global locationsEntityPage */
+        return locationsEntityPage(app, $container, router, auth, opt, query);
       },
 
       // ---
@@ -257,8 +257,8 @@ $(function () {
         return renderLocationDetailsPage(app, $container, router, auth, opt, id, query);
       },
       ['locations(/:opt)(/)'](opt, query) {
-        /* global renderLocationsPage */
-        return renderLocationsPage(app, $container, router, auth, opt, query);
+        /* global page__locations */
+        return page__locations(app, $container, router, auth, opt, query);
       },
 
       // ---
