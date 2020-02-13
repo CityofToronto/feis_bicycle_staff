@@ -2,7 +2,7 @@
 /* global ajaxes auth__checkLogin fixButtonLinks query__objectToString query__stringToObject
    renderAlert */
 /* global renderDatatable */
-/* global entityLocationInspections__columns page__locations__views renderLocationDetailsNotesPage__resetState
+/* global locationInspectionsEntity__columns page__locations__views renderLocationDetailsNotesPage__resetState
    renderLocationDetailsNotesPage__currentView */
 
 const renderLocationDetailsInspectionsPage__views = {
@@ -15,15 +15,15 @@ const renderLocationDetailsInspectionsPage__views = {
     definition: (auth, opt, id) => {
       const definition = {
         columns: [
-          entityLocationInspections__columns.action(renderLocationDetailsInspectionsPage__views.all.fragment(opt, id)),
+          locationInspectionsEntity__columns.action(renderLocationDetailsInspectionsPage__views.all.fragment(opt, id)),
 
-          entityLocationInspections__columns.date,
-          entityLocationInspections__columns.result(auth),
-          entityLocationInspections__columns.note,
+          locationInspectionsEntity__columns.date,
+          locationInspectionsEntity__columns.result(auth),
+          locationInspectionsEntity__columns.note,
 
-          entityLocationInspections__columns.__Status(auth),
+          locationInspectionsEntity__columns.__Status(auth),
 
-          Object.assign({}, entityLocationInspections__columns.location, { visible: false }),
+          Object.assign({}, locationInspectionsEntity__columns.location, { visible: false }),
         ],
 
         order: [
