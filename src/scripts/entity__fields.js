@@ -2,21 +2,20 @@
 
 /* exported entity__fields */
 const entity__fields = {
-  id: ({ model }) => ({
+  id: {
     title: 'ID',
     type: 'text',
     required: true,
     htmlAttr: { readonly: true },
-    postRender({ field }) {
-      function handler() {
-        $(`#${field.id}`).val(model.get('id'));
-      }
-      model.on('change:id', handler);
-      handler();
+    postRender({ model, field }) {
+      const $element = $(`#${field.id}`);
+      model.on('init change:id', () => {
+        $element.val(model.get('id'));
+      });
     }
-  }),
+  },
 
-  __Status: ({ auth, model }) => ({
+  __Status: (auth) => ({
     title: 'Status',
     type: 'radio',
     choices: {
@@ -32,64 +31,55 @@ const entity__fields = {
     },
     orientation: 'horizontal',
     required: true,
-    bindTo: '__Status',
-    postRender({ field }) {
-      function handler() {
-        $(`#${field.id}Element input[type="radio"][value="${model.get(field.bindTo)}"]`).prop('checked', true);
-      }
-      model.on('change:__Status', handler);
-    }
+    bindTo: '__Status'
   }),
 
-  __CreatedOn: ({ model }) => ({
+  __CreatedOn: {
     title: 'Created On',
     type: 'text',
     required: true,
     htmlAttr: { readOnly: true },
-    postRender({ field }) {
-      function handler() {
+    postRender({ model, field }) {
+      const $element = $(`#${field.id}`);
+      model.on(`init change:__CreatedOn`, () => {
         const momentDate = moment(model.get('__CreatedOn'));
         if (momentDate.isValid()) {
-          $(`#${field.id}`).val(momentDate.format('YYYY/MM/DD h:mm A'));
+          $element.val(momentDate.format('YYYY/MM/DD h:mm A'));
         } else {
-          $(`#${field.id}`).val('');
+          $element.val('');
         }
-      }
-      model.on(`change:__CreatedOn`, handler);
-      handler();
+      });
     }
-  }),
+  },
 
-  __ModifiedOn: ({ model }) => ({
+  __ModifiedOn: {
     title: 'Modified On',
     type: 'text',
     required: true,
     htmlAttr: { readOnly: true },
-    postRender({ field }) {
-      function handler() {
+    postRender({ model, field }) {
+      const $element = $(`#${field.id}`);
+      model.on(`init change:__ModifiedOn`, () => {
         const momentDate = moment(model.get('__ModifiedOn'));
         if (momentDate.isValid()) {
-          $(`#${field.id}`).val(momentDate.format('YYYY/MM/DD h:mm A'));
+          $element.val(momentDate.format('YYYY/MM/DD h:mm A'));
         } else {
-          $(`#${field.id}`).val('');
+          $element.val('');
         }
-      }
-      model.on(`change:__ModifiedOn`, handler);
-      handler();
+      });
     }
-  }),
+  },
 
-  __Owner: ({ model }) => ({
+  __Owner: {
     title: 'Modified By',
     type: 'text',
     required: true,
     htmlAttr: { readOnly: true },
-    postRender({ field }) {
-      function handler() {
-        $(`#${field.id}`).val(model.get('__Owner'));
-      }
-      model.on('change:__Owner', handler);
-      handler();
+    postRender({ model, field }) {
+      const $element = $(`#${field.id}`);
+      model.on('init change:__Owner', () => {
+        $element.val(model.get('__Owner'));
+      });
     }
-  })
+  }
 };

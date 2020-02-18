@@ -4,7 +4,7 @@
 const locationsEntity__views = {
   all: {
     breadcrumb: 'All',
-    title: 'All Locations',
+    title: 'All Locker Locations',
     fragment: 'entities/locations/all',
     stateSaveWebStorageKey: 'entity_locations_all',
 

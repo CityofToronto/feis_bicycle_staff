@@ -193,7 +193,7 @@ function renderEntitiesPage(app, $container, router, auth) {
     ];
     app.setBreadcrumb(breadcrumbs, true);
 
-    app.setTitle('Entities');
+    app.setTitle('Secure Bike Parking Entities');
   }).catch((error) => {
     console.error(error); // eslint-disable-line no-console
   });

@@ -1,39 +1,195 @@
 /* global $ Backbone */
-/* global ajaxes auth__checkLogin modal__showConfirm query__objectToString query__stringToObject
-   renderAlert toSnapShot */
+/* global ajaxes auth__checkLogin modal__showConfirm query__objectToString query__stringToObject renderAlert toSnapShot */
 /* global renderForm */
 /* global locationsEntity__views locationsEntity__fields */
 
 /* exported locationsEntityDetailsPage */
 function locationsEntityDetailsPage(app, $container, router, auth, opt, id, query) {
-  if (!(opt in locationsEntity__views)) {
-    const fragment = locationsEntity__views.all.fragment;
-    const query = query__objectToString({ resetState: 'yes' });
-    router.navigate(`${fragment}?${query}`, { trigger: true, replace: true });
-    return;
+
+  // ---
+  const ENTITY_VIEWS = locationsEntity__views;
+  const ENTITY_VIEW = ENTITY_VIEWS[opt];
+  const ENTITY_VIEW_DEFAULT = ENTITY_VIEWS.all;
+
+  const REDIRECT_TO_DEFAULT = ENTITY_VIEW.title;
+  const REDIRECT_TO_FRAGMENT_DEFAULT = ENTITY_VIEW.fragment;
+
+  const ITEM = 'Locker Location';
+  const ITEM_PLURAL = `${ITEM}s`;
+
+  const BREADCRUMBS = [
+    { name: app.name, link: '#home' },
+    { name: 'Entities', link: '#entities' },
+    { name: ITEM_PLURAL, link: `#${ENTITY_VIEW_DEFAULT.fragment}` },
+    { name: ENTITY_VIEW.breadcrumb, link: `#${ENTITY_VIEW.fragment}` }
+  ];
+
+  const DATAACCESS_URL = '/* @echo C3DATA_LOCATIONS_URL */';
+
+  const MODEL = Backbone.Model.extend({
+    defaults: {
+      municipality: 'Toronto',
+      province: 'Ontario',
+      __Status: 'Active'
+    }
+  });
+
+  const COT_FORM_SECTIONS = [{
+    title: 'Details',
+
+    rows: [{
+      fields: [
+        Object.assign({}, locationsEntity__fields.site_name, { className: 'col-md-4' }),
+        Object.assign({}, locationsEntity__fields.description, { className: 'col-md-8' })
+      ]
+    }, {
+      fields: [
+        Object.assign({}, locationsEntity__fields.civic_address, { className: 'col-md-8' })
+      ]
+    }, {
+      fields: [
+        locationsEntity__fields.municipality,
+        locationsEntity__fields.province(auth),
+        locationsEntity__fields.postal_code
+      ]
+    }]
+  },
+  {
+    title: 'Contacts',
+
+    rows: [{
+      fields: [
+        locationsEntity__fields.primary_contact_heading
+      ]
+    }, {
+      fields: [
+        Object.assign({}, locationsEntity__fields.primary_contact_first_name, { title: 'First Name', className: 'col-md-4' }),
+        Object.assign({}, locationsEntity__fields.primary_contact_last_name, { title: 'Last Name', className: 'col-md-4' })
+      ]
+    }, {
+      fields: [
+        Object.assign({}, locationsEntity__fields.primary_contact_email, { title: 'Email' }),
+        Object.assign({}, locationsEntity__fields.primary_contact_primary_phone, { title: 'Primary Phone' }),
+        Object.assign({}, locationsEntity__fields.primary_contact_alternate_phone, { title: 'Alternate Phone' })
+      ]
+    }, {
+      fields: [
+        locationsEntity__fields.alternate_contact_heading
+      ]
+    }, {
+      fields: [
+        Object.assign({}, locationsEntity__fields.alternate_contact_first_name, { title: 'First Name', className: 'col-md-4' }),
+        Object.assign({}, locationsEntity__fields.alternate_contact_last_name, { title: 'Last Name', className: 'col-md-4' })
+      ]
+    }, {
+      fields: [
+        Object.assign({}, locationsEntity__fields.alternate_contact_email, { title: 'Email' }),
+        Object.assign({}, locationsEntity__fields.alternate_contact_primary_phone, { title: 'Primary Phone' }),
+        Object.assign({}, locationsEntity__fields.alternate_contact_alternate_phone, { title: 'Alternate Phone' })
+      ]
+    }]
+  }, {
+    title: 'Latest Note',
+    id: 'latest_note',
+    postRender({ model, section }) {
+      const $element = $(`#${section.id}`);
+      model.on('init change:id', () => {
+        if (model.isNew()) {
+          $element.hide();
+        } else {
+          $element.show();
+        }
+      });
+    },
+
+    rows: [{
+      fields: [
+        Object.assign({}, locationsEntity__fields.latest_note__date, { title: 'Date', className: 'col-md-4' })
+      ]
+    }, {
+      fields: [
+        Object.assign({}, locationsEntity__fields.latest_note__note, { title: 'Note' })
+      ]
+    }]
+  }, {
+    title: 'Latest Inspection',
+    id: 'latest_inspection',
+    postRender({ model, section }) {
+      const $element = $(`#${section.id}`);
+      model.on('init change:id', () => {
+        if (model.isNew()) {
+          $element.hide();
+        } else {
+          $element.show();
+        }
+      });
+    },
+
+    rows: [
+      {
+        fields: [
+          Object.assign({}, locationsEntity__fields.latest_inspection__date, { title: 'Date', className: 'col-md-4' }),
+          Object.assign({}, locationsEntity__fields.latest_inspection__result, { title: 'Result', className: 'col-md-4' })
+        ]
+      },
+      {
+        fields: [
+          Object.assign({}, locationsEntity__fields.latest_inspection__note, { title: 'Note' })
+        ]
+      }
+    ]
+  },
+  {
+    title: 'Meta',
+    id: 'meta',
+    postRender({ model, section }) {
+      const $element = $(`#${section.id}`);
+      model.on('init change:id', () => {
+        if (model.isNew()) {
+          $element.hide();
+        } else {
+          $element.show();
+        }
+      });
+    },
+
+    rows: [
+      {
+        fields: [
+          Object.assign({}, locationsEntity__fields.id, { className: 'col-md-8' }),
+          Object.assign({}, locationsEntity__fields.__Status(auth), { className: 'col-md-4' })
+        ]
+      },
+      {
+        fields: [
+          locationsEntity__fields.__CreatedOn,
+          locationsEntity__fields.__ModifiedOn,
+          locationsEntity__fields.__Owner
+        ]
+      }
+    ]
+  }];
+  // ---
+
+  if (!(opt in ENTITY_VIEWS)) {
+    return router.navigate(`${ENTITY_VIEW_DEFAULT.fragment}?${query__objectToString({ resetState: 'yes' })}`,
+      { trigger: true, replace: true });
+    // EXIT
   }
 
   return auth__checkLogin(auth).then((isLoggedIn) => {
     if (!isLoggedIn) {
       return router.navigateToLoginPage();
+      // EXIT
     }
 
-    const currentLocationView = locationsEntity__views[opt];
-
     const {
-      redirectTo = 'Locations',
-      redirectToFragment = currentLocationView.fragment
+      redirectTo = REDIRECT_TO_DEFAULT,
+      redirectToFragment = REDIRECT_TO_FRAGMENT_DEFAULT
     } = query__stringToObject(query);
 
     $container.empty();
     const $containerTop = $('<div></div>').appendTo($container);
-
-    const breadcrumbs = [
-      { name: app.name, link: '#home' },
-      { name: 'Entities', link: '#entities' },
-      { name: 'Locations', link: `#${locationsEntity__views.all.fragment}` },
-      { name: currentLocationView.breadcrumb, link: `#${currentLocationView.fragment}` }
-    ];
 
     return Promise.resolve().then(() => {
       if (id !== 'new') {
@@ -45,19 +201,13 @@ function locationsEntityDetailsPage(app, $container, router, auth, opt, id, quer
           },
           contentType: 'application/json; charset=utf-8',
           method: 'GET',
-          url: `/* @echo C3DATA_LOCATIONS_URL */('${id}')`
+          url: `${DATAACCESS_URL}('${id}')`
         });
       }
 
       return { data: {} };
     }).then(({ data }) => {
-      const Model = Backbone.Model.extend({
-        defaults: {
-          municipality: 'Toronto',
-          province: 'Ontario',
-        }
-      });
-      const model = new Model(data);
+      const model = new MODEL(data);
 
       let snapShot = toSnapShot(model.toJSON());
 
@@ -79,10 +229,9 @@ function locationsEntityDetailsPage(app, $container, router, auth, opt, id, quer
           }).then(({ data, textStatus, jqXHR }) => {
             snapShot = toSnapShot(data);
 
-            router.navigate(`${currentLocationView.fragment}/${data.id}`, { trigger: false, replace: true });
+            router.navigate(`${ENTITY_VIEW.fragment}/${data.id}`, { trigger: false, replace: true });
 
-            breadcrumbs.splice(breadcrumbs.length - 1, 1, { name: data.site_name, link: `#${currentLocationView.fragment}/${data.id}` });
-            app.setBreadcrumb(breadcrumbs, true);
+            app.setBreadcrumb(BREADCRUMBS.concat({ name: data.site_name, link: `#${ENTITY_VIEW.fragment}/${data.id}` }), true);
             app.setTitle(data.site_name);
 
             return { data, textStatus, jqXHR };
@@ -92,187 +241,34 @@ function locationsEntityDetailsPage(app, $container, router, auth, opt, id, quer
           });
         },
 
-        sections: [
-          {
-            title: 'Details',
+        sections: COT_FORM_SECTIONS,
 
-            rows: [
-              {
-                fields: [
-                  Object.assign({}, locationsEntity__fields.site_name, { className: 'col-md-4' }),
-                  Object.assign({}, locationsEntity__fields.description, { className: 'col-md-8' })
-                ]
-              },
-              {
-                fields: [
-                  Object.assign({}, locationsEntity__fields.civic_address, { className: 'col-md-8' })
-                ]
-              },
-              {
-                fields: [
-                  locationsEntity__fields.municipality,
-                  locationsEntity__fields.province({ auth, model }),
-                  locationsEntity__fields.postal_code
-                ]
-              }
-            ]
-          },
-          {
-            title: 'Contacts',
-
-            rows: [
-              {
-                fields: [
-                  locationsEntity__fields.primary_contact_heading
-                ]
-              },
-              {
-                fields: [
-                  Object.assign({}, locationsEntity__fields.primary_contact_first_name, { title: 'First Name', className: 'col-md-4' }),
-                  Object.assign({}, locationsEntity__fields.primary_contact_last_name, { title: 'Last Name', className: 'col-md-4' })
-                ]
-              },
-              {
-                fields: [
-                  Object.assign({}, locationsEntity__fields.primary_contact_email, { title: 'Email' }),
-                  Object.assign({}, locationsEntity__fields.primary_contact_primary_phone, { title: 'Primary Phone' }),
-                  Object.assign({}, locationsEntity__fields.primary_contact_alternate_phone, { title: 'Alternate Phone' })
-                ]
-              },
-              {
-                fields: [
-                  locationsEntity__fields.alternate_contact_heading
-                ]
-              },
-              {
-                fields: [
-                  Object.assign({}, locationsEntity__fields.alternate_contact_first_name, { title: 'First Name', className: 'col-md-4' }),
-                  Object.assign({}, locationsEntity__fields.alternate_contact_last_name, { title: 'Last Name', className: 'col-md-4' })
-                ]
-              },
-              {
-                fields: [
-                  Object.assign({}, locationsEntity__fields.alternate_contact_email, { title: 'Email' }),
-                  Object.assign({}, locationsEntity__fields.alternate_contact_primary_phone, { title: 'Primary Phone' }),
-                  Object.assign({}, locationsEntity__fields.alternate_contact_alternate_phone, { title: 'Alternate Phone' })
-                ]
-              }
-            ]
-          },
-          {
-            title: 'Latest Note',
-            id: 'latest_note',
-            postRender({ model, section }) {
-              function handler() {
-                if (model.isNew()) {
-                  $(`#${section.id}`).hide();
-                } else {
-                  $(`#${section.id}`).show();
-                }
-              }
-              handler();
-              model.on(`change:${model.idAttribute}`, handler);
-            },
-
-            rows: [
-              {
-                fields: [
-                  Object.assign({}, locationsEntity__fields.latest_note__date({ auth, model }), { title: 'Date', className: 'col-md-4' })
-                ]
-              },
-              {
-                fields: [
-                  Object.assign({}, locationsEntity__fields.latest_note__note({ auth, model }), { title: 'Note' })
-                ]
-              }
-            ]
-          },
-          {
-            title: 'Latest Inspection',
-            id: 'latest_inspection',
-            postRender({ model, section }) {
-              function handler() {
-                if (model.isNew()) {
-                  $(`#${section.id}`).hide();
-                } else {
-                  $(`#${section.id}`).show();
-                }
-              }
-              handler();
-              model.on(`change:${model.idAttribute}`, handler);
-            },
-
-            rows: [
-              {
-                fields: [
-                  Object.assign({}, locationsEntity__fields.latest_inspection__date({ auth, model }), { title: 'Date', className: 'col-md-4' }),
-                  Object.assign({}, locationsEntity__fields.latest_inspection__result({ auth, model }), { title: 'Result', className: 'col-md-4' })
-                ]
-              },
-              {
-                fields: [
-                  Object.assign({}, locationsEntity__fields.latest_inspection__note({ auth, model }), { title: 'Note' })
-                ]
-              }
-            ]
-          },
-          {
-            title: 'Meta',
-            id: 'meta',
-            postRender({ model, section }) {
-              function handler() {
-                if (model.isNew()) {
-                  $(`#${section.id}`).hide();
-                } else {
-                  $(`#${section.id}`).show();
-                }
-              }
-              handler();
-              model.on(`change:${model.idAttribute}`, handler);
-            },
-
-            rows: [
-              {
-                fields: [
-                  Object.assign({}, locationsEntity__fields.id({ auth, model }), { className: 'col-md-8' }),
-                  Object.assign({}, locationsEntity__fields.__Status({ auth, model }), { className: 'col-md-4' })
-                ]
-              },
-              {
-                fields: [
-                  locationsEntity__fields.__CreatedOn({ auth, model }),
-                  locationsEntity__fields.__ModifiedOn({ auth, model }),
-                  locationsEntity__fields.__Owner({ auth, model })
-                ]
-              }
-            ]
-          }
-        ]
+        postRender: ({ model }) => {
+          model.trigger('init');
+        }
       };
 
       return Promise.resolve().then(() => {
         return renderForm($('<div></div>').appendTo($container), definition, model, {
           auth,
-          url: '/* @echo C3DATA_LOCATIONS_URL */',
+          url: DATAACCESS_URL,
 
-          saveButtonLabel: (model) => model.isNew() ? 'Create Location' : 'Update Location',
+          saveButtonLabel: (model) => model.isNew() ? `Create ${ITEM}` : `Update ${ITEM}`,
 
           cancelButtonLabel: 'Cancel',
-          cancelButtonFragment: currentLocationView.fragment,
+          cancelButtonFragment: ENTITY_VIEW.fragment,
 
-          removeButtonLabel: 'Remove Location',
+          removeButtonLabel: `Remove ${ITEM}`,
           removePromptValue: 'DELETE'
         });
       }).then(() => {
         $containerTop.html(`<p><a href="#${redirectToFragment}">Back to ${redirectTo}</a></p>`);
 
         if (id === 'new') {
-          breadcrumbs.push({ name: 'New', link: `#${currentLocationView.fragment}/new` });
-          app.setBreadcrumb(breadcrumbs, true);
-          app.setTitle('New Location');
+          app.setBreadcrumb(BREADCRUMBS.concat({ name: 'New', link: `#${ENTITY_VIEW.fragment}/new` }), true);
+          app.setTitle(`New ${ITEM}`);
         } else {
-          breadcrumbs.push({ name: data.site_name, link: `#${currentLocationView.fragment}/${data.id}` });
-          app.setBreadcrumb(breadcrumbs, true);
+          app.setBreadcrumb(BREADCRUMBS.concat({ name: data.site_name, link: `#${ENTITY_VIEW.fragment}/${data.id}` }), true);
           app.setTitle(data.site_name);
         }
 
@@ -286,8 +282,7 @@ function locationsEntityDetailsPage(app, $container, router, auth, opt, id, quer
         };
       });
     }, (error) => {
-      breadcrumbs.push({ name: 'Error' });
-      app.setBreadcrumb(breadcrumbs, true);
+      app.setBreadcrumb(BREADCRUMBS.concat({ name: 'Error' }), true);
       app.setTitle('An Error has Occured');
 
       renderAlert($container, '<p>An error occured while fetching data.</p>', {

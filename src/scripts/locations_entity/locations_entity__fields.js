@@ -28,7 +28,7 @@ const locationsEntity__fields = {
     required: false,
     bindTo: 'municipality'
   },
-  province: ({ auth }) => ({
+  province: (auth) => ({
     title: 'Province',
     type: 'dropdown',
     choices: {
@@ -125,83 +125,78 @@ const locationsEntity__fields = {
     bindTo: 'alternate_contact_alternate_phone'
   },
 
-  latest_note__date: ({ model }) => ({
+  latest_note__date: {
     title: 'Latest Note Date',
     type: 'text',
     required: false,
     htmlAttr: { readonly: true },
-    postRender({ field }) {
-      function handler() {
+    postRender({ model, field }) {
+      const $element = $(`#${field.id}`);
+      model.on('init change:latest_note__date', () => {
         const momentDate = moment(model.get('latest_note__date'));
         if (momentDate.isValid()) {
-          $(`#${field.id}`).val(momentDate.format('YYYY/MM/DD h:mm A'));
+          $element.val(momentDate.format('YYYY/MM/DD h:mm A'));
         } else {
-          $(`#${field.id}`).val('');
+          $element.val('');
         }
-      }
-      model.on(`change:latest_note__date`, handler);
-      handler();
+      });
     }
-  }),
-  latest_note__note: ({ model }) => ({
+  },
+  latest_note__note: {
     title: 'Latest Note',
     type: 'textarea',
     rows: 5,
     required: false,
     htmlAttr: { readonly: true },
-    postRender({ field }) {
-      function handler() {
-        $(`#${field.id}`).val(model.get('latest_note__note'));
-      }
-      model.on('change:latest_note__note', handler);
-      handler();
+    postRender({ model, field }) {
+      const $element = $(`#${field.id}`);
+      model.on('init change:latest_note__note', () => {
+        $element.val(model.get('latest_note__note'));
+      });
     }
-  }),
+  },
 
-  latest_inspection__date: ({ model }) => ({
+  latest_inspection__date: {
     title: 'Latest Inspection Date',
     type: 'text',
     required: false,
     htmlAttr: { readonly: true },
-    postRender({ field }) {
-      function handler() {
+    postRender({ model, field }) {
+      const $element = $(`#${field.id}`);
+      model.on('init change:latest_inspection__date', () => {
         const momentDate = moment(model.get('latest_inspection__date'));
         if (momentDate.isValid()) {
-          $(`#${field.id}`).val(momentDate.format('YYYY/MM/DD h:mm A'));
+          $element.val(momentDate.format('YYYY/MM/DD h:mm A'));
         } else {
-          $(`#${field.id}`).val('');
+          $element.val('');
         }
-      }
-      model.on(`change:latest_inspection__date`, handler);
-      handler();
+      });
     }
-  }),
-  latest_inspection__result: ({ model }) => ({
+  },
+  latest_inspection__result: {
     title: 'Latest Inspection Result',
     type: 'text',
     required: false,
     htmlAttr: { readonly: true },
-    postRender({ field }) {
-      function handler() {
-        $(`#${field.id}`).val(model.get('latest_inspection__result'));
-      }
-      model.on('change:latest_inspection__result', handler);
-      handler();
+    postRender({ model, field }) {
+      const $element = $(`#${field.id}`);
+      model.on('init change:latest_inspection__result', () => {
+        $element.val(model.get('latest_inspection__result'));
+      });
     }
-  }),
-  latest_inspection__note: ({ model }) => ({
+  },
+  latest_inspection__note: {
     title: 'Latest Inspection Note',
     type: 'textarea',
     rows: 5,
     htmlAttr: { readonly: true },
-    postRender({ field }) {
-      function handler() {
-        $(`#${field.id}`).val(model.get('latest_inspection__note'));
-      }
-      model.on('change:latest_inspection__note', handler);
-      handler();
+    postRender({ model, field }) {
+      const $element = $(`#${field.id}`);
+      model.on('change:latest_inspection__note', () => {
+        $element.val(model.get('latest_inspection__note'));
+      });
     }
-  }),
+  },
 
   id: entity__fields.id,
   __Status: entity__fields.__Status,

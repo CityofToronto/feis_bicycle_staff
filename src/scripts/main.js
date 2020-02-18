@@ -11,7 +11,7 @@
 $(function () {
 
   // Configure App
-  const app = new cot_app('Bicycle Parking', {
+  const app = new cot_app('Secure Bike Parking', {
     hasContentTop: false,
     hasContentBottom: false,
     hasContentRight: false,
@@ -253,12 +253,12 @@ $(function () {
         return renderLocationDetailsNotesPage(app, $container, router, auth, opt1, id1, opt2, query);
       },
       ['locations/:opt/:id(/)'](opt, id, query) {
-        /* global renderLocationDetailsPage */
-        return renderLocationDetailsPage(app, $container, router, auth, opt, id, query);
+        /* global locationsDetailsPage */
+        return locationsDetailsPage(app, $container, router, auth, opt, id, query);
       },
       ['locations(/:opt)(/)'](opt, query) {
-        /* global page__locations */
-        return page__locations(app, $container, router, auth, opt, query);
+        /* global locationsPage */
+        return locationsPage(app, $container, router, auth, opt, query);
       },
 
       // ---
