@@ -28,7 +28,7 @@ const locationsEntity__fields = {
     required: false,
     bindTo: 'municipality'
   },
-  province: (auth) => ({
+  province: ({ auth }) => ({
     title: 'Province',
     type: 'dropdown',
     choices: {

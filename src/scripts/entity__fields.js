@@ -15,7 +15,7 @@ const entity__fields = {
     }
   },
 
-  __Status: (auth) => ({
+  __Status: ({ auth }) => ({
     title: 'Status',
     type: 'radio',
     choices: {

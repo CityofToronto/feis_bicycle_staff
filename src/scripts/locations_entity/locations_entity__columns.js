@@ -40,7 +40,7 @@ const locationsEntity__columns = {
     type: 'string',
     className: 'minWidth'
   },
-  province: (auth) => ({
+  province: ({ auth }) => ({
     title: 'Province',
     data: 'province',
     type: 'string',
