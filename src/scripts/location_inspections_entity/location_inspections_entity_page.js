@@ -2,8 +2,8 @@
 /* global renderDatatable */
 /* global locationInspectionsEntity__views */
 
-/* exported renderEntityLocationInspectionsPage */
-function renderEntityLocationInspectionsPage(app, $container, router, auth, opt, query) {
+/* exported locationInspectionsEntityPage */
+function locationInspectionsEntityPage(app, $container, router, auth, opt, query) {
 
   // ---
   const ENTITY_VIEWS = locationInspectionsEntity__views;

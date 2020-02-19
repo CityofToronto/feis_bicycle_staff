@@ -3,8 +3,8 @@
 /* global renderForm */
 /* global locationInspectionsEntity__views entityLocationInspectionDetails__fields */
 
-/* exported renderEntityLocationInspectionDetailsPage */
-function renderEntityLocationInspectionDetailsPage(app, $container, router, auth, opt, id, query) {
+/* exported locatioInspectionsEntityDetailsPage */
+function locatioInspectionsEntityDetailsPage(app, $container, router, auth, opt, id, query) {
 
   // ---
   const ENTITY_VIEWS = locationInspectionsEntity__views;

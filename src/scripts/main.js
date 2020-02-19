@@ -178,12 +178,12 @@ $(function () {
       // ---
 
       ['entities/location_inspections/:opt/:id(/)'](opt, id, query) {
-        /* global renderEntityLocationInspectionDetailsPage */
-        return renderEntityLocationInspectionDetailsPage(app, $container, router, auth, opt, id, query);
+        /* global locatioInspectionsEntityDetailsPage */
+        return locatioInspectionsEntityDetailsPage(app, $container, router, auth, opt, id, query);
       },
       ['entities/location_inspections(/:opt)(/)'](opt, query) {
-        /* global renderEntityLocationInspectionsPage */
-        return renderEntityLocationInspectionsPage(app, $container, router, auth, opt, query);
+        /* global locationInspectionsEntityPage */
+        return locationInspectionsEntityPage(app, $container, router, auth, opt, query);
       },
 
       // ---
