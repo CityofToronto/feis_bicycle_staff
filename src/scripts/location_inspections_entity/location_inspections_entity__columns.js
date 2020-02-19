@@ -34,7 +34,7 @@ const locationInspectionsEntity__columns = {
       }
     }
   },
-  result: ({auth}) => ({
+  result: ({ auth }) => ({
     title: 'Result',
     className: 'minWidth',
     data: 'result',

@@ -1,39 +1,113 @@
-/* global $ Backbone moment */
-/* global ajaxes auth__checkLogin modal__showConfirm query__objectToString query__stringToObject
-   renderAlert toSnapShot */
+/* global $ Backbone */
+/* global ajaxes auth__checkLogin modal__showConfirm query__objectToString query__stringToObject renderAlert toSnapShot */
 /* global renderForm */
 /* global locationInspectionsEntity__views entityLocationInspectionDetails__fields */
 
 /* exported renderEntityLocationInspectionDetailsPage */
 function renderEntityLocationInspectionDetailsPage(app, $container, router, auth, opt, id, query) {
-  if (!(opt in locationInspectionsEntity__views)) {
-    const fragment = locationInspectionsEntity__views.all.fragment;
-    const query = query__objectToString({ resetState: 'yes' });
-    router.navigate(`${fragment}?${query}`, { trigger: true, replace: true });
-    return;
+
+  // ---
+  const ENTITY_VIEWS = locationInspectionsEntity__views;
+  const ENTITY_VIEW = ENTITY_VIEWS[opt];
+  const ENTITY_VIEW_DEFAULT = ENTITY_VIEWS.all;
+
+  const REDIRECT_TO_DEFAULT = ENTITY_VIEW.title;
+  const REDIRECT_TO_FRAGMENT_DEFAULT = ENTITY_VIEW.fragment;
+
+  const ITEM = 'Locker Location Inspection';
+  const ITEM_PLURAL = `${ITEM}s`;
+
+  const BREADCRUMBS = [
+    { name: app.name, link: '#home' },
+    { name: 'Entities', link: '#entities' },
+    { name: ITEM_PLURAL, link: `#${ENTITY_VIEW_DEFAULT.fragment}` },
+    { name: ENTITY_VIEW.breadcrumb, link: `#${ENTITY_VIEW.fragment}` }
+  ];
+
+  const DATAACCESS_URL = '/* @echo C3DATA_LOCATION_INSPECTIONS_URL */';
+
+  const MODEL = Backbone.Model.extend({
+    defaults: {
+      municipality: 'Toronto',
+      province: 'Ontario',
+      __Status: 'Active'
+    }
+  });
+
+  const COT_FORM_SECTIONS = [
+    {
+      title: 'Details',
+
+      rows: [
+        {
+          fields: [
+            entityLocationInspectionDetails__fields.location({ auth }),
+            entityLocationInspectionDetails__fields.date,
+            entityLocationInspectionDetails__fields.result({ auth })
+          ]
+        },
+        {
+          fields: [
+            entityLocationInspectionDetails__fields.note
+          ]
+        }
+      ]
+    },
+    {
+      title: 'Details',
+      id: 'details',
+      postRender({ model, section }) {
+        function handler() {
+          if (model.isNew()) {
+            $(`#${section.id}`).hide();
+          } else {
+            $(`#${section.id}`).show();
+          }
+        }
+        handler();
+        model.on(`change:${model.idAttribute}`, handler);
+      },
+
+      rows: [
+        {
+          fields: [
+            Object.assign({}, entityLocationInspectionDetails__fields.id, { className: 'col-md-8' }),
+            Object.assign({}, entityLocationInspectionDetails__fields.__Status({ auth }), { className: 'col-md-4' })
+          ]
+        },
+        {
+          fields: [
+            entityLocationInspectionDetails__fields.__CreatedOn,
+            entityLocationInspectionDetails__fields.__ModifiedOn,
+            entityLocationInspectionDetails__fields.__Owner
+          ]
+        }
+      ]
+    }
+  ];
+  // ---
+
+  if (!(opt in ENTITY_VIEWS)) {
+    return router.navigate(`${ENTITY_VIEW_DEFAULT.fragment}?${query__objectToString({ resetState: 'yes' })}`,
+      { trigger: true, replace: true });
+    // EXIT
   }
 
   return auth__checkLogin(auth).then((isLoggedIn) => {
     if (!isLoggedIn) {
       return router.navigateToLoginPage();
+      // EXIT
     }
 
-    const currentLocationInspectionView = locationInspectionsEntity__views[opt];
-
     const {
-      redirectTo = 'Location Inspections',
-      redirectToFragment = currentLocationInspectionView.fragment
+      redirectTo = REDIRECT_TO_DEFAULT,
+      redirectToFragment = REDIRECT_TO_FRAGMENT_DEFAULT
     } = query__stringToObject(query);
 
     $container.empty();
-    const $containerTop = $('<div></div>').appendTo($container);
 
-    const breadcrumbs = [
-      { name: app.name, link: '#home' },
-      { name: 'Entities', link: '#entities' },
-      { name: 'Location Inspections', link: `#${locationInspectionsEntity__views.all.fragment}` },
-      { name: currentLocationInspectionView.breadcrumb, link: `#${currentLocationInspectionView.fragment}` }
-    ];
+    // ADD REDIRECT
+    $container.append(`<p><a href="#${redirectToFragment}">Back to ${redirectTo}</a></p>`);
 
     return Promise.resolve().then(() => {
       if (id !== 'new') {
@@ -45,30 +119,19 @@ function renderEntityLocationInspectionDetailsPage(app, $container, router, auth
           },
           contentType: 'application/json; charset=utf-8',
           method: 'GET',
-          url: `/* @echo C3DATA_LOCATION_INSPECTIONS_URL */('${id}')`
+          url: `${DATAACCESS_URL}('${id}')`
         });
       }
 
       return { data: {} };
     }).then(({ data }) => {
-      const Model = Backbone.Model.extend({
-        defaults: {
-          date: moment().format('YYYY/MM/DD h:mm A'),
-          result: 'OK'
-        }
-      });
-      const model = new Model(data);
+      const model = new MODEL(data);
 
       let snapShot = toSnapShot(model.toJSON());
 
       const definition = {
         successCore(data, options = {}) {
           const { auth, id, url } = options;
-
-          const momentDate = moment(data.date, 'YYYY/MM/DD h:mm A');
-          if (momentDate.isValid()) {
-            data.date = momentDate.format();
-          }
 
           return ajaxes({
             url: `${url}${id ? `('${id}')` : ''}`,
@@ -84,11 +147,10 @@ function renderEntityLocationInspectionDetailsPage(app, $container, router, auth
           }).then(({ data, textStatus, jqXHR }) => {
             snapShot = toSnapShot(data);
 
-            router.navigate(`${currentLocationInspectionView.fragment}/${data.id}`, { trigger: false, replace: true });
+            router.navigate(`${ENTITY_VIEW.fragment}/${data.id}`, { trigger: false, replace: true });
 
-            breadcrumbs.splice(breadcrumbs.length - 1, 1, { name: data.date, link: `#${currentLocationInspectionView.fragment}/${data.id}` });
-            app.setBreadcrumb(breadcrumbs, true);
-            app.setTitle(data.date);
+            app.setBreadcrumb(BREADCRUMBS.concat({ name: data.site_name, link: `#${ENTITY_VIEW.fragment}/${data.id}` }), true);
+            app.setTitle(data.site_name);
 
             return { data, textStatus, jqXHR };
           }).catch((error) => {
@@ -97,85 +159,39 @@ function renderEntityLocationInspectionDetailsPage(app, $container, router, auth
           });
         },
 
-        sections: [
-          {
-            title: 'Details',
+        sections: COT_FORM_SECTIONS,
 
-            rows: [
-              {
-                fields: [
-                  entityLocationInspectionDetails__fields.location(auth),
-                  entityLocationInspectionDetails__fields.date,
-                  entityLocationInspectionDetails__fields.result(auth)
-                ]
-              },
-              {
-                fields: [
-                  entityLocationInspectionDetails__fields.note
-                ]
-              }
-            ]
-          },
-          {
-            title: 'Details',
-            id: 'details',
-            postRender({ model, section }) {
-              function handler() {
-                if (model.isNew()) {
-                  $(`#${section.id}`).hide();
-                } else {
-                  $(`#${section.id}`).show();
-                }
-              }
-              handler();
-              model.on(`change:${model.idAttribute}`, handler);
-            },
-
-            rows: [
-              {
-                fields: [
-                  Object.assign({}, entityLocationInspectionDetails__fields.id(model), { className: 'col-md-8' }),
-                  Object.assign({}, entityLocationInspectionDetails__fields.__Status(auth, model), { className: 'col-md-4' })
-                ]
-              },
-              {
-                fields: [
-                  entityLocationInspectionDetails__fields.__CreatedOn(model),
-                  entityLocationInspectionDetails__fields.__ModifiedOn(model),
-                  entityLocationInspectionDetails__fields.__Owner(model)
-                ]
-              }
-            ]
-          }
-        ]
+        postRender: ({ model }) => {
+          model.trigger('init');
+        }
       };
 
+      // ADD COT FORM
       return Promise.resolve().then(() => {
         return renderForm($('<div></div>').appendTo($container), definition, model, {
           auth,
-          url: '/* @echo C3DATA_LOCATION_INSPECTIONS_URL */',
+          url: DATAACCESS_URL,
 
-          saveButtonLabel: (model) => model.isNew() ? 'Create Location Inspection' : 'Update Location Inspection',
+          saveButtonLabel: (model) => model.isNew() ? `Create ${ITEM}` : `Update ${ITEM}`,
 
           cancelButtonLabel: 'Cancel',
-          cancelButtonFragment: currentLocationInspectionView.fragment,
+          cancelButtonFragment: ENTITY_VIEW.fragment,
 
-          removeButtonLabel: 'Remove Location Inspection',
+          removeButtonLabel: `Remove ${ITEM}`,
           removePromptValue: 'DELETE'
         });
       }).then(() => {
-        $containerTop.html(`<p><a href="#${redirectToFragment}">Back to ${redirectTo}</a></p>`);
 
+        // SET TITLE AND BREADCRUMB
         if (id === 'new') {
-          breadcrumbs.push({ name: 'New', link: `#${currentLocationInspectionView.fragment}/new` });
-          app.setBreadcrumb(breadcrumbs, true);
-          app.setTitle('New Location Inspection');
+          app.setBreadcrumb(BREADCRUMBS.concat({ name: 'New', link: `#${ENTITY_VIEW.fragment}/new` }), true);
+          app.setTitle(`New ${ITEM}`);
         } else {
-          breadcrumbs.push({ name: data.date, link: `#${currentLocationInspectionView.fragment}/${data.id}` });
-          app.setBreadcrumb(breadcrumbs, true);
-          app.setTitle(data.date);
+          app.setBreadcrumb(BREADCRUMBS.concat({ name: data.site_name, link: `#${ENTITY_VIEW.fragment}/${data.id}` }), true);
+          app.setTitle(data.site_name);
         }
 
+        // RETURN CLEANUP FUNCTION
         return () => {
           if (snapShot !== toSnapShot(model.toJSON())) {
             return modal__showConfirm('There may be one or more unsaved data. Do you want to continue?', {
@@ -186,8 +202,9 @@ function renderEntityLocationInspectionDetailsPage(app, $container, router, auth
         };
       });
     }, (error) => {
-      breadcrumbs.push({ name: 'Error' });
-      app.setBreadcrumb(breadcrumbs, true);
+
+      // SET TITLE AND BREADCRUMB
+      app.setBreadcrumb(BREADCRUMBS.concat({ name: 'Error' }), true);
       app.setTitle('An Error has Occured');
 
       renderAlert($container, '<p>An error occured while fetching data.</p>', {

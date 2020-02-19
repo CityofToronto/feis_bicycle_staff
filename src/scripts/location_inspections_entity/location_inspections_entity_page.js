@@ -1,69 +1,81 @@
-/* global $ */
 /* global auth__checkLogin query__objectToString query__stringToObject */
 /* global renderDatatable */
 /* global locationInspectionsEntity__views */
 
 /* exported renderEntityLocationInspectionsPage */
 function renderEntityLocationInspectionsPage(app, $container, router, auth, opt, query) {
-  if (!(opt in locationInspectionsEntity__views)) {
-    const fragment = locationInspectionsEntity__views.all.fragment;
-    const query = query__objectToString({ resetState: 'yes' });
-    router.navigate(`${fragment}?${query}`, { trigger: true, replace: true });
-    return;
+
+  // ---
+  const ENTITY_VIEWS = locationInspectionsEntity__views;
+  const DEFAULT_ENTITY_VIEW = ENTITY_VIEWS.all;
+  const CURRENT_ENTITY_VIEW = ENTITY_VIEWS[opt];
+
+  const DEFAULT_REDIRECT_TO = 'Entities';
+  const DEFAULT_REDIRECT_TO_FRAGMENT = 'entities';
+
+  const ITEM = 'Locker Location Inspection';
+  const PLURAL_ITEM = `${ITEM}s`;
+
+  const BREADCRUMBS = [
+    { name: app.name, link: '#home' },
+    { name: 'Entities', link: '#entities' },
+    { name: PLURAL_ITEM, link: `#${DEFAULT_ENTITY_VIEW.fragment}` },
+    { name: CURRENT_ENTITY_VIEW.breadcrumb, link: `#${CURRENT_ENTITY_VIEW.fragment}` }
+  ];
+
+  const DATAACCESS_URL = '/* @echo C3DATA_LOCATION_INSPECTIONS_URL */';
+  // ---
+
+  if (!(opt in ENTITY_VIEWS)) {
+    return router.navigate(`${DEFAULT_ENTITY_VIEW.fragment}?${query__objectToString({ resetState: 'yes' })}`,
+      { trigger: true, replace: true });
+    // EXIT
   }
 
   return auth__checkLogin(auth).then((isLoggedIn) => {
     if (!isLoggedIn) {
       return router.navigateToLoginPage();
+      // EXIT
     }
 
-    $container.empty();
-
-    const $containerTop = $('<div></div>').appendTo($container);
-    const currentLocationView = locationInspectionsEntity__views[opt];
-
     const {
-      redirectTo = 'Entities',
-      redirectToFragment = 'entities',
+      redirectTo = DEFAULT_REDIRECT_TO,
+      redirectToFragment = DEFAULT_REDIRECT_TO_FRAGMENT,
       resetState
     } = query__stringToObject(query);
 
+    $container.empty();
+
+    // SET TITLE AND BREADCRUMB
+    app.setBreadcrumb(BREADCRUMBS, true);
+    app.setTitle(PLURAL_ITEM);
+
+    // RESET SESSION STORAGE
     if (resetState === 'yes') {
-      sessionStorage.removeItem(currentLocationView.stateSaveWebStorageKey);
+      sessionStorage.removeItem(CURRENT_ENTITY_VIEW.stateSaveWebStorageKey);
     }
 
-    const definition = currentLocationView.definition(auth, opt);
+    // ADD REDIRECT AND SUB TITLE
+    $container.append(`<p><a href="#${redirectToFragment}">Back to ${redirectTo}</a></p>`);
+    $container.append(`<h2>${CURRENT_ENTITY_VIEW.title}</h2>`);
 
-    const views = Object.keys(locationInspectionsEntity__views).map((key) => ({
-      title: locationInspectionsEntity__views[key].title,
-      fragment: `${locationInspectionsEntity__views[key].fragment}?${query__objectToString({ resetState: 'yes' })}`,
-      isCurrent: key === opt
-    }));
-
+    // ADD DATATABLE
     return Promise.resolve().then(() => {
-      return renderDatatable($container, definition, {
+      return renderDatatable($container, CURRENT_ENTITY_VIEW.definition(auth), {
         auth,
-        url: '/* @echo C3DATA_LOCATION_INSPECTIONS_URL */',
+        url: DATAACCESS_URL,
 
-        newButtonLabel: 'New Location Inspection',
-        newButtonFragment: `${currentLocationView.fragment}/new`,
+        newButtonLabel: `New ${ITEM}`,
+        newButtonFragment: `${CURRENT_ENTITY_VIEW.fragment}/new`,
 
-        stateSaveWebStorageKey: currentLocationView.stateSaveWebStorageKey,
+        stateSaveWebStorageKey: CURRENT_ENTITY_VIEW.stateSaveWebStorageKey,
 
-        views
+        views: Object.keys(ENTITY_VIEWS).map((key) => ({
+          title: ENTITY_VIEWS[key].title,
+          fragment: `${ENTITY_VIEWS[key].fragment}?${query__objectToString({ resetState: 'yes' })}`,
+          isCurrent: key === opt
+        }))
       });
-    }).then(() => {
-      $containerTop.html(`<p><a href="#${redirectToFragment}">Back to ${redirectTo}</a></p>`);
-      $containerTop.append(`<h2>${currentLocationView.title}</h2>`);
-
-      const breadcrumbs = [
-        { name: app.name, link: '#home' },
-        { name: 'Entities', link: '#entities' },
-        { name: 'Location Inpections', link: `#${locationInspectionsEntity__views.all.fragment}` },
-        { name: currentLocationView.breadcrumb, link: `#${currentLocationView.fragment}` }
-      ];
-      app.setBreadcrumb(breadcrumbs, true);
-      app.setTitle('Location Inspections');
     });
   }).catch((error) => {
     console.error(error); // eslint-disable-line no-console
