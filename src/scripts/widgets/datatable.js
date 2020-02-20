@@ -197,7 +197,12 @@ function renderDatatable($container, definition, options = {}) {
             if (column.searchable && column.search && column.search.value && column.search.value.trim()) {
               switch (definition.columns[index].type) {
                 case 'boolean':
+                  return `(${column.data} eq ${column.search.value !== false})`;
+
                 case 'number':
+                  if (isNaN(column.search.value)) {
+                    return false;
+                  }
                   return `(${column.data} eq ${oData__escapeValue(column.search.value)})`;
 
                 case 'date':
