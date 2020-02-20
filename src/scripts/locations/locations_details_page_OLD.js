@@ -1,9 +1,10 @@
 /* global $ Backbone */
 /* global ajaxes auth__checkLogin fixButtonLinks modal__showConfirm query__objectToString query__stringToObject
-  renderAlert toSnapShot */
+   renderAlert toSnapShot */
 /* global renderForm */
-/* global locations__views locationsEntity__fields */
-/* global locationNotesPage_opt2 */
+/* global locations__views renderLocationDetailsNotesPage__currentView renderLocationDetailsNotesPage__resetState
+   renderLocationDetailsInspectionsPage__resetState renderLocationDetailsInspectionsPage__currentView
+   locationsEntity__fields */
 
 /* exported locationsDetailsPage */
 function locationsDetailsPage(app, $container, router, auth, opt, id, query) {
@@ -16,15 +17,40 @@ function locationsDetailsPage(app, $container, router, auth, opt, id, query) {
   const DEFAULT_REDIRECT_TO = ENTITY_VIEW.title;
   const DEFAULT_REDIRECT_TO_FRAGMENT = ENTITY_VIEW.fragment;
 
-  const ITEM = 'Location';
+  const RESET_STATES = function (opt, id) {
+    renderLocationDetailsNotesPage__resetState(opt, id);
+    renderLocationDetailsInspectionsPage__resetState(opt, id);
+  };
+
+  const TAB_HTML_STRING = function (id) {
+    return `
+      <div class="navbar">
+        <ul class="nav nav-tabs">
+          <li class="nav-item active" role="presentation">
+            <a href="#${DEFAULT_REDIRECT_TO_FRAGMENT}/${id}" class="nav-link">Location</a>
+          </li>
+          <li class="nav-item" role="presentation">
+            <a href="#${DEFAULT_REDIRECT_TO_FRAGMENT}/${id}/notes/${renderLocationDetailsNotesPage__currentView}" class="nav-link">Notes</a>
+          </li>
+          <li class="nav-item" role="presentation">
+            <a href="#${DEFAULT_REDIRECT_TO_FRAGMENT}/${id}/inspections/${renderLocationDetailsInspectionsPage__currentView}" class="nav-link">Inspections</a>
+          </li>
+          <li class="nav-item" role="presentation">
+            <a href="#" class="nav-link">Lockers</a>
+          </li>
+        </ul>
+      </div>
+    `;
+  };
+
+  const ITEM = 'Locker Location';
   const ITEM_PLURAL = `${ITEM}s`;
 
   const BREADCRUMBS = [
     { name: app.name, link: '#home' },
     { name: ITEM_PLURAL, link: `#${ENTITY_VIEW_DEFAULT.fragment}` },
-    { name: ENTITY_VIEW.breadcrumb, link: `#${ENTITY_VIEW.fragment}` }
+    { name: ENTITY_VIEW.breadcrumb, link: `#${ENTITY_VIEW.fragment}` },
   ];
-  // const ACTIVE_BREADCRUMB_NEW =
 
   const DATAACCESS_URL = '/* @echo C3DATA_LOCATIONS_URL */';
 
@@ -198,29 +224,6 @@ function locationsDetailsPage(app, $container, router, auth, opt, id, query) {
       ]
     }
   ];
-
-  const GET_TAB_HTML = function (id) {
-    return `
-      <div class="navbar">
-        <ul class="nav nav-tabs">
-          <li class="nav-item active" role="presentation">
-            <a href="#${DEFAULT_REDIRECT_TO_FRAGMENT}/${id}" class="nav-link">Location</a>
-          </li>
-          <li class="nav-item" role="presentation">
-            <a href="#${DEFAULT_REDIRECT_TO_FRAGMENT}/${id}/notes/${locationNotesPage_opt2}" class="nav-link">Notes</a>
-          </li>
-        </ul>
-      </div>
-    `;
-
-
-    //       <li class="nav-item" role="presentation">
-    //         <a href="#${DEFAULT_REDIRECT_TO_FRAGMENT}/${id}/inspections/${renderLocationDetailsInspectionsPage__currentView}" class="nav-link">Inspections</a>
-    //       </li>
-    //       <li class="nav-item" role="presentation">
-    //         <a href="#" class="nav-link">Lockers</a>
-    //       </li>
-  };
   // ---
 
   if (!(opt in ENTITY_VIEWS)) {
@@ -237,18 +240,19 @@ function locationsDetailsPage(app, $container, router, auth, opt, id, query) {
 
     const {
       redirectTo = DEFAULT_REDIRECT_TO,
-      redirectToFragment = DEFAULT_REDIRECT_TO_FRAGMENT
+      redirectToFragment = DEFAULT_REDIRECT_TO_FRAGMENT,
+      resetState
     } = query__stringToObject(query);
 
-    $container.empty();
+    if (resetState === 'yes') {
+      RESET_STATES(opt, id);
+    }
 
-    // ADD REDIRECT
-    $container.append(`<p><a href="#${redirectToFragment}">Back to ${redirectTo}</a></p>`);
+    $container.html(`<p><a href="#${redirectToFragment}">Back to ${redirectTo}</a></p>`);
 
-    // ADD TABS
     const $tabContainer = $('<div></div>').appendTo($container);
     function renderNavBar(id) {
-      $tabContainer.html(GET_TAB_HTML(id));
+      $tabContainer.html(TAB_HTML_STRING(id));
       fixButtonLinks($tabContainer);
     }
     if (id !== 'new') {
@@ -292,6 +296,7 @@ function locationsDetailsPage(app, $container, router, auth, opt, id, query) {
             }
           }).then(({ data, textStatus, jqXHR }) => {
             snapShot = toSnapShot(data);
+            renderNavBar(data.id);
 
             router.navigate(`${ENTITY_VIEW.fragment}/${data.id}`, { trigger: false, replace: true });
 
@@ -312,7 +317,6 @@ function locationsDetailsPage(app, $container, router, auth, opt, id, query) {
         }
       };
 
-      // ADD COT FORM
       return Promise.resolve().then(() => {
         return renderForm($('<div></div>').appendTo($container), definition, model, {
           auth,
@@ -327,8 +331,6 @@ function locationsDetailsPage(app, $container, router, auth, opt, id, query) {
           removePromptValue: 'DELETE'
         });
       }).then(() => {
-
-        // SET TITLE AND BREADCRUMB
         if (id === 'new') {
           app.setBreadcrumb(BREADCRUMBS.concat({ name: 'New', link: `#${ENTITY_VIEW.fragment}/new` }), true);
           app.setTitle(`New ${ITEM}`);
@@ -337,7 +339,6 @@ function locationsDetailsPage(app, $container, router, auth, opt, id, query) {
           app.setTitle(data.site_name);
         }
 
-        // RETURN CLEANUP FUNCTION
         return () => {
           if (snapShot !== toSnapShot(model.toJSON())) {
             return modal__showConfirm('There may be one or more unsaved data. Do you want to continue?', {
@@ -348,8 +349,6 @@ function locationsDetailsPage(app, $container, router, auth, opt, id, query) {
         };
       });
     }, (error) => {
-
-      // SET TITLE AND BREADCRUMB
       app.setBreadcrumb(BREADCRUMBS.concat({ name: 'Error' }), true);
       app.setTitle('An Error has Occured');
 

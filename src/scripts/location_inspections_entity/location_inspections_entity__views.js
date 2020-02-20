@@ -13,7 +13,7 @@ const locationInspectionsEntity__views = {
       return {
         columns: Object.keys(locationInspectionsEntity__columns).map(
           (key) => typeof locationInspectionsEntity__columns[key] === 'function'
-            ? locationInspectionsEntity__columns[key]({ auth, view: this })
+            ? locationInspectionsEntity__columns[key]({ auth, fragment: this.fragment })
             : locationInspectionsEntity__columns[key]
         ),
 

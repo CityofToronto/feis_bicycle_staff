@@ -245,12 +245,13 @@ $(function () {
         return renderLocationDetailsInspectionsPage(app, $container, router, auth, opt1, id1, opt2, query);
       },
       ['locations/:opt1/:id1/notes/:opt2/:id2(/)'](opt1, id1, opt2, id2, query) {
-        /* global renderLocationDetailsNoteDetailsPage */
-        return renderLocationDetailsNoteDetailsPage(app, $container, router, auth, opt1, id1, opt2, id2, query);
+        console.log('notes details');
+        /* global locationNotesDetailsPage */
+        return locationNotesDetailsPage(app, $container, router, auth, opt1, id1, opt2, id2, query);
       },
       ['locations/:opt1/:id1/notes(/:opt2)(/)'](opt1, id1, opt2, query) {
-        /* global renderLocationDetailsNotesPage */
-        return renderLocationDetailsNotesPage(app, $container, router, auth, opt1, id1, opt2, query);
+        /* global locationNotesPage */
+        return locationNotesPage(app, $container, router, auth, opt1, id1, opt2, query);
       },
       ['locations/:opt/:id(/)'](opt, id, query) {
         /* global locationsDetailsPage */

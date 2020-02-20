@@ -1,37 +1,32 @@
-/* global */
 /* global auth__checkLogin query__objectToString query__stringToObject */
 /* global renderDatatable */
 /* global locations__views */
 
 /* exported locationsPage */
 function locationsPage(app, $container, router, auth, opt, query) {
+
   // ---
   const ENTITY_VIEWS = locations__views;
-  const ENTITY_VIEW = ENTITY_VIEWS[opt];
-  const ENTITY_VIEW_DEFAULT = ENTITY_VIEWS.all;
+  const DEFAULT_ENTITY_VIEW = ENTITY_VIEWS.all;
+  const CURRENT_ENTITY_VIEW = ENTITY_VIEWS[opt];
 
-  const REDIRECT_TO_DEFAULT = 'Home';
-  const REDIRECT_TO_FRAGMENT_DEFAULT = 'home';
+  const DEFAULT_REDIRECT_TO = 'Home';
+  const DEFAULT_REDIRECT_TO_FRAGMENT = 'home';
 
-  const RESET_STATES = function (opt, id) {
-    renderLocationDetailsNotesPage__resetState(opt, id);
-    renderLocationDetailsInspectionsPage__resetState(opt, id);
-  };
-
-  const ITEM = 'Locker Location';
-  const ITEM_PLURAL = `${ITEM}s`;
+  const ITEM = 'Location';
+  const PLURAL_ITEM = `${ITEM}s`;
 
   const BREADCRUMBS = [
     { name: app.name, link: '#home' },
-    { name: ITEM_PLURAL, link: `#${ENTITY_VIEW_DEFAULT.fragment}` },
-    { name: ENTITY_VIEW.breadcrumb, link: `#${ENTITY_VIEW.fragment}` }
+    { name: PLURAL_ITEM, link: `#${DEFAULT_ENTITY_VIEW.fragment}` },
+    { name: CURRENT_ENTITY_VIEW.breadcrumb, link: `#${CURRENT_ENTITY_VIEW.fragment}` }
   ];
 
   const DATAACCESS_URL = '/* @echo C3DATA_LOCATIONS_URL */';
   // ---
 
   if (!(opt in ENTITY_VIEWS)) {
-    return router.navigate(`${ENTITY_VIEW_DEFAULT.fragment}?${query__objectToString({ resetState: 'yes' })}`,
+    return router.navigate(`${DEFAULT_ENTITY_VIEW.fragment}?${query__objectToString({ resetState: 'yes' })}`,
       { trigger: true, replace: true });
     // EXIT
   }
@@ -43,43 +38,43 @@ function locationsPage(app, $container, router, auth, opt, query) {
     }
 
     const {
-      redirectTo = REDIRECT_TO_DEFAULT,
-      redirectToFragment = REDIRECT_TO_FRAGMENT_DEFAULT,
+      redirectTo = DEFAULT_REDIRECT_TO,
+      redirectToFragment = DEFAULT_REDIRECT_TO_FRAGMENT,
       resetState
     } = query__stringToObject(query);
 
-    // const stateSaveWebStorageKey = `locations_${opt}`;
+    $container.empty();
+
+    // SET TITLE AND BREADCRUMB
+    app.setBreadcrumb(BREADCRUMBS, true);
+    app.setTitle(PLURAL_ITEM);
+
+    // RESET SESSION STORAGE
     if (resetState === 'yes') {
-      // sessionStorage.removeItem(stateSaveWebStorageKey);
-      RESET_STATES();
+      sessionStorage.removeItem(CURRENT_ENTITY_VIEW.stateSaveWebStorageKey);
     }
 
-    $container.html(`<p><a href="#${redirectToFragment}">Back to ${redirectTo}</a></p>`);
-    $container.append(`<h2>${ENTITY_VIEW.title}</h2>`);
+    // ADD REDIRECT AND SUB TITLE
+    $container.append(`<p><a href="#${redirectToFragment}">Back to ${redirectTo}</a></p>`);
+    $container.append(`<h2>${CURRENT_ENTITY_VIEW.title}</h2>`);
 
-    const definition = ENTITY_VIEW.definition(auth, opt);
-
-    const views = Object.keys(ENTITY_VIEWS).map((key) => ({
-      title: ENTITY_VIEWS[key].title,
-      fragment: `${ENTITY_VIEWS[key].fragment}?${query__objectToString({ resetState: 'yes' })}`,
-      isCurrent: key === opt
-    }));
-
+    // ADD DATATABLE
     return Promise.resolve().then(() => {
-      return renderDatatable($container, definition, {
+      return renderDatatable($container, CURRENT_ENTITY_VIEW.definition(auth), {
         auth,
         url: DATAACCESS_URL,
 
-        newButtonLabel: 'New Location',
-        newButtonFragment: `locations/${opt}/new`,
+        newButtonLabel: `New ${ITEM}`,
+        newButtonFragment: `${CURRENT_ENTITY_VIEW.fragment}/new`,
 
-        stateSaveWebStorageKey,
+        stateSaveWebStorageKey: CURRENT_ENTITY_VIEW.stateSaveWebStorageKey,
 
-        views
+        views: Object.keys(ENTITY_VIEWS).map((key) => ({
+          title: ENTITY_VIEWS[key].title,
+          fragment: `${ENTITY_VIEWS[key].fragment}?${query__objectToString({ resetState: 'yes' })}`,
+          isCurrent: key === opt
+        }))
       });
-    }).then(() => {
-      app.setBreadcrumb(BREADCRUMBS, true);
-      app.setTitle('Locations');
     });
   }).catch((error) => {
     console.error(error); // eslint-disable-line no-console

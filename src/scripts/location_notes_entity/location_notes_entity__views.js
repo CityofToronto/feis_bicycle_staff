@@ -5,7 +5,7 @@
 const locationNotesEntity__views = {
   all: {
     breadcrumb: 'All',
-    title: 'All Locker Location Notes',
+    title: 'All Location Notes',
     fragment: 'entities/location_notes/all',
     stateSaveWebStorageKey: 'entity_location_notes_all',
 
@@ -13,7 +13,7 @@ const locationNotesEntity__views = {
       return {
         columns: Object.keys(locationNotesEntity__columns).map(
           (key) => typeof locationNotesEntity__columns[key] === 'function'
-            ? locationNotesEntity__columns[key]({ auth, view: this })
+            ? locationNotesEntity__columns[key]({ auth, fragment: this.fragment })
             : locationNotesEntity__columns[key]
         ),
 

@@ -3,14 +3,14 @@
 
 /* exported entity__columns */
 const entity__columns = {
-  action: ({ view }) => ({
+  action: ({ fragment }) => ({
     title: 'Action',
     data: 'id',
     orderable: false,
     searchable: false,
     className: 'excludeFromButtons openButtonWidth',
     render(data) {
-      const href = `#${view.fragment}/${data}?${query__objectToString({ resetState: 'yes' })}`;
+      const href = `#${fragment}/${data}?${query__objectToString({ resetState: 'yes' })}`;
       return `<a href="${href}" class="btn btn-default dblclick-target">Open</a>`;
     }
   }),

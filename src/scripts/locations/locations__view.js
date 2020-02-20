@@ -4,13 +4,13 @@
 const locations__views = {
   all: {
     breadcrumb: 'All',
-    title: 'All Locations',
+    title: 'All Locker Locations',
     fragment: `locations/all`,
 
     definition(auth) {
       return {
         columns: [
-          locationsEntity__columns.action({ view: this }),
+          entity__columns.action({ fragment: this.fragment }),
 
           locationsEntity__columns.site_name,
           locationsEntity__columns.address,
@@ -38,7 +38,7 @@ const locations__views = {
     definition(auth) {
       return {
         columns: [
-          locationsEntity__columns.action({ view: this }),
+          entity__columns.action({ fragment: this.fragment }),
 
           locationsEntity__columns.latest_inspection__date,
           locationsEntity__columns.latest_inspection__result({ auth }),
@@ -51,7 +51,7 @@ const locations__views = {
           locationsEntity__columns.contact,
           locationsEntity__columns.phone,
 
-          locationsEntity__columns.__Status({ auth })
+          entity__columns.__Status({ auth })
         ],
 
         order: [[1, 'desc']],

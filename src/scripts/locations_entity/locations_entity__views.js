@@ -12,7 +12,7 @@ const locationsEntity__views = {
       return {
         columns: Object.keys(locationsEntity__columns).map(
           (key) => typeof locationsEntity__columns[key] === 'function'
-            ? locationsEntity__columns[key]({ auth, view: this })
+            ? locationsEntity__columns[key]({ auth, fragment: this.fragment })
             : locationsEntity__columns[key]
         ),
 

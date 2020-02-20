@@ -11,8 +11,8 @@ function locatioInspectionsEntityDetailsPage(app, $container, router, auth, opt,
   const ENTITY_VIEW = ENTITY_VIEWS[opt];
   const ENTITY_VIEW_DEFAULT = ENTITY_VIEWS.all;
 
-  const REDIRECT_TO_DEFAULT = ENTITY_VIEW.title;
-  const REDIRECT_TO_FRAGMENT_DEFAULT = ENTITY_VIEW.fragment;
+  const DEFAULT_REDIRECT_TO = ENTITY_VIEW.title;
+  const DEFAULT_REDIRECT_TO_FRAGMENT = ENTITY_VIEW.fragment;
 
   const ITEM = 'Locker Location Inspection';
   const ITEM_PLURAL = `${ITEM}s`;
@@ -100,8 +100,8 @@ function locatioInspectionsEntityDetailsPage(app, $container, router, auth, opt,
     }
 
     const {
-      redirectTo = REDIRECT_TO_DEFAULT,
-      redirectToFragment = REDIRECT_TO_FRAGMENT_DEFAULT
+      redirectTo = DEFAULT_REDIRECT_TO,
+      redirectToFragment = DEFAULT_REDIRECT_TO_FRAGMENT
     } = query__stringToObject(query);
 
     $container.empty();

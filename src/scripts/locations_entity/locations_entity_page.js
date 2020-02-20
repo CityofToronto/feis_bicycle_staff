@@ -3,31 +3,33 @@
 /* global locationsEntity__views */
 
 /* exported locationsEntityPage */
-function locationsEntityPage(app, $container, router, auth, opt, query) {
+function locationsEntityPage(app, $container, router, auth, opt1, query) {
 
   // ---
-  const ENTITY_VIEWS = locationsEntity__views;
-  const DEFAULT_ENTITY_VIEW = ENTITY_VIEWS.all;
-  const CURRENT_ENTITY_VIEW = ENTITY_VIEWS[opt];
+  const VIEWS = locationsEntity__views;
 
-  const DEFAULT_REDIRECT_TO = 'Entities';
-  const DEFAULT_REDIRECT_TO_FRAGMENT = 'entities';
+  const VIEW__DEFAULT = VIEWS.all;
+  const VIEW__CURRENT = VIEWS[opt1];
 
-  const ITEM = 'Locker Location';
-  const PLURAL_ITEM = `${ITEM}s`;
+  const DEFAULT_REDIRECT = 'Entities';
+  const DEFAULT_REDIRECT_FRAGMENT = 'entities';
+
+  const TITLE = 'Locations';
 
   const BREADCRUMBS = [
     { name: app.name, link: '#home' },
-    { name: 'Entities', link: '#entities' },
-    { name: PLURAL_ITEM, link: `#${DEFAULT_ENTITY_VIEW.fragment}` },
-    { name: CURRENT_ENTITY_VIEW.breadcrumb, link: `#${CURRENT_ENTITY_VIEW.fragment}` }
+    { name: 'Entities', link: `#entities` },
+    { name: 'Locations', link: `#${VIEW__DEFAULT.fragment}` },
+    { name: VIEW__CURRENT.breadcrumb, link: `#${VIEW__CURRENT.fragment}` }
   ];
+
+  const ITEM = 'Location';
 
   const DATAACCESS_URL = '/* @echo C3DATA_LOCATIONS_URL */';
   // ---
 
-  if (!(opt in ENTITY_VIEWS)) {
-    return router.navigate(`${DEFAULT_ENTITY_VIEW.fragment}?${query__objectToString({ resetState: 'yes' })}`,
+  if (!(opt1 in VIEWS)) {
+    return router.navigate(`${VIEW__DEFAULT.fragment}?${query__objectToString({ resetState: 'yes' })}`,
       { trigger: true, replace: true });
     // EXIT
   }
@@ -39,8 +41,8 @@ function locationsEntityPage(app, $container, router, auth, opt, query) {
     }
 
     const {
-      redirectTo = DEFAULT_REDIRECT_TO,
-      redirectToFragment = DEFAULT_REDIRECT_TO_FRAGMENT,
+      redirectTo = DEFAULT_REDIRECT,
+      redirectToFragment = DEFAULT_REDIRECT_FRAGMENT,
       resetState
     } = query__stringToObject(query);
 
@@ -48,32 +50,32 @@ function locationsEntityPage(app, $container, router, auth, opt, query) {
 
     // SET TITLE AND BREADCRUMB
     app.setBreadcrumb(BREADCRUMBS, true);
-    app.setTitle(PLURAL_ITEM);
+    app.setTitle(TITLE);
 
     // RESET SESSION STORAGE
     if (resetState === 'yes') {
-      sessionStorage.removeItem(CURRENT_ENTITY_VIEW.stateSaveWebStorageKey);
+      sessionStorage.removeItem(VIEW__CURRENT.stateSaveWebStorageKey);
     }
 
     // ADD REDIRECT AND SUB TITLE
     $container.append(`<p><a href="#${redirectToFragment}">Back to ${redirectTo}</a></p>`);
-    $container.append(`<h2>${CURRENT_ENTITY_VIEW.title}</h2>`);
+    $container.append(`<h2>${VIEW__CURRENT.title}</h2>`);
 
     // ADD DATATABLE
     return Promise.resolve().then(() => {
-      return renderDatatable($container, CURRENT_ENTITY_VIEW.definition(auth), {
+      return renderDatatable($container, VIEW__CURRENT.definition(auth), {
         auth,
         url: DATAACCESS_URL,
 
         newButtonLabel: `New ${ITEM}`,
-        newButtonFragment: `${CURRENT_ENTITY_VIEW.fragment}/new`,
+        newButtonFragment: `${VIEW__CURRENT.fragment}/new`,
 
-        stateSaveWebStorageKey: CURRENT_ENTITY_VIEW.stateSaveWebStorageKey,
+        stateSaveWebStorageKey: VIEW__CURRENT.stateSaveWebStorageKey,
 
-        views: Object.keys(ENTITY_VIEWS).map((key) => ({
-          title: ENTITY_VIEWS[key].title,
-          fragment: `${ENTITY_VIEWS[key].fragment}?${query__objectToString({ resetState: 'yes' })}`,
-          isCurrent: key === opt
+        views: Object.keys(VIEWS).map((key) => ({
+          title: VIEWS[key].title,
+          fragment: `${VIEWS[key].fragment}?${query__objectToString({ resetState: 'yes' })}`,
+          isCurrent: key === opt1
         }))
       });
     });

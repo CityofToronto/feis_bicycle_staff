@@ -4,25 +4,37 @@
 /* global locationNotesEntity__views entityLocationNoteDetails__fields */
 
 /* exported locationNotesEntityDetailsPage */
-function locationNotesEntityDetailsPage(app, $container, router, auth, opt, id, query) {
+function locationNotesEntityDetailsPage(app, $container, router, auth, opt1, id1, query) {
 
   // ---
-  const ENTITY_VIEWS = locationNotesEntity__views;
-  const ENTITY_VIEW = ENTITY_VIEWS[opt];
-  const ENTITY_VIEW_DEFAULT = ENTITY_VIEWS.all;
+  const VIEWS = locationNotesEntity__views;
 
-  const REDIRECT_TO_DEFAULT = ENTITY_VIEW.title;
-  const REDIRECT_TO_FRAGMENT_DEFAULT = ENTITY_VIEW.fragment;
+  const VIEW__DEFAULT = VIEWS.all;
+  const VIEW__CURRENT = VIEWS[opt1];
 
-  const ITEM = 'Locker Location Note';
-  const ITEM_PLURAL = `${ITEM}s`;
+  const DEFAULT_REDIRECT = 'Location Notes';
+  const DEFAULT_REDIRECT_FRAGMENT = VIEW__DEFAULT.fragment;
+
+  const TITLE__FUNC = function (data) {
+    if (data.id) {
+      return 'New Location Note';
+    } else {
+      return data.date;
+    }
+  };
 
   const BREADCRUMBS = [
     { name: app.name, link: '#home' },
-    { name: 'Entities', link: '#entities' },
-    { name: ITEM_PLURAL, link: `#${ENTITY_VIEW_DEFAULT.fragment}` },
-    { name: ENTITY_VIEW.breadcrumb, link: `#${ENTITY_VIEW.fragment}` }
+    { name: 'Entities', link: `#entities` },
+    { name: 'Location Notes', link: `#${VIEW__DEFAULT.fragment}` },
+    { name: VIEW__CURRENT.breadcrumb, link: `#${VIEW__CURRENT.fragment}` }
   ];
+  const BREADCRUMBS__FUNC = (data) => BREADCRUMBS.concat({
+    name: data.id ? 'New' : data.date,
+    link: data.id ? null : `#${VIEW__CURRENT.fragment}/${data.id}`
+  });
+
+  const ITEM = 'Location Note';
 
   const DATAACCESS_URL = '/* @echo C3DATA_LOCATION_NOTES_URL */';
 
@@ -86,8 +98,8 @@ function locationNotesEntityDetailsPage(app, $container, router, auth, opt, id, 
   ];
   // ---
 
-  if (!(opt in ENTITY_VIEWS)) {
-    return router.navigate(`${ENTITY_VIEW_DEFAULT.fragment}?${query__objectToString({ resetState: 'yes' })}`,
+  if (!(opt1 in VIEWS)) {
+    return router.navigate(`${VIEW__DEFAULT.fragment}?${query__objectToString({ resetState: 'yes' })}`,
       { trigger: true, replace: true });
     // EXIT
   }
@@ -99,8 +111,8 @@ function locationNotesEntityDetailsPage(app, $container, router, auth, opt, id, 
     }
 
     const {
-      redirectTo = REDIRECT_TO_DEFAULT,
-      redirectToFragment = REDIRECT_TO_FRAGMENT_DEFAULT
+      redirectTo = DEFAULT_REDIRECT,
+      redirectToFragment = DEFAULT_REDIRECT_FRAGMENT
     } = query__stringToObject(query);
 
     $container.empty();
@@ -109,7 +121,7 @@ function locationNotesEntityDetailsPage(app, $container, router, auth, opt, id, 
     $container.append(`<p><a href="#${redirectToFragment}">Back to ${redirectTo}</a></p>`);
 
     return Promise.resolve().then(() => {
-      if (id !== 'new') {
+      if (id1 !== 'new') {
         return ajaxes({
           beforeSend(jqXHR) {
             if (auth && auth.sId) {
@@ -118,7 +130,7 @@ function locationNotesEntityDetailsPage(app, $container, router, auth, opt, id, 
           },
           contentType: 'application/json; charset=utf-8',
           method: 'GET',
-          url: `${DATAACCESS_URL}('${id}')`
+          url: `${DATAACCESS_URL}('${id1}')`
         });
       }
 
@@ -146,10 +158,7 @@ function locationNotesEntityDetailsPage(app, $container, router, auth, opt, id, 
           }).then(({ data, textStatus, jqXHR }) => {
             snapShot = toSnapShot(data);
 
-            router.navigate(`${ENTITY_VIEW.fragment}/${data.id}`, { trigger: false, replace: true });
-
-            app.setBreadcrumb(BREADCRUMBS.concat({ name: data.site_name, link: `#${ENTITY_VIEW.fragment}/${data.id}` }), true);
-            app.setTitle(data.site_name);
+            router.navigate(`${VIEW__CURRENT.fragment}/${data.id}`, { trigger: false, replace: true });
 
             return { data, textStatus, jqXHR };
           }).catch((error) => {
@@ -174,7 +183,7 @@ function locationNotesEntityDetailsPage(app, $container, router, auth, opt, id, 
           saveButtonLabel: (model) => model.isNew() ? `Create ${ITEM}` : `Update ${ITEM}`,
 
           cancelButtonLabel: 'Cancel',
-          cancelButtonFragment: ENTITY_VIEW.fragment,
+          cancelButtonFragment: VIEW__CURRENT.fragment,
 
           removeButtonLabel: `Remove ${ITEM}`,
           removePromptValue: 'DELETE'
@@ -182,13 +191,12 @@ function locationNotesEntityDetailsPage(app, $container, router, auth, opt, id, 
       }).then(() => {
 
         // SET TITLE AND BREADCRUMB
-        if (id === 'new') {
-          app.setBreadcrumb(BREADCRUMBS.concat({ name: 'New', link: `#${ENTITY_VIEW.fragment}/new` }), true);
-          app.setTitle(`New ${ITEM}`);
-        } else {
-          app.setBreadcrumb(BREADCRUMBS.concat({ name: data.site_name, link: `#${ENTITY_VIEW.fragment}/${data.id}` }), true);
-          app.setTitle(data.site_name);
-        }
+        app.setBreadcrumb(BREADCRUMBS__FUNC(model.toJSON()), true);
+        app.setTitle(TITLE__FUNC(model.toJSON()));
+        model.on('change:id', () => {
+          app.setBreadcrumb(BREADCRUMBS__FUNC(model.toJSON()), true);
+          app.setTitle(TITLE__FUNC(model.toJSON()));
+        });
 
         // RETURN CLEANUP FUNCTION
         return () => {
