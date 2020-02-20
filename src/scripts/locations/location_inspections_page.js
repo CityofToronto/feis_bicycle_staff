@@ -3,8 +3,8 @@
 /* global renderDatatable */
 /* global locations__views location_notes__views location_inspections__views */
 
-/* exported locationNotesPage */
-function locationNotesPage(app, $container, router, auth, opt1, id1, opt2, query) {
+/* exported locationInspectionsPage */
+function locationInspectionsPage(app, $container, router, auth, opt1, id1, opt2, query) {
 
   // ---
   const PARENT_VIEWS = locations__views;
@@ -12,7 +12,7 @@ function locationNotesPage(app, $container, router, auth, opt1, id1, opt2, query
   const PARENT_VIEW__DEFAULT = PARENT_VIEWS.all;
   const PARENT_VIEW__CURRENT = PARENT_VIEWS[opt1];
 
-  const VIEWS = location_notes__views(PARENT_VIEW__CURRENT, id1);
+  const VIEWS = location_inspections__views(PARENT_VIEW__CURRENT, id1);
 
   const VIEW__DEFAULT = VIEWS.all;
   const VIEW__CURRENT = VIEWS[opt2];
@@ -34,9 +34,9 @@ function locationNotesPage(app, $container, router, auth, opt1, id1, opt2, query
     link: `#${VIEW__CURRENT.fragment}/${data.id}`
   });
 
-  const ITEM = 'Location Note';
+  const ITEM = 'Location Inspections';
 
-  const DATAACCESS_URL = '/* @echo C3DATA_LOCATION_NOTES_URL */';
+  const DATAACCESS_URL = '/* @echo C3DATA_LOCATION_INSPECTIONS_URL */';
   const DATAACCESS_URL__PARENT = '/* @echo C3DATA_LOCATIONS_URL */';
 
   const TABS = `
@@ -45,25 +45,17 @@ function locationNotesPage(app, $container, router, auth, opt1, id1, opt2, query
         <li class="nav-item" role="presentation">
           <a href="#${PARENT_VIEW__CURRENT.fragment}/${id1}" class="nav-link">Location</a>
         </li>
-        <li class="nav-item active" role="presentation">
-          <a href="#${VIEW__CURRENT.fragment}" class="nav-link">Notes</a>
-        </li>
         <li class="nav-item" role="presentation">
-          <a href="#${location_inspections__views(PARENT_VIEW__CURRENT, id1)[location_inspections__views.active_view_key].fragment}" class="nav-link">Inspections</a>
+          <a href="#${location_notes__views(PARENT_VIEW__CURRENT, id1)[location_notes__views.active_view_key].fragment}" class="nav-link">Notes</a>
+        </li>
+        <li class="nav-item active" role="presentation">
+          <a href="#${VIEW__CURRENT.fragment}" class="nav-link">Inspections</a>
         </li>
       </ul>
     </div>
   `;
 
-  const RESET_STATES__FUNC = () => {
-    if (id1) {
-      location_inspections__views.active_view_key = 'all';
-      const inspectionsViews = location_inspections__views(VIEW__CURRENT, id1);
-      for (const key in inspectionsViews) {
-        sessionStorage.removeItem(inspectionsViews[key].stateSaveWebStorageKey);
-      }
-    }
-  };
+  const RESET_STATES__FUNC = () => { };
   // ---
 
   if (!(opt1 in PARENT_VIEWS)) {

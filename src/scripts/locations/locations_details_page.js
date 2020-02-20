@@ -2,7 +2,7 @@
 /* global ajaxes auth__checkLogin fixButtonLinks modal__showConfirm query__objectToString query__stringToObject
   renderAlert toSnapShot */
 /* global renderForm */
-/* global locations__views locationsEntity__fields location_notes__views */
+/* global locations__views locationsEntity__fields location_notes__views location_inspections__views */
 
 /* exported locationsDetailsPage */
 function locationsDetailsPage(app, $container, router, auth, opt1, id1, query) {
@@ -223,22 +223,12 @@ function locationsDetailsPage(app, $container, router, auth, opt1, id1, query) {
           <li class="nav-item" role="presentation">
             <a href="#${location_notes__views(VIEW__CURRENT, data.id)[location_notes__views.active_view_key].fragment}" class="nav-link">Notes</a>
           </li>
+          <li class="nav-item" role="presentation">
+            <a href="#${location_inspections__views(VIEW__CURRENT, data.id)[location_inspections__views.active_view_key].fragment}" class="nav-link">Inspections</a>
+          </li>
         </ul>
       </div>
     `;
-
-    // <li class="nav-item active" role="presentation">
-    //         <a href="#${DEFAULT_REDIRECT_TO_FRAGMENT}/${id}" class="nav-link">Location</a>
-    //       </li>
-    //       <li class="nav-item" role="presentation">
-    //         <a href="#${DEFAULT_REDIRECT_TO_FRAGMENT}/${id}/notes/${locationNotesPage_opt2}" class="nav-link">Notes</a>
-    //       </li>
-    //       <li class="nav-item" role="presentation">
-    //         <a href="#${DEFAULT_REDIRECT_TO_FRAGMENT}/${id}/inspections/${renderLocationDetailsInspectionsPage__currentView}" class="nav-link">Inspections</a>
-    //       </li>
-    //       <li class="nav-item" role="presentation">
-    //         <a href="#" class="nav-link">Lockers</a>
-    //       </li>
   };
 
   const RESET_STATES__FUNC = () => {
@@ -248,8 +238,16 @@ function locationsDetailsPage(app, $container, router, auth, opt1, id1, query) {
       for (const key in notesViews) {
         sessionStorage.removeItem(notesViews[key].stateSaveWebStorageKey);
       }
+
+      location_inspections__views.active_view_key = 'all';
+      const inspectionsViews = location_inspections__views(VIEW__CURRENT, id1);
+      for (const key in inspectionsViews) {
+        sessionStorage.removeItem(inspectionsViews[key].stateSaveWebStorageKey);
+      }
     }
   };
+
+  const FINALIZE_DATA = () => {};
   // ---
 
   if (!(opt1 in VIEWS)) {
@@ -313,6 +311,8 @@ function locationsDetailsPage(app, $container, router, auth, opt1, id1, query) {
       const definition = {
         successCore(data, options = {}) {
           const { auth, id, url } = options;
+
+          FINALIZE_DATA(data);
 
           return ajaxes({
             url: `${url}${id ? `('${id}')` : ''}`,

@@ -2,10 +2,10 @@
 /* global ajaxes auth__checkLogin fixButtonLinks modal__showConfirm query__objectToString query__stringToObject
   renderAlert toSnapShot */
 /* global renderForm */
-/* global locations__views location_notes__views entityLocationNotesDetails__fields location_inspections__views */
+/* global locations__views location_notes__views location_inspections__views entityLocationInspectionDetails__fields */
 
-/* exported locationNotesDetailsPage */
-function locationNotesDetailsPage(app, $container, router, auth, opt1, id1, opt2, id2, query) {
+/* exported locationInspectionsDetailsPage */
+function locationInspectionsDetailsPage(app, $container, router, auth, opt1, id1, opt2, id2, query) {
 
   // ---
   const PARENT_VIEWS = locations__views;
@@ -13,7 +13,7 @@ function locationNotesDetailsPage(app, $container, router, auth, opt1, id1, opt2
   const PARENT_VIEW__DEFAULT = PARENT_VIEWS.all;
   const PARENT_VIEW__CURRENT = PARENT_VIEWS[opt1];
 
-  const VIEWS = location_notes__views(PARENT_VIEW__CURRENT, id1);
+  const VIEWS = location_inspections__views(PARENT_VIEW__CURRENT, id1);
 
   const VIEW__DEFAULT = VIEWS.all;
   const VIEW__CURRENT = VIEWS[opt2];
@@ -35,23 +35,23 @@ function locationNotesDetailsPage(app, $container, router, auth, opt1, id1, opt2
     link: `#${VIEW__CURRENT.fragment}/${data.id}`
   });
 
-  const ITEM = 'Location Note';
+  const ITEM = 'Location Inspection';
 
-  const DATAACCESS_URL = '/* @echo C3DATA_LOCATION_NOTES_URL */';
+  const DATAACCESS_URL = '/* @echo C3DATA_LOCATION_INSPECTIONS_URL */';
   const DATAACCESS_URL__PARENT = '/* @echo C3DATA_LOCATIONS_URL */';
 
   const TABS = `
     <div class="navbar">
       <ul class="nav nav-tabs">
-        <li class="nav-item" role="presentation">
-          <a href="#${PARENT_VIEW__CURRENT.fragment}/${id1}" class="nav-link">Location</a>
-        </li>
-        <li class="nav-item active" role="presentation">
-          <a href="#${VIEW__CURRENT.fragment}" class="nav-link">Notes</a>
-        </li>
-        <li class="nav-item" role="presentation">
-          <a href="#${location_inspections__views(PARENT_VIEW__CURRENT, id1)[location_inspections__views.active_view_key].fragment}" class="nav-link">Inspections</a>
-        </li>
+      <li class="nav-item" role="presentation">
+        <a href="#${PARENT_VIEW__CURRENT.fragment}/${id1}" class="nav-link">Location</a>
+      </li>
+      <li class="nav-item" role="presentation">
+        <a href="#${location_notes__views(PARENT_VIEW__CURRENT, id1)[location_notes__views.active_view_key].fragment}" class="nav-link">Notes</a>
+      </li>
+      <li class="nav-item active" role="presentation">
+        <a href="#${VIEW__CURRENT.fragment}" class="nav-link">Inspections</a>
+      </li>
       </ul>
     </div>
   `;
@@ -59,6 +59,7 @@ function locationNotesDetailsPage(app, $container, router, auth, opt1, id1, opt2
   const MODEL = Backbone.Model.extend({
     defaults: {
       location: id1,
+      result: 'OK',
       date: new Date(),
       __Status: 'Active'
     }
@@ -71,43 +72,13 @@ function locationNotesDetailsPage(app, $container, router, auth, opt1, id1, opt2
       rows: [
         {
           fields: [
-            Object.assign({}, entityLocationNotesDetails__fields.date, { className: 'col-md-4' })
+            Object.assign({}, entityLocationInspectionDetails__fields.date, { className: 'col-md-4' }),
+            Object.assign({}, entityLocationInspectionDetails__fields.result({ auth }), { className: 'col-md-4' })
           ]
         },
         {
           fields: [
-            entityLocationNotesDetails__fields.note
-          ]
-        }
-      ]
-    },
-    {
-      title: 'Meta',
-      id: 'meta',
-      postRender({ model, section }) {
-        function handler() {
-          if (model.isNew()) {
-            $(`#${section.id}`).hide();
-          } else {
-            $(`#${section.id}`).show();
-          }
-        }
-        handler();
-        model.on(`change:${model.idAttribute}`, handler);
-      },
-
-      rows: [
-        {
-          fields: [
-            Object.assign({}, entityLocationNotesDetails__fields.id, { className: 'col-md-8' }),
-            Object.assign({}, entityLocationNotesDetails__fields.__Status(auth), { className: 'col-md-4' })
-          ]
-        },
-        {
-          fields: [
-            entityLocationNotesDetails__fields.__CreatedOn,
-            entityLocationNotesDetails__fields.__ModifiedOn,
-            entityLocationNotesDetails__fields.__Owner
+            entityLocationInspectionDetails__fields.note
           ]
         }
       ]

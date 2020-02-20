@@ -97,6 +97,8 @@ function locatioInspectionsEntityDetailsPage(app, $container, router, auth, opt1
       ]
     }
   ];
+
+  const FINALIZE_DATA = () => {};
   // ---
 
   if (!(opt1 in VIEWS)) {
@@ -144,6 +146,8 @@ function locatioInspectionsEntityDetailsPage(app, $container, router, auth, opt1
       const definition = {
         successCore(data, options = {}) {
           const { auth, id, url } = options;
+
+          FINALIZE_DATA(data);
 
           return ajaxes({
             url: `${url}${id ? `('${id}')` : ''}`,

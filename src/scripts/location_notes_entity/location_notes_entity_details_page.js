@@ -1,7 +1,7 @@
 /* global $ Backbone */
 /* global ajaxes auth__checkLogin modal__showConfirm query__objectToString query__stringToObject renderAlert toSnapShot */
 /* global renderForm */
-/* global locationNotesEntity__views entityLocationNoteDetails__fields */
+/* global locationNotesEntity__views entityLocationNotesDetails__fields */
 
 /* exported locationNotesEntityDetailsPage */
 function locationNotesEntityDetailsPage(app, $container, router, auth, opt1, id1, query) {
@@ -52,13 +52,13 @@ function locationNotesEntityDetailsPage(app, $container, router, auth, opt1, id1
       rows: [
         {
           fields: [
-            Object.assign({}, entityLocationNoteDetails__fields.location({ auth }), { className: 'col-md-4' }),
-            Object.assign({}, entityLocationNoteDetails__fields.date, { className: 'col-md-4' })
+            Object.assign({}, entityLocationNotesDetails__fields.location({ auth }), { className: 'col-md-4' }),
+            Object.assign({}, entityLocationNotesDetails__fields.date, { className: 'col-md-4' })
           ]
         },
         {
           fields: [
-            entityLocationNoteDetails__fields.note
+            entityLocationNotesDetails__fields.note
           ]
         }
       ]
@@ -81,20 +81,22 @@ function locationNotesEntityDetailsPage(app, $container, router, auth, opt1, id1
       rows: [
         {
           fields: [
-            Object.assign({}, entityLocationNoteDetails__fields.id, { className: 'col-md-8' }),
-            Object.assign({}, entityLocationNoteDetails__fields.__Status({ auth }), { className: 'col-md-4' })
+            Object.assign({}, entityLocationNotesDetails__fields.id, { className: 'col-md-8' }),
+            Object.assign({}, entityLocationNotesDetails__fields.__Status({ auth }), { className: 'col-md-4' })
           ]
         },
         {
           fields: [
-            entityLocationNoteDetails__fields.__CreatedOn,
-            entityLocationNoteDetails__fields.__ModifiedOn,
-            entityLocationNoteDetails__fields.__Owner
+            entityLocationNotesDetails__fields.__CreatedOn,
+            entityLocationNotesDetails__fields.__ModifiedOn,
+            entityLocationNotesDetails__fields.__Owner
           ]
         }
       ]
     }
   ];
+
+  const FINALIZE_DATA = () => {};
   // ---
 
   if (!(opt1 in VIEWS)) {
@@ -142,6 +144,8 @@ function locationNotesEntityDetailsPage(app, $container, router, auth, opt1, id1
       const definition = {
         successCore(data, options = {}) {
           const { auth, id, url } = options;
+
+          FINALIZE_DATA(data);
 
           return ajaxes({
             url: `${url}${id ? `('${id}')` : ''}`,

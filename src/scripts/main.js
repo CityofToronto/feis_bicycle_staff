@@ -239,10 +239,13 @@ $(function () {
       },
 
       // ---
-
+      ['locations/:opt1/:id1/inspections/:opt2/:id2(/)'](opt1, id1, opt2, id2, query) {
+        /* global locationInspectionsDetailsPage */
+        return locationInspectionsDetailsPage(app, $container, router, auth, opt1, id1, opt2, id2, query);
+      },
       ['locations/:opt1/:id1/inspections(/:opt2)(/)'](opt1, id1, opt2, query) {
-        /* global renderLocationDetailsInspectionsPage */
-        return renderLocationDetailsInspectionsPage(app, $container, router, auth, opt1, id1, opt2, query);
+        /* global locationInspectionsPage */
+        return locationInspectionsPage(app, $container, router, auth, opt1, id1, opt2, query);
       },
       ['locations/:opt1/:id1/notes/:opt2/:id2(/)'](opt1, id1, opt2, id2, query) {
         /* global locationNotesDetailsPage */

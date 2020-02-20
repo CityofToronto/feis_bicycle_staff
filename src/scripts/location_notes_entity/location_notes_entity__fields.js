@@ -1,7 +1,7 @@
 /* global entity__fields */
 
-/* exported entityLocationNoteDetails__fields */
-const entityLocationNoteDetails__fields = {
+/* exported entityLocationNotesDetails__fields */
+const entityLocationNotesDetails__fields = {
   location: ({ auth }) => ({
     title: 'Location',
     bindTo: 'location',

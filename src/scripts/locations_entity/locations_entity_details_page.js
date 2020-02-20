@@ -199,6 +199,8 @@ function locationsEntityDetailsPage(app, $container, router, auth, opt1, id1, qu
       ]
     }
   ];
+
+  const FINALIZE_DATA = () => {};
   // ---
 
   if (!(opt1 in VIEWS)) {
@@ -246,6 +248,8 @@ function locationsEntityDetailsPage(app, $container, router, auth, opt1, id1, qu
       const definition = {
         successCore(data, options = {}) {
           const { auth, id, url } = options;
+
+          FINALIZE_DATA(data);
 
           return ajaxes({
             url: `${url}${id ? `('${id}')` : ''}`,

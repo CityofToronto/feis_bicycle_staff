@@ -3,7 +3,7 @@
    renderAlert toSnapShot */
 /* global renderForm */
 /* global renderLocationsPage__views renderLocationDetailsNotesPage__views
-   renderLocationDetailsNotesPage__currentView entityLocationNoteDetails__fields
+   renderLocationDetailsNotesPage__currentView entityLocationNotesDetails__fields
    renderLocationDetailsInspectionsPage__currentView */
 
 
@@ -153,12 +153,12 @@ function renderLocationDetailsNoteDetailsPage(app, $container, router, auth, opt
             rows: [
               {
                 fields: [
-                  Object.assign({}, entityLocationNoteDetails__fields.date, { className: 'col-md-4' })
+                  Object.assign({}, entityLocationNotesDetails__fields.date, { className: 'col-md-4' })
                 ]
               },
               {
                 fields: [
-                  entityLocationNoteDetails__fields.note
+                  entityLocationNotesDetails__fields.note
                 ]
               }
             ]
@@ -181,15 +181,15 @@ function renderLocationDetailsNoteDetailsPage(app, $container, router, auth, opt
             rows: [
               {
                 fields: [
-                  Object.assign({}, entityLocationNoteDetails__fields.id(model), { className: 'col-md-8' }),
-                  Object.assign({}, entityLocationNoteDetails__fields.__Status(auth, model), { className: 'col-md-4' })
+                  Object.assign({}, entityLocationNotesDetails__fields.id(model), { className: 'col-md-8' }),
+                  Object.assign({}, entityLocationNotesDetails__fields.__Status(auth, model), { className: 'col-md-4' })
                 ]
               },
               {
                 fields: [
-                  entityLocationNoteDetails__fields.__CreatedOn(model),
-                  entityLocationNoteDetails__fields.__ModifiedOn(model),
-                  entityLocationNoteDetails__fields.__Owner(model)
+                  entityLocationNotesDetails__fields.__CreatedOn(model),
+                  entityLocationNotesDetails__fields.__ModifiedOn(model),
+                  entityLocationNotesDetails__fields.__Owner(model)
                 ]
               }
             ]
