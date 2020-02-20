@@ -1,9 +1,7 @@
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// REQUIRE
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 const common = require('bicycle_parking/common.js');
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// LIFE CYCLE
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /* exported afterQuery, beforeContentParse, afterCreate, afterUpdate, afterDelete */
 
@@ -17,7 +15,6 @@ function beforeContentParse(content, request, uriInfo, response) {// eslint-disa
 
   cleanupStation(content, request);
 
-  setStationSiteName(content, request);
   setStatus(content, request);
 }
 
@@ -45,27 +42,10 @@ function afterDelete(content, request, uriInfo, response) {// eslint-disable-lin
   updateStation(content, request);
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-function setStationSiteName(content, request) {
-  if (content.has('station__site_name')) {
-    content.remove('station__site_name');
-  }
-
-  const select = encodeURIComponent('site_name');
-  ajax.request({
-    headers: { Authorization: request.getHeader('Authorization') },
-    method: 'GET',
-    uri: `${common.DA_STATIONS_URL}('${content.get('station').getAsString()}')?$select=${select}`
-  }, function okFunction(okResponse) {
-    const body = JSON.parse(okResponse.body);
-    content.addProperty('station__site_name', body.site_name);
-
-    // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
-  }, function errorFunction(errorResponse) { // eslint-disable-line no-unused-vars
-    // mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);
-  });
-}
+// SET PROPERTIES
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function setStatus(content, request) {
   if (request.getMethod() !== 'POST') {
@@ -78,6 +58,11 @@ function setStatus(content, request) {
 
   content.addProperty('__Status', 'Active');
 }
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// UPDATE STATION
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function getPreviousVersion(content, request) {
   if (request.getMethod() !== 'PUT') {

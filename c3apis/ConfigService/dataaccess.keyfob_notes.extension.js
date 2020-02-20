@@ -1,11 +1,9 @@
 'use strict';
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// REQUIRE
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 var common = require('bicycle_parking/common.js');
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// LIFE CYCLE
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /* exported afterQuery, beforeContentParse, afterCreate, afterUpdate, afterDelete */
 
@@ -21,7 +19,6 @@ function beforeContentParse(content, request, uriInfo, response) {
 
   cleanupKeyfobs(content, request);
 
-  setKeyfobsNumber(content, request);
   setStatus(content, request);
 }
 
@@ -53,27 +50,8 @@ function afterDelete(content, request, uriInfo, response) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-function setKeyfobsNumber(content, request) {
-  if (content.has('keyfob__number')) {
-    content.remove('keyfob__number');
-  }
-
-  var select = encodeURIComponent('number');
-
-  ajax.request({
-    headers: { Authorization: request.getHeader('Authorization') },
-    method: 'GET',
-    uri: common.DA_KEYFOBS_URL + '(\'' + content.get('keyfob').getAsString() + '\')?$select=' + select
-  }, function okFunction(okResponse) {
-    var body = JSON.parse(okResponse.body);
-    content.addProperty('keyfob__number', body.number);
-
-    // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
-  }, function errorFunction(errorResponse) {// eslint-disable-line no-unused-vars
-    // mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);
-  });
-}
+// SET PROPERTIES
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function setStatus(content, request) {
   if (request.getMethod() !== 'POST') {
@@ -86,6 +64,10 @@ function setStatus(content, request) {
 
   content.addProperty('__Status', 'Active');
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// UPDATE KEY FOB
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function getPreviousVersion(content, request) {
   if (request.getMethod() !== 'PUT') {

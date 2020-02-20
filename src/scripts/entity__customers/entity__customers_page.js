@@ -12,40 +12,49 @@ const renderEntityCustomersPage__views = {
 
     definition: (auth, opt) => { // eslint-disable-line no-unused-vars
       const definition = {
-        columns: [
-          entityCustomers__columns.action(renderEntityCustomersPage__views.all.fragment),
+        // columns: [
+        //   entityCustomers__columns.action(renderEntityCustomersPage__views.all.fragment),
 
-          entityCustomers__columns.id,
-          entityCustomers__columns.site_name,
-          entityCustomers__columns.description,
-          entityCustomers__columns.civic_address,
-          entityCustomers__columns.municipality,
-          entityCustomers__columns.province(auth),
-          entityCustomers__columns.postal_code,
-          entityCustomers__columns.primary_contact_first_name,
-          entityCustomers__columns.primary_contact_last_name,
-          entityCustomers__columns.primary_contact_email,
-          entityCustomers__columns.primary_contact_primary_phone,
-          entityCustomers__columns.primary_contact_alternate_phone,
-          entityCustomers__columns.alternate_contact_first_name,
-          entityCustomers__columns.alternate_contact_last_name,
-          entityCustomers__columns.alternate_contact_email,
-          entityCustomers__columns.alternate_contact_primary_phone,
-          entityCustomers__columns.alternate_contact_alternate_phone,
-          entityCustomers__columns.lockers_total,
-          entityCustomers__columns.latest_note,
-          entityCustomers__columns.latest_note__date,
-          entityCustomers__columns.latest_note__note,
-          entityCustomers__columns.latest_inspection,
-          entityCustomers__columns.latest_inspection__date,
-          entityCustomers__columns.latest_inspection__result(auth),
-          entityCustomers__columns.latest_inspection__note,
+        //   entityCustomers__columns.id,
+        //   entityCustomers__columns.site_name,
+        //   entityCustomers__columns.description,
+        //   entityCustomers__columns.civic_address,
+        //   entityCustomers__columns.municipality,
+        //   entityCustomers__columns.province(auth),
+        //   entityCustomers__columns.postal_code,
+        //   entityCustomers__columns.primary_contact_first_name,
+        //   entityCustomers__columns.primary_contact_last_name,
+        //   entityCustomers__columns.primary_contact_email,
+        //   entityCustomers__columns.primary_contact_primary_phone,
+        //   entityCustomers__columns.primary_contact_alternate_phone,
+        //   entityCustomers__columns.alternate_contact_first_name,
+        //   entityCustomers__columns.alternate_contact_last_name,
+        //   entityCustomers__columns.alternate_contact_email,
+        //   entityCustomers__columns.alternate_contact_primary_phone,
+        //   entityCustomers__columns.alternate_contact_alternate_phone,
+        //   entityCustomers__columns.lockers_total,
+        //   entityCustomers__columns.latest_note,
+        //   entityCustomers__columns.latest_note__date,
+        //   entityCustomers__columns.latest_note__note,
+        //   entityCustomers__columns.latest_inspection,
+        //   entityCustomers__columns.latest_inspection__date,
+        //   entityCustomers__columns.latest_inspection__result(auth),
+        //   entityCustomers__columns.latest_inspection__note,
 
-          entityCustomers__columns.__CreatedOn,
-          entityCustomers__columns.__ModifiedOn,
-          entityCustomers__columns.__Owner,
-          entityCustomers__columns.__Status
-        ],
+        //   entityCustomers__columns.__CreatedOn,
+        //   entityCustomers__columns.__ModifiedOn,
+        //   entityCustomers__columns.__Owner,
+        //   entityCustomers__columns.__Status
+        // ],
+
+
+        columns: Object.keys(entityCustomers__columns).map((key) => {
+          if (key === 'action') {
+            return entityCustomers__columns[key](renderEntityCustomersPage__views.all.fragment);
+          }
+          return typeof entityCustomers__columns[key] === 'function' ? entityCustomers__columns[key](auth)
+            : entityCustomers__columns[key];
+        }),
 
         order: [[1, 'asc']],
 

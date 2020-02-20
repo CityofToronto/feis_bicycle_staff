@@ -1,5 +1,5 @@
 /* global $ */
-/* global auth__checkLogin query__objectToString query__stringToObject */
+/* global ajaxes auth__checkLogin query__objectToString query__stringToObject */
 /* global renderDatatable */
 /* global entityKeyfobNotes__columns */
 
@@ -13,20 +13,13 @@ const renderEntityKeyfobNotesPage__views = {
 
     definition: (auth, opt) => { // eslint-disable-line no-unused-vars
       const definition = {
-        columns: [
-          entityKeyfobNotes__columns.action(renderEntityKeyfobNotesPage__views.all.fragment),
-
-          entityKeyfobNotes__columns.id,
-          entityKeyfobNotes__columns.keyfob,
-          entityKeyfobNotes__columns.keyfob__number,
-          entityKeyfobNotes__columns.date,
-          entityKeyfobNotes__columns.note,
-
-          entityKeyfobNotes__columns.__CreatedOn,
-          entityKeyfobNotes__columns.__ModifiedOn,
-          entityKeyfobNotes__columns.__Owner,
-          entityKeyfobNotes__columns.__Status
-        ],
+        columns: Object.keys(entityKeyfobNotes__columns).map((key) => {
+          if (key === 'action') {
+            return entityKeyfobNotes__columns[key](renderEntityKeyfobNotesPage__views.all.fragment);
+          }
+          return typeof entityKeyfobNotes__columns[key] === 'function' ? entityKeyfobNotes__columns[key](auth)
+            : entityKeyfobNotes__columns[key];
+        }),
 
         order: [
           [1, 'asc']
@@ -36,6 +29,68 @@ const renderEntityKeyfobNotesPage__views = {
       };
 
       definition.searchCols[definition.columns.length - 1] = { search: 'Active' };
+
+      definition.ajaxCore = definition.ajaxCore || function (data, callback, settings, queryObject, url, options = {}) {
+        const { auth } = options;
+
+        return ajaxes({
+          beforeSend(jqXHR) {
+            if (auth && auth.sId) {
+              jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+            }
+          },
+          contentType: 'application/json; charset=utf-8',
+          method: 'GET',
+          url: `${url}?${query__objectToString(queryObject)}`
+        }).then(({ data: response }) => {
+          const keyfobs = response.value.map(({ keyfob }) => keyfob)
+            .filter((keyfob, index, array) => array.indexOf(keyfob) === index);
+
+          if (keyfobs.length > 0) {
+            const filter = encodeURIComponent(keyfobs.map((id) => `id eq '${id}'`).join(' or '));
+            return ajaxes({
+              beforeSend(jqXHR) {
+                if (auth && auth.sId) {
+                  jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+                }
+              },
+              contentType: 'application/json; charset=utf-8',
+              method: 'GET',
+              url: `/* @echo C3DATA_KEYFOBS_URL */?$filter=${filter}`,
+            }).then(({ data: response2 }) => {
+              const keyfobMap = response2.value.reduce((acc, { id, number }) => {
+                acc[id] = number;
+                return acc;
+              }, {});
+
+              response.value.forEach((keyfobNote) => {
+                keyfobNote.calc_keyfob_number = keyfobMap[keyfobNote.keyfob];
+              });
+
+              callback({
+                data: response.value,
+                draw: data.draw,
+                recordsTotal: response['@odata.count'],
+                recordsFiltered: response['@odata.count']
+              });
+            });
+          } else {
+            response.value.forEach((locationNote) => {
+              locationNote.calc_location_site_name = null;
+            });
+
+            callback({
+              data: response.value,
+              draw: data.draw,
+              recordsTotal: response['@odata.count'],
+              recordsFiltered: response['@odata.count']
+            });
+          }
+        }).catch((error) => {
+          callback({ data: [], draw: data.draw, recordsTotal: 0, recordsFiltered: 0 });
+          throw error;
+        });
+      };
 
       return definition;
     }

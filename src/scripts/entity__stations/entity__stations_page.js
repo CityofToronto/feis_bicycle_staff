@@ -12,40 +12,13 @@ const renderEntityStationsPage__views = {
 
     definition: (auth, opt) => { // eslint-disable-line no-unused-vars
       const definition = {
-        columns: [
-          entityStations__columns.action(renderEntityStationsPage__views.all.fragment),
-
-          entityStations__columns.id,
-          entityStations__columns.site_name,
-          entityStations__columns.description,
-          entityStations__columns.civic_address,
-          entityStations__columns.municipality,
-          entityStations__columns.province(auth),
-          entityStations__columns.postal_code,
-          entityStations__columns.primary_contact_first_name,
-          entityStations__columns.primary_contact_last_name,
-          entityStations__columns.primary_contact_email,
-          entityStations__columns.primary_contact_primary_phone,
-          entityStations__columns.primary_contact_alternate_phone,
-          entityStations__columns.alternate_contact_first_name,
-          entityStations__columns.alternate_contact_last_name,
-          entityStations__columns.alternate_contact_email,
-          entityStations__columns.alternate_contact_primary_phone,
-          entityStations__columns.alternate_contact_alternate_phone,
-          entityStations__columns.capacity,
-          entityStations__columns.latest_note,
-          entityStations__columns.latest_note__date,
-          entityStations__columns.latest_note__note,
-          entityStations__columns.latest_inspection,
-          entityStations__columns.latest_inspection__date,
-          entityStations__columns.latest_inspection__result(auth),
-          entityStations__columns.latest_inspection__note,
-
-          entityStations__columns.__CreatedOn,
-          entityStations__columns.__ModifiedOn,
-          entityStations__columns.__Owner,
-          entityStations__columns.__Status
-        ],
+        columns: Object.keys(entityStations__columns).map((key) => {
+          if (key === 'action') {
+            return entityStations__columns[key](renderEntityStationsPage__views.all.fragment);
+          }
+          return typeof entityStations__columns[key] === 'function' ? entityStations__columns[key](auth)
+            : entityStations__columns[key];
+        }),
 
         order: [[1, 'asc']],
 

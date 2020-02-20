@@ -103,13 +103,44 @@ function renderEntityKeyfobNoteDetailsPage(app, $container, router, auth, opt, i
             rows: [
               {
                 fields: [
-                  Object.assign({}, entityKeyfobNoteDetails__fields.keyfob(auth), { className: 'col-sm-4' }),
-                  Object.assign({}, entityKeyfobNoteDetails__fields.date, { className: 'col-sm-4' })
+                  Object.assign({}, entityKeyfobNoteDetails__fields.keyfob(auth), { className: 'col-md-4' }),
+                  Object.assign({}, entityKeyfobNoteDetails__fields.date, { className: 'col-md-4' })
                 ]
               },
               {
                 fields: [
                   entityKeyfobNoteDetails__fields.note
+                ]
+              }
+            ]
+          },
+          {
+            title: 'Details',
+            id: 'details',
+            postRender({ model, section }) {
+              function handler() {
+                if (model.isNew()) {
+                  $(`#${section.id}`).hide();
+                } else {
+                  $(`#${section.id}`).show();
+                }
+              }
+              handler();
+              model.on(`change:${model.idAttribute}`, handler);
+            },
+
+            rows: [
+              {
+                fields: [
+                  Object.assign({}, entityKeyfobNoteDetails__fields.id(model), { className: 'col-md-8' }),
+                  Object.assign({}, entityKeyfobNoteDetails__fields.__Status(auth, model), { className: 'col-md-4' })
+                ]
+              },
+              {
+                fields: [
+                  entityKeyfobNoteDetails__fields.__CreatedOn(model),
+                  entityKeyfobNoteDetails__fields.__ModifiedOn(model),
+                  entityKeyfobNoteDetails__fields.__Owner(model)
                 ]
               }
             ]

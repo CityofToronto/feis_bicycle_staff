@@ -1,7 +1,8 @@
 {
   "number": "string",
+  "description": "string",
   "stations": ["string"],
-  "stations__site_name": "string",
+  "customer": "string",
   "latest_note": "string",
   "latest_note__date": "2019-12-23T00:00:00.000-05:00",
   "latest_note__note": "string"

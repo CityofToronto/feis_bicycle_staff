@@ -1,4 +1,4 @@
-/* global $ Backbone moment */
+/* global $ Backbone */
 /* global CotForm */
 /* global ajaxes auth__checkLogin deepCloneObject fixButtonLinks functionToValue oData__getErrorMessage modal__showAlert
   modal__showConfirm modal__showLogin modal__showPrompt stringToFunction */
@@ -9,8 +9,6 @@ function renderForm($container, definition, model, options = {}) {
   const {
     auth,
     url,
-
-    includeMeta = true,
 
     saveButtonLabel = (model) => model.isNew() ? 'Create' : 'Update',
 
@@ -117,116 +115,6 @@ function renderForm($container, definition, model, options = {}) {
       }
     });
   };
-
-  if (includeMeta) {
-    definition.sections.push({
-      title: 'Meta',
-      id: 'meta',
-
-      rows: [
-        {
-          fields: [
-            {
-              title: 'ID',
-              required: true,
-              class: 'col-sm-8',
-              htmlAttr: { readonly: true },
-
-              postRender({ field }) {
-                function handler() {
-                  $(`#${field.id}`).val(model.get('id'));
-                }
-                model.on('change:id', handler);
-                handler();
-              }
-            },
-            {
-              title: 'Status',
-              bindTo: '__Status',
-              required: true,
-              type: 'radio',
-              choices: [{ text: 'Active' }, { text: 'Inactive' }],
-              orientation: 'horizontal',
-              class: 'col-sm-4',
-
-              postRender({ field }) {
-                function handler() {
-                  $(`#${field.id}Element input[type="radio"][value="${model.get(field.bindTo)}"]`).prop('checked', true);
-                }
-                model.on('change:__Status', handler);
-              }
-            }
-          ]
-        },
-        {
-          fields: [
-            {
-              title: 'Created On',
-              required: true,
-              htmlAttr: { readOnly: true },
-
-              postRender({ field }) {
-                function handler() {
-                  const momentDate = moment(model.get('__CreatedOn'));
-                  if (momentDate.isValid()) {
-                    $(`#${field.id}`).val(momentDate.format('YYYY/MM/DD h:mm A'));
-                  } else {
-                    $(`#${field.id}`).val('');
-                  }
-                }
-                model.on(`change:__CreatedOn`, handler);
-                handler();
-              }
-            },
-            {
-              title: 'Modified On',
-              required: true,
-              htmlAttr: { readOnly: true },
-
-              postRender({ field }) {
-                function handler() {
-                  const momentDate = moment(model.get('__ModifiedOn'));
-                  if (momentDate.isValid()) {
-                    $(`#${field.id}`).val(momentDate.format('YYYY/MM/DD h:mm A'));
-                  } else {
-                    $(`#${field.id}`).val('');
-                  }
-                }
-                model.on(`change:__ModifiedOn`, handler);
-                handler();
-              }
-            },
-            {
-              title: 'Modified By',
-              required: true,
-              htmlAttr: { readOnly: true },
-
-              postRender({ field }) {
-                function handler() {
-                  $(`#${field.id}`).val(model.get('__Owner'));
-                }
-                model.on('change:__Owner', handler);
-                handler();
-              }
-            }
-          ]
-        }
-      ],
-
-      postRender({ section }) {
-        const $section = $(`#${section.id}`);
-        const handler = () => {
-          if (model.isNew()) {
-            $section.addClass('hide');
-          } else {
-            $section.removeClass('hide');
-          }
-        };
-        model.on(`change:${model.idAttribute}`, handler);
-        handler();
-      }
-    });
-  }
 
   function doRenderLoop({
     formPreRender,
@@ -512,8 +400,8 @@ function renderForm($container, definition, model, options = {}) {
       }
 
       if ($leftColumn.children().length > 0 && $rightColumn.children().length > 0) {
-        $leftColumn.addClass('col-sm-6');
-        $rightColumn.addClass('col-sm-6');
+        $leftColumn.addClass('col-md-6');
+        $rightColumn.addClass('col-md-6');
         $buttons.append($leftColumn, $rightColumn);
       } else if ($leftColumn.children().length > 0) {
         $leftColumn.addClass('col-xs-12');

@@ -54,7 +54,7 @@ function renderEntityCustomerDetailsPage(app, $container, router, auth, opt, id,
       const Model = Backbone.Model.extend({
         defaults: {
           municipality: 'Toronto',
-          province: 'Ontario',
+          province: 'Ontario'
         }
       });
       const model = new Model(data);
@@ -64,6 +64,54 @@ function renderEntityCustomerDetailsPage(app, $container, router, auth, opt, id,
       const definition = {
         successCore(data, options = {}) {
           const { auth, id, url } = options;
+
+          switch (data.request_type) {
+            case 'Bicycle Lockers':
+              delete data.request_station_choice_1;
+              delete data.request_station_choice_2;
+              delete data.request_station_choice_3;
+              break;
+
+            case 'Bicycle Stations':
+              delete data.request_locker_choice_1;
+              delete data.request_locker_choice_2;
+              delete data.request_locker_choice_3;
+              break;
+
+            default:
+              delete data.request_locker_choice_1;
+              delete data.request_locker_choice_2;
+              delete data.request_locker_choice_3;
+              delete data.request_station_choice_1;
+              delete data.request_station_choice_2;
+              delete data.request_station_choice_3;
+          }
+
+          switch (data.subscription_type) {
+            case 'Bicycle Locker':
+              delete data.station;
+              delete data.keyfob;
+              delete data.keyfob_date_assigned;
+              delete data.keyfob_date_returned;
+              break;
+
+            case 'Bicycle Station':
+              delete data.location;
+              delete data.locker;
+              delete data.locker_key_date_assigned;
+              delete data.locker_key_date_returned;
+              break;
+
+            default:
+              delete data.location;
+              delete data.locker;
+              delete data.locker_key_date_assigned;
+              delete data.locker_key_date_returned;
+              delete data.station;
+              delete data.keyfob;
+              delete data.keyfob_date_assigned;
+              delete data.keyfob_date_returned;
+          }
 
           return ajaxes({
             url: `${url}${id ? `('${id}')` : ''}`,
@@ -94,18 +142,26 @@ function renderEntityCustomerDetailsPage(app, $container, router, auth, opt, id,
 
         sections: [
           {
-            title: 'Details',
+            title: 'Contact',
 
             rows: [
               {
                 fields: [
-                  Object.assign({}, entityCustomerDetails__fields.site_name, { className: 'col-sm-4' }),
-                  Object.assign({}, entityCustomerDetails__fields.description, { className: 'col-sm-8' })
+                  entityCustomerDetails__fields.first_name,
+                  entityCustomerDetails__fields.last_name,
+                  entityCustomerDetails__fields.title
                 ]
               },
               {
                 fields: [
-                  Object.assign({}, entityCustomerDetails__fields.civic_address, { className: 'col-sm-8' })
+                  entityCustomerDetails__fields.email,
+                  entityCustomerDetails__fields.primary_phone,
+                  entityCustomerDetails__fields.alternate_phone
+                ]
+              },
+              {
+                fields: [
+                  Object.assign({}, entityCustomerDetails__fields.civic_address, { className: 'col-md-8' })
                 ]
               },
               {
@@ -118,56 +174,314 @@ function renderEntityCustomerDetailsPage(app, $container, router, auth, opt, id,
             ]
           },
           {
-            title: 'Contacts',
+            title: 'Bicycles',
 
             rows: [
               {
                 fields: [
                   {
                     type: 'html',
-                    html: '<h4>Primary Contact</h4>'
+                    html: '<h4>Bicycle 1</h4>'
                   }
                 ]
               },
               {
                 fields: [
-                  Object.assign({}, entityCustomerDetails__fields.primary_contact_first_name, { title: 'First Name', className: 'col-sm-4' }),
-                  Object.assign({}, entityCustomerDetails__fields.primary_contact_last_name, { title: 'Last Name', className: 'col-sm-4' })
-                ]
-              },
-              {
-                fields: [
-                  Object.assign({}, entityCustomerDetails__fields.primary_contact_email, { title: 'Email' }),
-                  Object.assign({}, entityCustomerDetails__fields.primary_contact_primary_phone, { title: 'Primary Phone' }),
-                  Object.assign({}, entityCustomerDetails__fields.primary_contact_alternate_phone, { title: 'Alternate Phone' })
+                  Object.assign({}, entityCustomerDetails__fields.bicycle_1_make, { title: 'Make' }),
+                  Object.assign({}, entityCustomerDetails__fields.bicycle_1_model, { title: 'Model' }),
+                  Object.assign({}, entityCustomerDetails__fields.bicycle_1_colour, { title: 'Colour' })
                 ]
               },
               {
                 fields: [
                   {
                     type: 'html',
-                    html: '<h4>Alternate Contact</h4>'
+                    html: '<h4>Bicycle 2</h4>'
                   }
                 ]
               },
               {
                 fields: [
-                  Object.assign({}, entityCustomerDetails__fields.alternate_contact_first_name, { title: 'First Name', className: 'col-sm-4' }),
-                  Object.assign({}, entityCustomerDetails__fields.alternate_contact_last_name, { title: 'Last Name', className: 'col-sm-4' })
+                  Object.assign({}, entityCustomerDetails__fields.bicycle_2_make, { title: 'Make' }),
+                  Object.assign({}, entityCustomerDetails__fields.bicycle_2_model, { title: 'Model' }),
+                  Object.assign({}, entityCustomerDetails__fields.bicycle_2_colour, { title: 'Colour' })
+                ]
+              },
+            ]
+          },
+          {
+            title: 'Request',
+            postRender: ({ section } = {}) => {
+              section.$requestTypeElement.trigger('init');
+            },
+
+            rows: [
+              {
+                fields: [
+                  Object.assign({}, entityCustomerDetails__fields.request_type(auth), { className: 'col-md-4' })
                 ]
               },
               {
                 fields: [
-                  Object.assign({}, entityCustomerDetails__fields.alternate_contact_email, { title: 'Email' }),
-                  Object.assign({}, entityCustomerDetails__fields.alternate_contact_primary_phone, { title: 'Primary Phone' }),
-                  Object.assign({}, entityCustomerDetails__fields.alternate_contact_alternate_phone, { title: 'Alternate Phone' })
+                  entityCustomerDetails__fields.choice_1,
+                  entityCustomerDetails__fields.choice_2,
+                  entityCustomerDetails__fields.choice_3
                 ]
               }
             ]
           },
           {
-            title: 'Latest Note',
-            id: 'latest_note',
+            title: 'Subscription',
+            postRender: ({ section } = {}) => {
+              section.$subscriptionTypeElement.trigger('init');
+              section.$subscriptionLocationElement.trigger('init');
+            },
+
+            rows: [
+              {
+                fields: [
+                  Object.assign({}, entityCustomerDetails__fields.subscription_type, {
+                    className: 'col-md-4',
+
+                    postRender: ({ section, field } = {}) => {
+                      const $element = $(`#${field.id}`);
+
+                      section.$subscriptionTypeElement = $element;
+
+                      $element.on('init change', () => {
+                        switch ($element.val()) {
+                          case 'Bicycle Locker':
+                            $('.locationItem').removeClass('hide');
+                            $('.stationItem').addClass('hide');
+                            break;
+
+                          case 'Bicycle Station':
+                            $('.locationItem').addClass('hide');
+                            $('.stationItem').removeClass('hide');
+                            break;
+
+                          default:
+                            $('.locationItem').addClass('hide');
+                            $('.stationItem').addClass('hide');
+                        }
+                      });
+                    }
+                  }),
+                  Object.assign({}, entityCustomerDetails__fields.location(auth), {
+                    className: 'col-md-4 hide locationItem',
+
+                    postRender: ({ section, field, model } = {}) => {
+                      const $element = $(`#${field.id}`);
+
+                      section.$subscriptionLocationElement = $element;
+
+                      $element.on('init change', () => {
+                        if (model.get(field.bindTo)) {
+                          ajaxes({
+                            beforeSend(jqXHR) {
+                              if (auth && auth.sId) {
+                                jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+                              }
+                            },
+                            contentType: 'application/json; charset=utf-8',
+                            method: 'GET',
+                            url: `/* @echo C3DATA_LOCKERS_URL */?$filter=location eq '${model.get(field.bindTo)}'&$orderby=number`
+                          }).then(({ data }) => {
+                            const lockerOptions = `
+                              <option value="">- Select -</option>
+                              ${data.value.map((locker) => `<option value="${locker.id}">${locker.number}</option>`).join('')}
+                            `;
+
+                            const ids = data.value.map((locker) => locker.id);
+
+                            const locker = model.get('locker');
+                            const options = locker && ids.indexOf(locker) == -1
+                              ? `<option value="${locker}">${locker}</option>${lockerOptions}`
+                              : lockerOptions;
+                            section.$subscriptionLockerElement.html(options);
+                            if (locker) {
+                              section.$subscriptionLockerElement.val(locker);
+                            } else {
+                              section.$subscriptionLockerElement.val('');
+                            }
+                          });
+                        } else {
+                          section.$subscriptionLockerElement.html('<option value="">- Select a Location -</option>');
+                        }
+
+                        section.$subscriptionLockerElement.trigger('init');
+                      });
+                    }
+                  }),
+                  {
+                    title: 'Locker',
+                    required: true,
+                    bindTo: 'locker',
+                    type: 'dropdown',
+                    choices: [{ text: '- Select a Location -', value: '' }],
+                    className: 'col-md-4 hide locationItem',
+
+                    postRender: (({ section, field, formValidator } = {}) => {
+                      const $element = $(`#${field.id}`);
+
+                      section.$subscriptionLockerElement = $element;
+
+                      $element.on('init', () => {
+                        if ($element.val()) {
+                          formValidator.validateField(field.id);
+                        } else {
+                          formValidator.updateStatus(field.id, 'NOT_VALIDATED');
+                        }
+                      });
+
+                      $element.on('init change', () => {
+                        const val = $element.val();
+                        switch (model.get('request_type')) {
+                          case 'Bicycle Lockers':
+                            if (val) {
+                              model.set('request_locker_choice_1', val);
+                            } else {
+                              model.unset('request_locker_choice_1');
+                            }
+                            break;
+
+                          case 'Bicycle Stations':
+                            if (val) {
+                              model.set('request_station_choice_1', val);
+                            } else {
+                              model.unset('request_station_choice_1');
+                            }
+                            break;
+                        }
+                      });
+                    })
+                  },
+                  Object.assign({}, entityCustomerDetails__fields.station(auth), {
+                    className: 'col-md-4 hide stationItem',
+
+                    postRender: ({ section, field, model } = {}) => {
+                      const $element = $(`#${field.id}`);
+
+                      section.$subscriptionStationElement = $element;
+
+                      $element.on('init change', () => {
+                        if (model.get(field.bindTo)) {
+                          ajaxes({
+                            beforeSend(jqXHR) {
+                              if (auth && auth.sId) {
+                                jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+                              }
+                            },
+                            contentType: 'application/json; charset=utf-8',
+                            method: 'GET',
+                            url: `/* @echo C3DATA_KEYFOBS_URL */?$filter=stations/any(s:s eq '${$element.val()}')&$orderby=number`
+                          }).then(({ data }) => {
+                            const keyfobOptions = `
+                              <option value="">- Select -</option>
+                              ${data.value.map((keyfob) => `<option value="${keyfob.id}">${keyfob.number}</option>`).join('')}
+                            `;
+
+                            const ids = data.value.map((keyfob) => keyfob.id);
+
+                            const keyfob = model.get('keyfob');
+                            const options = keyfob && ids.indexOf(keyfob) == -1
+                              ? `<option value="${keyfob}">${keyfob}</option>${keyfobOptions}`
+                              : keyfobOptions;
+                            section.$subscriptionKeyfobElement.html(options);
+                            if (keyfob) {
+                              section.$subscriptionKeyfobElement.val(keyfob);
+                            } else {
+                              section.$subscriptionKeyfobElement.val('');
+                            }
+                          });
+                        } else {
+                          section.$subscriptionKeyfobElement.html('<option value="">- Select a Location -</option>');
+                        }
+
+                        section.$subscriptionKeyfobElement.trigger('init');
+                      });
+                    }
+                  })
+                ]
+              },
+              {
+                fields: [
+                  entityCustomerDetails__fields.subscription_start_date,
+                  entityCustomerDetails__fields.subscription_expiration_date,
+                  entityCustomerDetails__fields.subscription_end_date
+                ]
+              },
+              {
+                fields: [
+                  Object.assign({}, entityCustomerDetails__fields.locker_key_date_assigned, {
+                    className: 'col-md-4',
+
+                    postRender: ({ field } = {}) => {
+                      const $element = $(`#${field.id}`);
+
+                      const $rowElement = $element.closest('.row');
+                      $rowElement.addClass('hide locationItem');
+                    }
+                  }),
+                  Object.assign({}, entityCustomerDetails__fields.locker_key_date_returned, { className: 'col-md-4' })
+                ]
+              },
+              {
+                fields: [
+                  {
+                    title: 'Key Fob',
+                    required: false,
+                    bindTo: 'keyfob',
+                    type: 'dropdown',
+                    choices: [{ text: '- Select a Station -', value: '' }],
+
+                    postRender: (({ section, field, formValidator } = {}) => {
+                      const $element = $(`#${field.id}`);
+
+                      section.$subscriptionKeyfobElement = $element;
+
+                      const $rowElement = $element.closest('.row');
+                      $rowElement.addClass('hide stationItem');
+
+                      $element.on('init', () => {
+                        if ($element.val()) {
+                          formValidator.validateField(field.id);
+                        } else {
+                          formValidator.updateStatus(field.id, 'NOT_VALIDATED');
+                        }
+                      });
+
+                      $element.on('init change', () => {
+                        const val = $element.val();
+                        switch (model.get('request_type')) {
+                          case 'Bicycle Lockers':
+                            if (val) {
+                              model.set('request_locker_choice_1', val);
+                            } else {
+                              model.unset('request_locker_choice_1');
+                            }
+                            break;
+
+                          case 'Bicycle Stations':
+                            if (val) {
+                              model.set('request_station_choice_1', val);
+                            } else {
+                              model.unset('request_station_choice_1');
+                            }
+                            break;
+                        }
+                      });
+                    })
+                  },
+                  entityCustomerDetails__fields.keyfob_date_assigned,
+                  entityCustomerDetails__fields.keyfob_date_returned
+                ]
+              }
+            ]
+          },
+          {
+            title: 'Meta',
+            id: 'meta',
             postRender({ model, section }) {
               function handler() {
                 if (model.isNew()) {
@@ -183,41 +497,15 @@ function renderEntityCustomerDetailsPage(app, $container, router, auth, opt, id,
             rows: [
               {
                 fields: [
-                  Object.assign({}, entityCustomerDetails__fields.latest_note__date(model), { title: 'Date', className: 'col-sm-4' })
+                  Object.assign({}, entityCustomerDetails__fields.id(model), { className: 'col-md-8' }),
+                  Object.assign({}, entityCustomerDetails__fields.__Status(auth, model), { className: 'col-md-4' })
                 ]
               },
               {
                 fields: [
-                  Object.assign({}, entityCustomerDetails__fields.latest_note__note(model), { title: 'Note' })
-                ]
-              }
-            ]
-          },
-          {
-            title: 'Latest Inspection',
-            id: 'latest_inspection',
-            postRender({ model, section }) {
-              function handler() {
-                if (model.isNew()) {
-                  $(`#${section.id}`).hide();
-                } else {
-                  $(`#${section.id}`).show();
-                }
-              }
-              handler();
-              model.on(`change:${model.idAttribute}`, handler);
-            },
-
-            rows: [
-              {
-                fields: [
-                  Object.assign({}, entityCustomerDetails__fields.latest_inspection__date(model), { title: 'Date', className: 'col-sm-4' }),
-                  Object.assign({}, entityCustomerDetails__fields.latest_inspection__result(model), { title: 'Result', className: 'col-sm-4' })
-                ]
-              },
-              {
-                fields: [
-                  Object.assign({}, entityCustomerDetails__fields.latest_inspection__note(model), { title: 'Note' })
+                  entityCustomerDetails__fields.__CreatedOn(model),
+                  entityCustomerDetails__fields.__ModifiedOn(model),
+                  entityCustomerDetails__fields.__Owner(model)
                 ]
               }
             ]

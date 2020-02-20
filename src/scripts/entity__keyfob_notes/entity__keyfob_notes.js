@@ -26,10 +26,14 @@ const entityKeyfobNotes__columns = {
     className: 'minWidth',
     data: 'keyfob'
   },
-  keyfob__number: {
+  calc_keyfob_number: {
     title: 'Key Fob',
+    orderable: false,
+    searchable: false,
     className: 'minWidth',
-    data: 'keyfob__number'
+    render(data, type, row) {
+      return row.calc_keyfob_number;
+    }
   },
 
   date: {
@@ -93,15 +97,24 @@ const entityKeyfobNotes__columns = {
     data: '__Owner',
     type: 'string'
   },
-  __Status: {
+  __Status: (auth) => ({
     title: 'Status',
     className: 'statusWidth',
     data: '__Status',
     type: 'string',
     searchType: 'equals',
-    choices: [{ text: 'Active' }, { text: 'Inactive' }],
+    choices: {
+      beforeSend(jqXHR) {
+        if (auth && auth.sId) {
+          jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+        }
+      },
+      contentType: 'application/json; charset=utf-8',
+      method: 'GET',
+      url: '/* @echo C3DATAMEDIA_STATUS_CHOICES */'
+    },
     render(data) {
       return `<span class="label label-${data === 'Active' ? 'success' : data === 'Inactive' ? 'danger' : 'default'}" style="font-size: 90%;">${data}</span>`;
     }
-  }
+  })
 };

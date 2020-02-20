@@ -1,5 +1,5 @@
 /* global $ */
-/* global auth__checkLogin query__objectToString query__stringToObject */
+/* global ajaxes auth__checkLogin query__objectToString query__stringToObject */
 /* global renderDatatable */
 /* global entityLockers__columns */
 
@@ -12,27 +12,13 @@ const renderEntityLockersPage__views = {
 
     definition: (auth, opt) => { // eslint-disable-line no-unused-vars
       const definition = {
-        columns: [
-          entityLockers__columns.action(renderEntityLockersPage__views.all.fragment),
-
-          entityLockers__columns.id,
-          entityLockers__columns.location,
-          entityLockers__columns.location__site_name,
-          entityLockers__columns.number,
-          entityLockers__columns.description,
-          entityLockers__columns.latest_note,
-          entityLockers__columns.latest_note__date,
-          entityLockers__columns.latest_note__note,
-          entityLockers__columns.latest_inspection,
-          entityLockers__columns.latest_inspection__date,
-          entityLockers__columns.latest_inspection__result(auth),
-          entityLockers__columns.latest_inspection__note,
-
-          entityLockers__columns.__CreatedOn,
-          entityLockers__columns.__ModifiedOn,
-          entityLockers__columns.__Owner,
-          entityLockers__columns.__Status
-        ],
+        columns: Object.keys(entityLockers__columns).map((key) => {
+          if (key === 'action') {
+            return entityLockers__columns[key](renderEntityLockersPage__views.all.fragment);
+          }
+          return typeof entityLockers__columns[key] === 'function' ? entityLockers__columns[key](auth)
+            : entityLockers__columns[key];
+        }),
 
         order: [[1, 'asc']],
 
@@ -40,6 +26,83 @@ const renderEntityLockersPage__views = {
       };
 
       definition.searchCols[definition.columns.length - 1] = { search: 'Active' };
+
+      definition.ajaxCore = definition.ajaxCore || function (data, callback, settings, queryObject, url, options = {}) {
+        const { auth } = options;
+
+        return ajaxes({
+          beforeSend(jqXHR) {
+            if (auth && auth.sId) {
+              jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+            }
+          },
+          contentType: 'application/json; charset=utf-8',
+          method: 'GET',
+          url: `${url}?${query__objectToString(queryObject)}`
+        }).then(({ data: response }) => {
+          const promises = [];
+
+          const locations = response.value.map(({ location }) => location)
+            .filter((location, index, array) => array.indexOf(location) === index);
+          if (locations.length > 0) {
+            const filter = encodeURIComponent(locations.map((id) => `id eq '${id}'`).join(' or '));
+            promises.push(ajaxes({
+              beforeSend(jqXHR) {
+                if (auth && auth.sId) {
+                  jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+                }
+              },
+              contentType: 'application/json; charset=utf-8',
+              method: 'GET',
+              url: `/* @echo C3DATA_LOCATIONS_URL */?$filter=${filter}`,
+            }).then(({ data: response2 }) => {
+              const locationMap = response2.value.reduce((acc, { id, site_name }) => {
+                acc[id] = site_name;
+                return acc;
+              }, {});
+              response.value.forEach((location) => location.calc_location_site_name = locationMap[location.location]);
+            }));
+          } else {
+            response.value.forEach((location) => location.calc_location_site_name = null);
+          }
+
+          const customers = response.value.map(({ customer }) => customer)
+            .filter((customer, index, array) => array.indexOf(customer) === index);
+          if (customers.length > 0) {
+            const filter = encodeURIComponent(customers.map((id) => `id eq '${id}'`).join(' or '));
+            promises.push(ajaxes({
+              beforeSend(jqXHR) {
+                if (auth && auth.sId) {
+                  jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+                }
+              },
+              contentType: 'application/json; charset=utf-8',
+              method: 'GET',
+              url: `/* @echo C3DATA_CUSTOMERS_URL */?$filter=${filter}`,
+            }).then(({ data: response3 }) => {
+              const customerMap = response3.value.reduce((acc, { id, first_name, last_name }) => {
+                acc[id] = `${first_name} ${last_name}`;
+                return acc;
+              }, {});
+              response.value.forEach((customer) => customer.calc_customer_name = customerMap[customer.customer]);
+            }));
+          } else {
+            response.value.forEach((location) => location.calc_customer_name = null);
+          }
+
+          Promise.all(promises).then(() => {
+            callback({
+              data: response.value,
+              draw: data.draw,
+              recordsTotal: response['@odata.count'],
+              recordsFiltered: response['@odata.count']
+            });
+          });
+        }).catch((error) => {
+          callback({ data: [], draw: data.draw, recordsTotal: 0, recordsFiltered: 0 });
+          throw error;
+        });
+      };
 
       return definition;
     }

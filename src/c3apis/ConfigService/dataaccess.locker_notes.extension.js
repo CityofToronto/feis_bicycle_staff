@@ -1,9 +1,8 @@
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// REQUIRE
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 const common = require('bicycle_parking/common.js');
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// LIFE CYCLE
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /* exported afterQuery, beforeContentParse, afterCreate, afterUpdate, afterDelete */
 
@@ -17,7 +16,6 @@ function beforeContentParse(content, request, uriInfo, response) { // eslint-dis
 
   cleanupLocker(content, request);
 
-  setLockerName(content, request);
   setStatus(content, request);
 }
 
@@ -45,28 +43,10 @@ function afterDelete(content, request, uriInfo, response) { // eslint-disable-li
   updateLocker(content, request);
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-function setLockerName(content, request) {
-  if (content.has('locker__name')) {
-    content.remove('locker__name');
-  }
-
-  const select = encodeURIComponent('location__site_name,number');
-
-  ajax.request({
-    headers: { Authorization: request.getHeader('Authorization') },
-    method: 'GET',
-    uri: `${common.DA_LOCKERS_URL}('${content.get('locker').getAsString()}')?$select=${select}`
-  }, function okFunction(okResponse) {
-    const body = JSON.parse(okResponse.body);
-    content.addProperty('locker__name', `${body.location__site_name} ${body.number}`);
-
-    // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
-  }, function errorFunction(errorResponse) { // eslint-disable-line no-unused-vars
-    // mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);
-  });
-}
+// SET PROPERTIES
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function setStatus(content, request) {
   if (request.getMethod() !== 'POST') {
@@ -79,6 +59,11 @@ function setStatus(content, request) {
 
   content.addProperty('__Status', 'Active');
 }
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// UPDATE LOCKER
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function getPreviousVersion(content, request) {
   if (request.getMethod() !== 'PUT') {
@@ -121,6 +106,8 @@ function updateLocker(content, request, {
   locker = content.get('locker').getAsString(),
   __Status = content.get('__Status').getAsString()
 } = {}) {
+  let body;
+
   const method = request.getMethod();
 
   const select = encodeURIComponent('id,date,note');
@@ -145,7 +132,7 @@ function updateLocker(content, request, {
       return null;
     })();
 
-    const body = JSON.parse(okResponse.body);
+    body = JSON.parse(okResponse.body);
     if (method === 'DELETE') {
       if (body.value[1] && body.value[1].id === id) {
         body.value.splice(1, 1);
@@ -183,32 +170,32 @@ function updateLocker(content, request, {
       return 0;
     });
 
-    const data = {};
-    if (body.value.length > 0) {
-      data.latest_note = body.value[0].id;
-      data.latest_note__date = body.value[0].date;
-      data.latest_note__note = body.value[0].note;
-    } else {
-      data.latest_note = null;
-      data.latest_note__date = null;
-      data.latest_note__note = null;
-    }
-    ajax.request({
-      data: JSON.stringify(data),
-      headers: {
-        Authorization: request.getHeader('Authorization'),
-        'Content-Type': 'application/json; charset=UTF-8',
-        'X-HTTP-Method-Override': 'PATCH'
-      },
-      method: 'POST',
-      uri: `${common.DA_LOCKERS_URL}('${locker}')`
+    // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
+  }, function errorFunction(errorResponse) { // eslint-disable-line no-unused-vars
+    // mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);
+  });
 
-    }, function okFunction(okResponse) { // eslint-disable-line no-unused-vars
-      // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
-    }, function errorFunction(errorResponse) { // eslint-disable-line no-unused-vars
-      // mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);
-    });
+  const data = {};
+  if (body.value.length > 0) {
+    data.latest_note = body.value[0].id;
+    data.latest_note__date = body.value[0].date;
+    data.latest_note__note = body.value[0].note;
+  } else {
+    data.latest_note = null;
+    data.latest_note__date = null;
+    data.latest_note__note = null;
+  }
+  ajax.request({
+    data: JSON.stringify(data),
+    headers: {
+      Authorization: request.getHeader('Authorization'),
+      'Content-Type': 'application/json; charset=UTF-8',
+      'X-HTTP-Method-Override': 'PATCH'
+    },
+    method: 'POST',
+    uri: `${common.DA_LOCKERS_URL}('${locker}')`
 
+  }, function okFunction(okResponse) { // eslint-disable-line no-unused-vars
     // mailClient.send('OKAY RESPONSE', JSON.stringify(okResponse), ['jngo2@toronto.ca']);
   }, function errorFunction(errorResponse) { // eslint-disable-line no-unused-vars
     // mailClient.send('ERROR RESPONSE', JSON.stringify(errorResponse), ['jngo2@toronto.ca']);

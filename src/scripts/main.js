@@ -11,7 +11,7 @@
 $(function () {
 
   // Configure App
-  const app = new cot_app('Bicycle Parking', {
+  const app = new cot_app('Secure Bike Parking', {
     hasContentTop: false,
     hasContentBottom: false,
     hasContentRight: false,
@@ -68,6 +68,27 @@ $(function () {
     },
 
     routes: {
+      ['entities/payments/:opt/:id(/)'](opt, id, query) {
+        /* global renderEntityPaymentDetailsPage */
+        return renderEntityPaymentDetailsPage(app, $container, router, auth, opt, id, query);
+      },
+      ['entities/payments(/:opt)(/)'](opt, query) {
+        /* global renderEntityPaymentsPage */
+        return renderEntityPaymentsPage(app, $container, router, auth, opt, query);
+      },
+
+      // ---
+      ['entities/customers/:opt/:id(/)'](opt, id, query) {
+        /* global renderEntityCustomerDetailsPage */
+        return renderEntityCustomerDetailsPage(app, $container, router, auth, opt, id, query);
+      },
+      ['entities/customers(/:opt)(/)'](opt, query) {
+        /* global renderEntityCustomersPage */
+        return renderEntityCustomersPage(app, $container, router, auth, opt, query);
+      },
+
+      // ---
+
       ['entities/keyfob_notes/:opt/:id(/)'](opt, id, query) {
         /* global renderEntityKeyfobNoteDetailsPage */
         return renderEntityKeyfobNoteDetailsPage(app, $container, router, auth, opt, id, query);
@@ -157,34 +178,34 @@ $(function () {
       // ---
 
       ['entities/location_inspections/:opt/:id(/)'](opt, id, query) {
-        /* global renderEntityLocationInspectionDetailsPage */
-        return renderEntityLocationInspectionDetailsPage(app, $container, router, auth, opt, id, query);
+        /* global locatioInspectionsEntityDetailsPage */
+        return locatioInspectionsEntityDetailsPage(app, $container, router, auth, opt, id, query);
       },
       ['entities/location_inspections(/:opt)(/)'](opt, query) {
-        /* global renderEntityLocationInspectionsPage */
-        return renderEntityLocationInspectionsPage(app, $container, router, auth, opt, query);
+        /* global locationInspectionsEntityPage */
+        return locationInspectionsEntityPage(app, $container, router, auth, opt, query);
       },
 
       // ---
 
       ['entities/location_notes/:opt/:id(/)'](opt, id, query) {
-        /* global renderEntityLocationNoteDetailsPage */
-        return renderEntityLocationNoteDetailsPage(app, $container, router, auth, opt, id, query);
+        /* global locationNotesEntityDetailsPage */
+        return locationNotesEntityDetailsPage(app, $container, router, auth, opt, id, query);
       },
       ['entities/location_notes(/:opt)(/)'](opt, query) {
-        /* global renderEntityLocationNotesPage */
-        return renderEntityLocationNotesPage(app, $container, router, auth, opt, query);
+        /* global locationNotesEntityPage */
+        return locationNotesEntityPage(app, $container, router, auth, opt, query);
       },
 
       // ---
 
       ['entities/locations/:opt/:id(/)'](opt, id, query) {
-        /* global renderEntityLocationDetailsPage */
-        return renderEntityLocationDetailsPage(app, $container, router, auth, opt, id, query);
+        /* global locationsEntityDetailsPage */
+        return locationsEntityDetailsPage(app, $container, router, auth, opt, id, query);
       },
       ['entities/locations(/:opt)(/)'](opt, query) {
-        /* global renderEntityLocationsPage */
-        return renderEntityLocationsPage(app, $container, router, auth, opt, query);
+        /* global locationsEntityPage */
+        return locationsEntityPage(app, $container, router, auth, opt, query);
       },
 
       // ---
@@ -192,6 +213,52 @@ $(function () {
       ['entities(/)'](query) {
         /* global renderEntitiesPage */
         return renderEntitiesPage(app, $container, router, auth, query);
+      },
+
+      // ---
+
+      ['lockers/:opt1/:id1/inspections(/:opt2)(/)'](opt1, id1, opt2, query) {
+        /* global renderLockerDetailsInspectionsPage */
+        return renderLockerDetailsInspectionsPage(app, $container, router, auth, opt1, id1, opt2, query);
+      },
+      ['lockers/:opt1/:id1/notes/:opt2/:id2(/)'](opt1, id1, opt2, id2, query) {
+        /* global renderLockerDetailsNoteDetailsPage */
+        return renderLockerDetailsNoteDetailsPage(app, $container, router, auth, opt1, id1, opt2, id2, query);
+      },
+      ['lockers/:opt1/:id1/notes(/:opt2)(/)'](opt1, id1, opt2, query) {
+        /* global renderLockerDetailsNotesPage */
+        return renderLockerDetailsNotesPage(app, $container, router, auth, opt1, id1, opt2, query);
+      },
+      ['lockers/:opt/:id(/)'](opt, id, query) {
+        /* global renderLockerDetailsPage */
+        return renderLockerDetailsPage(app, $container, router, auth, opt, id, query);
+      },
+      ['lockers(/:opt)(/)'](opt, query) {
+        /* global renderLockersPage */
+        return renderLockersPage(app, $container, router, auth, opt, query);
+      },
+
+      // ---
+
+      ['locations/:opt1/:id1/inspections(/:opt2)(/)'](opt1, id1, opt2, query) {
+        /* global renderLocationDetailsInspectionsPage */
+        return renderLocationDetailsInspectionsPage(app, $container, router, auth, opt1, id1, opt2, query);
+      },
+      ['locations/:opt1/:id1/notes/:opt2/:id2(/)'](opt1, id1, opt2, id2, query) {
+        /* global locationNotesDetailsPage */
+        return locationNotesDetailsPage(app, $container, router, auth, opt1, id1, opt2, id2, query);
+      },
+      ['locations/:opt1/:id1/notes(/:opt2)(/)'](opt1, id1, opt2, query) {
+        /* global locationNotesPage */
+        return locationNotesPage(app, $container, router, auth, opt1, id1, opt2, query);
+      },
+      ['locations/:opt/:id(/)'](opt, id, query) {
+        /* global locationsDetailsPage */
+        return locationsDetailsPage(app, $container, router, auth, opt, id, query);
+      },
+      ['locations(/:opt)(/)'](opt, query) {
+        /* global locationsPage */
+        return locationsPage(app, $container, router, auth, opt, query);
       },
 
       // ---

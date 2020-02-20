@@ -53,6 +53,7 @@ function renderEntityKeyfobDetailsPage(app, $container, router, auth, opt, id, q
     }).then(({ data }) => {
       const Model = Backbone.Model.extend({
         defaults: {
+          number: '0000'
         }
       });
       const model = new Model(data);
@@ -99,13 +100,72 @@ function renderEntityKeyfobDetailsPage(app, $container, router, auth, opt, id, q
             rows: [
               {
                 fields: [
-                  Object.assign({}, entityKeyfobDetails__fields.number, { className: 'col-sm-4' }),
-                  Object.assign({}, entityKeyfobDetails__fields.description, { className: 'col-sm-8' })
+                  Object.assign({}, entityKeyfobDetails__fields.number, { className: 'col-md-4' }),
+                  Object.assign({}, entityKeyfobDetails__fields.description, { className: 'col-md-8' })
                 ]
               },
               {
                 fields: [
-                  Object.assign({}, entityKeyfobDetails__fields.stations(auth), { className: 'col-sm-8' })
+                  Object.assign({}, entityKeyfobDetails__fields.stations(auth), { className: 'col-md-8' })
+                ]
+              }
+            ]
+          },
+          {
+            title: 'Latest Note',
+            id: 'latest_note',
+            postRender({ model, section }) {
+              function handler() {
+                if (model.isNew()) {
+                  $(`#${section.id}`).hide();
+                } else {
+                  $(`#${section.id}`).show();
+                }
+              }
+              handler();
+              model.on(`change:${model.idAttribute}`, handler);
+            },
+
+            rows: [
+              {
+                fields: [
+                  Object.assign({}, entityKeyfobDetails__fields.latest_note__date(model), { title: 'Date', className: 'col-md-4' })
+                ]
+              },
+              {
+                fields: [
+                  Object.assign({}, entityKeyfobDetails__fields.latest_note__note(model), { title: 'Note' })
+                ]
+              }
+            ]
+          },
+          {
+            title: 'Details',
+            id: 'details',
+            postRender({ model, section }) {
+              function handler() {
+                if (model.isNew()) {
+                  $(`#${section.id}`).hide();
+                } else {
+                  $(`#${section.id}`).show();
+                }
+              }
+              handler();
+              model.on(`change:${model.idAttribute}`, handler);
+            },
+
+            rows: [
+              {
+                fields: [
+                  Object.assign({}, entityKeyfobDetails__fields.id(model), { className: 'col-md-8' }),
+                  Object.assign({}, entityKeyfobDetails__fields.__Status(auth, model), { className: 'col-md-4' })
+                ]
+              },
+              {
+                fields: [
+                  entityKeyfobDetails__fields.__CreatedOn(model),
+                  entityKeyfobDetails__fields.__ModifiedOn(model),
+                  entityKeyfobDetails__fields.__Owner(model)
                 ]
               }
             ]

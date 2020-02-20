@@ -26,10 +26,15 @@ const entityLockers__columns = {
     className: 'minWidth',
     data: 'location'
   },
-  location__site_name: {
+  calc_location_site_name: {
     title: 'Location',
+    data: 'location',
+    orderable: false,
+    searchable: false,
     className: 'minWidth',
-    data: 'location__site_name'
+    render(data, type, row) {
+      return row.calc_location_site_name || '';
+    }
   },
 
   number: {
@@ -47,6 +52,22 @@ const entityLockers__columns = {
       } else {
         return '';
       }
+    }
+  },
+
+  customer: {
+    title: 'Customer',
+    className: 'minWidth',
+    data: 'customer'
+  },
+  calc_customer_name: {
+    title: 'Customer',
+    data: 'customer',
+    orderable: false,
+    searchable: false,
+    className: 'minWidth',
+    render(data, type, row) {
+      return row.calc_customer_name || '';
     }
   },
 
@@ -114,7 +135,7 @@ const entityLockers__columns = {
       },
       contentType: 'application/json; charset=utf-8',
       method: 'GET',
-      url: '/* @echo C3DATAMEDIA_LOCATION_INSPECTION_CHOICES */'
+      url: '/* @echo C3DATAMEDIA_INSPECTION_CHOICES */'
     },
     render(data) {
       if (data) {
@@ -171,16 +192,25 @@ const entityLockers__columns = {
     data: '__Owner',
     type: 'string'
   },
-  __Status: {
+  __Status: (auth) => ({
     title: 'Status',
-    className: 'statusWidth',
     data: '__Status',
     type: 'string',
     searchType: 'equals',
-    choices: [{ text: 'Active' }, { text: 'Inactive' }],
+    choices: {
+      beforeSend(jqXHR) {
+        if (auth && auth.sId) {
+          jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+        }
+      },
+      contentType: 'application/json; charset=utf-8',
+      method: 'GET',
+      url: '/* @echo C3DATAMEDIA_STATUS_CHOICES */'
+    },
+    className: 'statusWidth',
     render(data) {
       const labelClass = data === 'Active' ? 'success' : data === 'Inactive' ? 'danger' : 'default';
       return `<span class="label label-${labelClass}" style="font-size: 90%;">${data}</span>`;
     }
-  }
+  })
 };

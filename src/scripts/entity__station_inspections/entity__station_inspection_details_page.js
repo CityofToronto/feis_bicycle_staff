@@ -115,6 +115,37 @@ function renderEntityStationInspectionDetailsPage(app, $container, router, auth,
                 ]
               }
             ]
+          },
+          {
+            title: 'Details',
+            id: 'details',
+            postRender({ model, section }) {
+              function handler() {
+                if (model.isNew()) {
+                  $(`#${section.id}`).hide();
+                } else {
+                  $(`#${section.id}`).show();
+                }
+              }
+              handler();
+              model.on(`change:${model.idAttribute}`, handler);
+            },
+
+            rows: [
+              {
+                fields: [
+                  Object.assign({}, entityStationInspectionDetails__fields.id(model), { className: 'col-md-8' }),
+                  Object.assign({}, entityStationInspectionDetails__fields.__Status(auth, model), { className: 'col-md-4' })
+                ]
+              },
+              {
+                fields: [
+                  entityStationInspectionDetails__fields.__CreatedOn(model),
+                  entityStationInspectionDetails__fields.__ModifiedOn(model),
+                  entityStationInspectionDetails__fields.__Owner(model)
+                ]
+              }
+            ]
           }
         ]
       };
