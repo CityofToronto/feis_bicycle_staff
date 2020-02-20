@@ -245,7 +245,6 @@ $(function () {
         return renderLocationDetailsInspectionsPage(app, $container, router, auth, opt1, id1, opt2, query);
       },
       ['locations/:opt1/:id1/notes/:opt2/:id2(/)'](opt1, id1, opt2, id2, query) {
-        console.log('notes details');
         /* global locationNotesDetailsPage */
         return locationNotesDetailsPage(app, $container, router, auth, opt1, id1, opt2, id2, query);
       },
