@@ -13,7 +13,9 @@ const locationInspectionsEntity__columns = {
     data: 'location'
   },
   calc_location_site_name: {
-    title: 'Location',
+    title: 'Location Site Name',
+    orderable: false,
+    searchable: false,
     className: 'minWidth',
     render(data, type, row) {
       return row.calc_location_site_name;
