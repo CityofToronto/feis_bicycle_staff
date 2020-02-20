@@ -3,69 +3,70 @@
 /* global renderDatatable */
 /* global locations__views location_notes__views */
 
-/* exported locationNotesPage_opt2 */
-let locationNotesPage_opt2 = 'all';
-
 /* exported locationNotesPage */
 function locationNotesPage(app, $container, router, auth, opt1, id1, opt2, query) {
 
   // ---
-  const PARENT_ENTITY_VIEWS = locations__views;
-  const DEFAULT_PARENT_ENTITY_VIEW = PARENT_ENTITY_VIEWS.all;
-  const CURRENT_PARENT_ENTITY_VIEW = PARENT_ENTITY_VIEWS[opt1];
+  const PARENT_VIEWS = locations__views;
 
-  const ENTITY_VIEWS = location_notes__views;
-  const DEFAULT_ENTITY_VIEW = ENTITY_VIEWS.all;
-  const CURRENT_ENTITY_VIEW = ENTITY_VIEWS[opt2];
+  const PARENT_VIEW__DEFAULT = PARENT_VIEWS.all;
+  const PARENT_VIEW__CURRENT = PARENT_VIEWS[opt1];
 
-  const DEFAULT_REDIRECT_TO = CURRENT_PARENT_ENTITY_VIEW.title;
-  const DEFAULT_REDIRECT_TO_FRAGMENT = CURRENT_PARENT_ENTITY_VIEW.fragment;
+  const VIEWS = location_notes__views(PARENT_VIEW__CURRENT, id1);
 
-  const PLURAL_PARENT_ITEM = 'Locations';
+  const VIEW__DEFAULT = VIEWS.all;
+  const VIEW__CURRENT = VIEWS[opt2];
 
-  const ITEM = 'Locker Location Note';
-  // const PLURAL_ITEM = `${ITEM}s`;
+  const DEFAULT_REDIRECT = PARENT_VIEW__CURRENT.title;
+  const DEFAULT_REDIRECT_FRAGMENT = PARENT_VIEW__CURRENT.fragment;
+
+  const TITLE__FUNC = function (data) {
+    if (data.id) {
+      return data.site_name;
+    } else {
+      return 'New Location';
+    }
+  };
 
   const BREADCRUMBS = [
     { name: app.name, link: '#home' },
-    { name: PLURAL_PARENT_ITEM, link: `#${DEFAULT_PARENT_ENTITY_VIEW.fragment}` },
-    { name: CURRENT_PARENT_ENTITY_VIEW.breadcrumb, link: `#${CURRENT_PARENT_ENTITY_VIEW.fragment}` }
+    { name: 'Locker Locations', link: `#${PARENT_VIEW__DEFAULT.fragment}` },
+    { name: PARENT_VIEW__CURRENT.breadcrumb, link: `#${PARENT_VIEW__CURRENT.fragment}` }
   ];
+  const BREADCRUMBS__FUNC = (data) => BREADCRUMBS.concat({
+    name: data.id ? data.site_name : 'New',
+    link: data.id ? `#${VIEW__CURRENT.fragment}/${data.id}` : null
+  });
 
-  const PARENT_DATAACCESS_URL = '/* @echo C3DATA_LOCATIONS_URL */';
+  const ITEM = 'Location Note';
+
   const DATAACCESS_URL = '/* @echo C3DATA_LOCATION_NOTES_URL */';
+  const DATAACCESS_URL__PARENT = '/* @echo C3DATA_LOCATIONS_URL */';
 
-  const GET_TAB_HTML = function (id) {
-    return `
-      <div class="navbar">
-        <ul class="nav nav-tabs">
-          <li class="nav-item" role="presentation">
-            <a href="#${DEFAULT_REDIRECT_TO_FRAGMENT}/${id}" class="nav-link">Location</a>
-          </li>
-          <li class="nav-item active" role="presentation">
-            <a href="#${DEFAULT_REDIRECT_TO_FRAGMENT}/${id}/notes/${opt2}" class="nav-link">Notes</a>
-          </li>
-        </ul>
-      </div>
-    `;
+  const TABS = `
+    <div class="navbar">
+      <ul class="nav nav-tabs">
+        <li class="nav-item" role="presentation">
+          <a href="#${PARENT_VIEW__CURRENT.fragment}/${id1}" class="nav-link">Location</a>
+        </li>
+        <li class="nav-item active" role="presentation">
+          <a href="#${VIEW__CURRENT.fragment}" class="nav-link">Notes</a>
+        </li>
+      </ul>
+    </div>
+  `;
 
-    //       <li class="nav-item" role="presentation">
-    //         <a href="#${DEFAULT_REDIRECT_TO_FRAGMENT}/${id}/inspections/${renderLocationDetailsInspectionsPage__currentView}" class="nav-link">Inspections</a>
-    //       </li>
-    //       <li class="nav-item" role="presentation">
-    //         <a href="#" class="nav-link">Lockers</a>
-    //       </li>
-  };
+  const RESET_STATES__FUNC = () => { };
   // ---
 
-  if (!(opt1 in PARENT_ENTITY_VIEWS)) {
-    return router.navigate(`${DEFAULT_PARENT_ENTITY_VIEW.fragment}/${id1}/${DEFAULT_ENTITY_VIEW.fragment}?${query__objectToString({ resetState: 'yes' })}`,
+  if (!(opt1 in PARENT_VIEWS)) {
+    return router.navigate(`${PARENT_VIEW__DEFAULT.fragment}/${id1}/${VIEW__DEFAULT.fragment}?${query__objectToString({ resetState: 'yes' })}`,
       { trigger: true, replace: true });
     // EXIT
   }
 
-  if (!(opt2 in ENTITY_VIEWS)) {
-    return router.navigate(`${CURRENT_PARENT_ENTITY_VIEW.fragment}/${id1}${DEFAULT_ENTITY_VIEW.fragment}?${query__objectToString({ resetState: 'yes' })}`,
+  if (!(opt2 in VIEWS)) {
+    return router.navigate(`${VIEW__DEFAULT.fragment}?${query__objectToString({ resetState: 'yes' })}`,
       { trigger: true, replace: true });
     // EXIT
   }
@@ -77,10 +78,16 @@ function locationNotesPage(app, $container, router, auth, opt1, id1, opt2, query
     }
 
     const {
-      redirectTo = DEFAULT_REDIRECT_TO,
-      redirectToFragment = DEFAULT_REDIRECT_TO_FRAGMENT,
+      redirectTo = DEFAULT_REDIRECT,
+      redirectToFragment = DEFAULT_REDIRECT_FRAGMENT,
       resetState
     } = query__stringToObject(query);
+
+    // RESET SESSION STORAGE
+    if (resetState === 'yes') {
+      sessionStorage.removeItem(VIEW__CURRENT.stateSaveWebStorageKey);
+      RESET_STATES__FUNC();
+    }
 
     $container.empty();
 
@@ -91,50 +98,40 @@ function locationNotesPage(app, $container, router, auth, opt1, id1, opt2, query
           jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
         }
       },
-      dataType: 'json',
+      contentType: 'application/json; charset=utf-8',
       method: 'GET',
-      url: `${PARENT_DATAACCESS_URL}('${id1}')?$select=site_name`
-    }).then(({ data } = {}) => {
-      app.setBreadcrumb(BREADCRUMBS.concat({ name: data.site_name, link: `#${CURRENT_PARENT_ENTITY_VIEW.fragment}/${data.id}` }), true);
-      app.setTitle(data.site_name);
+      url: `${DATAACCESS_URL__PARENT}('${id1}')`
+    }).then(({ data }) => {
+      app.setBreadcrumb(BREADCRUMBS__FUNC(data), true);
+      app.setTitle(TITLE__FUNC(data));
     });
-
-    // RESET SESSION STORAGE
-    if (resetState === 'yes') {
-      sessionStorage.removeItem(CURRENT_ENTITY_VIEW.stateSaveWebStorageKey);
-    }
 
     // ADD REDIRECT
     $container.append(`<p><a href="#${redirectToFragment}">Back to ${redirectTo}</a></p>`);
 
-    // ADD TABS
+    // ADD TABS REGION
     const $tabContainer = $('<div></div>').appendTo($container);
-    function renderNavBar(id) {
-      $tabContainer.html(GET_TAB_HTML(id));
-      fixButtonLinks($tabContainer);
-    }
-    if (id1 !== 'new') {
-      renderNavBar(id1);
-    }
+    $tabContainer.html(TABS);
+    fixButtonLinks($tabContainer);
 
     // ADD SUB TITLE
-    $container.append(`<h2>${CURRENT_ENTITY_VIEW.title}</h2>`);
+    $container.append(`<h2>${VIEW__CURRENT.title}</h2>`);
 
     // ADD DATATABLE
     return Promise.resolve().then(() => {
-      return renderDatatable($container, CURRENT_ENTITY_VIEW.definition(auth, opt1, id1), {
+      return renderDatatable($container, VIEW__CURRENT.definition(auth), {
         auth,
         url: DATAACCESS_URL,
 
         newButtonLabel: `New ${ITEM}`,
-        newButtonFragment: `${CURRENT_ENTITY_VIEW.fragment}/new`,
+        newButtonFragment: `${VIEW__CURRENT.fragment}/new`,
 
-        stateSaveWebStorageKey: CURRENT_ENTITY_VIEW.stateSaveWebStorageKey,
+        stateSaveWebStorageKey: VIEW__CURRENT.stateSaveWebStorageKey,
 
-        views: Object.keys(ENTITY_VIEWS).map((key) => ({
-          title: ENTITY_VIEWS[key].title,
-          fragment: `${ENTITY_VIEWS[key].fragment}?${query__objectToString({ resetState: 'yes' })}`,
-          isCurrent: key === opt2
+        views: Object.keys(VIEWS).map((key) => ({
+          title: VIEWS[key].title,
+          fragment: `${VIEWS[key].fragment}?${query__objectToString({ resetState: 'yes' })}`,
+          isCurrent: key === opt1
         }))
       });
     });

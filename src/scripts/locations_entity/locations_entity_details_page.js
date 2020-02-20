@@ -17,9 +17,9 @@ function locationsEntityDetailsPage(app, $container, router, auth, opt1, id1, qu
 
   const TITLE__FUNC = function (data) {
     if (data.id) {
-      return 'New Location';
-    } else {
       return data.site_name;
+    } else {
+      return 'New Location';
     }
   };
 
@@ -30,8 +30,8 @@ function locationsEntityDetailsPage(app, $container, router, auth, opt1, id1, qu
     { name: VIEW__CURRENT.breadcrumb, link: `#${VIEW__CURRENT.fragment}` }
   ];
   const BREADCRUMBS__FUNC = (data) => BREADCRUMBS.concat({
-    name: data.id ? 'New' : data.id.site_name,
-    link: data.id ? null : `#${VIEW__CURRENT.fragment}/${data.id}`
+    name: data.id ? data.site_name : 'New',
+    link: data.id ? `#${VIEW__CURRENT.fragment}/${data.id}` : null
   });
 
   const ITEM = 'Location';

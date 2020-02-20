@@ -1,17 +1,17 @@
-/* global locations__views locationNotesEntity__columns entity__columns */
+/* global locationNotesEntity__columns entity__columns */
 
 /* exported location_notes__views */
-const location_notes__views = {
+const location_notes__views = (parentView, id) => ({
   all: {
     breadcrumb: 'All',
 
     title: 'All Notes',
-    fragment: 'notes/all',
+    fragment: `${parentView.fragment}/${id}/notes/all`,
 
-    definition(auth, opt, id) {
+    definition(auth) {
       return {
         columns: [
-          entity__columns.action({ fragment: `${locations__views[opt].fragment}/${id}/${this.fragment}` }),
+          entity__columns.action({ fragment: this.fragment }),
 
           locationNotesEntity__columns.date,
           locationNotesEntity__columns.note,
@@ -29,4 +29,6 @@ const location_notes__views = {
       };
     }
   }
-};
+});
+
+location_notes__views.active_view_key = 'all';

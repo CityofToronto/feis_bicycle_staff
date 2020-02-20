@@ -4,7 +4,7 @@
 const locations__views = {
   all: {
     breadcrumb: 'All',
-    title: 'All Locker Locations',
+    title: 'All Locations',
     fragment: `locations/all`,
 
     definition(auth) {

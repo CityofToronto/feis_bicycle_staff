@@ -2,29 +2,39 @@
 /* global ajaxes auth__checkLogin fixButtonLinks modal__showConfirm query__objectToString query__stringToObject
   renderAlert toSnapShot */
 /* global renderForm */
-/* global locations__views locationsEntity__fields */
-/* global locationNotesPage_opt2 */
+/* global locations__views locationsEntity__fields location_notes__views */
 
 /* exported locationsDetailsPage */
-function locationsDetailsPage(app, $container, router, auth, opt, id, query) {
+function locationsDetailsPage(app, $container, router, auth, opt1, id1, query) {
 
   // ---
-  const ENTITY_VIEWS = locations__views;
-  const ENTITY_VIEW = ENTITY_VIEWS[opt];
-  const ENTITY_VIEW_DEFAULT = ENTITY_VIEWS.all;
+  const VIEWS = locations__views;
 
-  const DEFAULT_REDIRECT_TO = ENTITY_VIEW.title;
-  const DEFAULT_REDIRECT_TO_FRAGMENT = ENTITY_VIEW.fragment;
+  const VIEW__DEFAULT = VIEWS.all;
+  const VIEW__CURRENT = VIEWS[opt1];
 
-  const ITEM = 'Location';
-  const ITEM_PLURAL = `${ITEM}s`;
+  const DEFAULT_REDIRECT = VIEW__DEFAULT.title;
+  const DEFAULT_REDIRECT_FRAGMENT = VIEW__DEFAULT.fragment;
+
+  const TITLE__FUNC = function (data) {
+    if (data.id) {
+      return data.site_name;
+    } else {
+      return 'New Location';
+    }
+  };
 
   const BREADCRUMBS = [
     { name: app.name, link: '#home' },
-    { name: ITEM_PLURAL, link: `#${ENTITY_VIEW_DEFAULT.fragment}` },
-    { name: ENTITY_VIEW.breadcrumb, link: `#${ENTITY_VIEW.fragment}` }
+    { name: 'Locker Locations', link: `#${VIEW__DEFAULT.fragment}` },
+    { name: VIEW__CURRENT.breadcrumb, link: `#${VIEW__CURRENT.fragment}` }
   ];
-  // const ACTIVE_BREADCRUMB_NEW =
+  const BREADCRUMBS__FUNC = (data) => BREADCRUMBS.concat({
+    name: data.id ? data.site_name : 'New',
+    link: data.id ? `#${VIEW__CURRENT.fragment}/${data.id}` : null
+  });
+
+  const ITEM = 'Location';
 
   const DATAACCESS_URL = '/* @echo C3DATA_LOCATIONS_URL */';
 
@@ -199,21 +209,30 @@ function locationsDetailsPage(app, $container, router, auth, opt, id, query) {
     }
   ];
 
-  const GET_TAB_HTML = function (id) {
+  const TABS__FUNC = function (data) {
+    if (!data.id) {
+      return '';
+    }
+
     return `
       <div class="navbar">
         <ul class="nav nav-tabs">
           <li class="nav-item active" role="presentation">
-            <a href="#${DEFAULT_REDIRECT_TO_FRAGMENT}/${id}" class="nav-link">Location</a>
+            <a href="#${VIEW__CURRENT.fragment}/${data.id}" class="nav-link">Location</a>
           </li>
           <li class="nav-item" role="presentation">
-            <a href="#${DEFAULT_REDIRECT_TO_FRAGMENT}/${id}/notes/${locationNotesPage_opt2}" class="nav-link">Notes</a>
+            <a href="#${location_notes__views(VIEW__CURRENT, data.id)[location_notes__views.active_view_key].fragment}" class="nav-link">Notes</a>
           </li>
         </ul>
       </div>
     `;
 
-
+    // <li class="nav-item active" role="presentation">
+    //         <a href="#${DEFAULT_REDIRECT_TO_FRAGMENT}/${id}" class="nav-link">Location</a>
+    //       </li>
+    //       <li class="nav-item" role="presentation">
+    //         <a href="#${DEFAULT_REDIRECT_TO_FRAGMENT}/${id}/notes/${locationNotesPage_opt2}" class="nav-link">Notes</a>
+    //       </li>
     //       <li class="nav-item" role="presentation">
     //         <a href="#${DEFAULT_REDIRECT_TO_FRAGMENT}/${id}/inspections/${renderLocationDetailsInspectionsPage__currentView}" class="nav-link">Inspections</a>
     //       </li>
@@ -221,10 +240,20 @@ function locationsDetailsPage(app, $container, router, auth, opt, id, query) {
     //         <a href="#" class="nav-link">Lockers</a>
     //       </li>
   };
+
+  const RESET_STATES__FUNC = () => {
+    if (id1) {
+      location_notes__views.active_view_key = 'all';
+      const notesViews = location_notes__views(VIEW__CURRENT, id1);
+      for (const key in notesViews) {
+        sessionStorage.removeItem(notesViews[key].stateSaveWebStorageKey);
+      }
+    }
+  };
   // ---
 
-  if (!(opt in ENTITY_VIEWS)) {
-    return router.navigate(`${ENTITY_VIEW_DEFAULT.fragment}?${query__objectToString({ resetState: 'yes' })}`,
+  if (!(opt1 in VIEWS)) {
+    return router.navigate(`${VIEW__DEFAULT.fragment}?${query__objectToString({ resetState: 'yes' })}`,
       { trigger: true, replace: true });
     // EXIT
   }
@@ -236,27 +265,26 @@ function locationsDetailsPage(app, $container, router, auth, opt, id, query) {
     }
 
     const {
-      redirectTo = DEFAULT_REDIRECT_TO,
-      redirectToFragment = DEFAULT_REDIRECT_TO_FRAGMENT
+      redirectTo = DEFAULT_REDIRECT,
+      redirectToFragment = DEFAULT_REDIRECT_FRAGMENT,
+      resetState
     } = query__stringToObject(query);
+
+    // RESET SESSION STORAGE
+    if (resetState === 'yes') {
+      RESET_STATES__FUNC();
+    }
 
     $container.empty();
 
     // ADD REDIRECT
     $container.append(`<p><a href="#${redirectToFragment}">Back to ${redirectTo}</a></p>`);
 
-    // ADD TABS
+    // ADD TABS REGION
     const $tabContainer = $('<div></div>').appendTo($container);
-    function renderNavBar(id) {
-      $tabContainer.html(GET_TAB_HTML(id));
-      fixButtonLinks($tabContainer);
-    }
-    if (id !== 'new') {
-      renderNavBar(id);
-    }
 
     return Promise.resolve().then(() => {
-      if (id !== 'new') {
+      if (id1 !== 'new') {
         return ajaxes({
           beforeSend(jqXHR) {
             if (auth && auth.sId) {
@@ -265,7 +293,7 @@ function locationsDetailsPage(app, $container, router, auth, opt, id, query) {
           },
           contentType: 'application/json; charset=utf-8',
           method: 'GET',
-          url: `${DATAACCESS_URL}('${id}')`
+          url: `${DATAACCESS_URL}('${id1}')`
         });
       }
 
@@ -274,6 +302,13 @@ function locationsDetailsPage(app, $container, router, auth, opt, id, query) {
       const model = new MODEL(data);
 
       let snapShot = toSnapShot(model.toJSON());
+
+      $tabContainer.html(TABS__FUNC(model.toJSON()));
+      fixButtonLinks($tabContainer);
+      model.on('change:id', () => {
+        $tabContainer.html(TABS__FUNC(model.toJSON()));
+        fixButtonLinks($tabContainer);
+      });
 
       const definition = {
         successCore(data, options = {}) {
@@ -293,10 +328,7 @@ function locationsDetailsPage(app, $container, router, auth, opt, id, query) {
           }).then(({ data, textStatus, jqXHR }) => {
             snapShot = toSnapShot(data);
 
-            router.navigate(`${ENTITY_VIEW.fragment}/${data.id}`, { trigger: false, replace: true });
-
-            app.setBreadcrumb(BREADCRUMBS.concat({ name: data.site_name, link: `#${ENTITY_VIEW.fragment}/${data.id}` }), true);
-            app.setTitle(data.site_name);
+            router.navigate(`${VIEW__CURRENT.fragment}/${data.id}`, { trigger: false, replace: true });
 
             return { data, textStatus, jqXHR };
           }).catch((error) => {
@@ -321,7 +353,7 @@ function locationsDetailsPage(app, $container, router, auth, opt, id, query) {
           saveButtonLabel: (model) => model.isNew() ? `Create ${ITEM}` : `Update ${ITEM}`,
 
           cancelButtonLabel: 'Cancel',
-          cancelButtonFragment: ENTITY_VIEW.fragment,
+          cancelButtonFragment: VIEW__CURRENT.fragment,
 
           removeButtonLabel: `Remove ${ITEM}`,
           removePromptValue: 'DELETE'
@@ -329,13 +361,12 @@ function locationsDetailsPage(app, $container, router, auth, opt, id, query) {
       }).then(() => {
 
         // SET TITLE AND BREADCRUMB
-        if (id === 'new') {
-          app.setBreadcrumb(BREADCRUMBS.concat({ name: 'New', link: `#${ENTITY_VIEW.fragment}/new` }), true);
-          app.setTitle(`New ${ITEM}`);
-        } else {
-          app.setBreadcrumb(BREADCRUMBS.concat({ name: data.site_name, link: `#${ENTITY_VIEW.fragment}/${data.id}` }), true);
-          app.setTitle(data.site_name);
-        }
+        app.setBreadcrumb(BREADCRUMBS__FUNC(model.toJSON()), true);
+        app.setTitle(TITLE__FUNC(model.toJSON()));
+        model.on('change:id', () => {
+          app.setBreadcrumb(BREADCRUMBS__FUNC(model.toJSON()), true);
+          app.setTitle(TITLE__FUNC(model.toJSON()));
+        });
 
         // RETURN CLEANUP FUNCTION
         return () => {

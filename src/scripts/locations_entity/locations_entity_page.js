@@ -46,16 +46,16 @@ function locationsEntityPage(app, $container, router, auth, opt1, query) {
       resetState
     } = query__stringToObject(query);
 
+    // RESET SESSION STORAGE
+    if (resetState === 'yes') {
+      sessionStorage.removeItem(VIEW__CURRENT.stateSaveWebStorageKey);
+    }
+
     $container.empty();
 
     // SET TITLE AND BREADCRUMB
     app.setBreadcrumb(BREADCRUMBS, true);
     app.setTitle(TITLE);
-
-    // RESET SESSION STORAGE
-    if (resetState === 'yes') {
-      sessionStorage.removeItem(VIEW__CURRENT.stateSaveWebStorageKey);
-    }
 
     // ADD REDIRECT AND SUB TITLE
     $container.append(`<p><a href="#${redirectToFragment}">Back to ${redirectTo}</a></p>`);

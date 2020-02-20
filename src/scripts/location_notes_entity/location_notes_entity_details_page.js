@@ -17,9 +17,9 @@ function locationNotesEntityDetailsPage(app, $container, router, auth, opt1, id1
 
   const TITLE__FUNC = function (data) {
     if (data.id) {
-      return 'New Location Note';
-    } else {
       return data.date;
+    } else {
+      return 'New Location';
     }
   };
 
@@ -30,8 +30,8 @@ function locationNotesEntityDetailsPage(app, $container, router, auth, opt1, id1
     { name: VIEW__CURRENT.breadcrumb, link: `#${VIEW__CURRENT.fragment}` }
   ];
   const BREADCRUMBS__FUNC = (data) => BREADCRUMBS.concat({
-    name: data.id ? 'New' : data.date,
-    link: data.id ? null : `#${VIEW__CURRENT.fragment}/${data.id}`
+    name: data.id ? data.date : 'New',
+    link: data.id ? `#${VIEW__CURRENT.fragment}/${data.id}` : null
   });
 
   const ITEM = 'Location Note';
@@ -40,8 +40,7 @@ function locationNotesEntityDetailsPage(app, $container, router, auth, opt1, id1
 
   const MODEL = Backbone.Model.extend({
     defaults: {
-      municipality: 'Toronto',
-      province: 'Ontario',
+      date: new Date(),
       __Status: 'Active'
     }
   });

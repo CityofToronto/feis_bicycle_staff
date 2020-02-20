@@ -2,36 +2,65 @@
 /* global ajaxes auth__checkLogin fixButtonLinks modal__showConfirm query__objectToString query__stringToObject
   renderAlert toSnapShot */
 /* global renderForm */
-/* global locations__views locationsEntity__fields */
-/* global locationNotesPage_opt2 */
+/* global locations__views location_notes__views entityLocationNoteDetails__fields */
 
 /* exported locationNotesDetailsPage */
-function locationNotesDetailsPage(app, $container, router, auth, opt, id, query) {
+function locationNotesDetailsPage(app, $container, router, auth, opt1, id1, opt2, id2, query) {
 
   // ---
-  const ENTITY_VIEWS = locations__views;
-  const ENTITY_VIEW = ENTITY_VIEWS[opt];
-  const ENTITY_VIEW_DEFAULT = ENTITY_VIEWS.all;
+  const PARENT_VIEWS = locations__views;
 
-  const DEFAULT_REDIRECT_TO = ENTITY_VIEW.title;
-  const DEFAULT_REDIRECT_TO_FRAGMENT = ENTITY_VIEW.fragment;
+  const PARENT_VIEW__DEFAULT = PARENT_VIEWS.all;
+  const PARENT_VIEW__CURRENT = PARENT_VIEWS[opt1];
 
-  const ITEM = 'Location';
-  const ITEM_PLURAL = `${ITEM}s`;
+  const VIEWS = location_notes__views(PARENT_VIEW__CURRENT, id1);
+
+  const VIEW__DEFAULT = VIEWS.all;
+  const VIEW__CURRENT = VIEWS[opt2];
+
+  const DEFAULT_REDIRECT = PARENT_VIEW__CURRENT.title;
+  const DEFAULT_REDIRECT_FRAGMENT = PARENT_VIEW__CURRENT.fragment;
+
+  const TITLE__FUNC = function (data) {
+    if (data.id) {
+      return data.site_name;
+    } else {
+      return 'New Location';
+    }
+  };
 
   const BREADCRUMBS = [
     { name: app.name, link: '#home' },
-    { name: ITEM_PLURAL, link: `#${ENTITY_VIEW_DEFAULT.fragment}` },
-    { name: ENTITY_VIEW.breadcrumb, link: `#${ENTITY_VIEW.fragment}` }
+    { name: 'Locker Locations', link: `#${PARENT_VIEW__DEFAULT.fragment}` },
+    { name: PARENT_VIEW__CURRENT.breadcrumb, link: `#${PARENT_VIEW__CURRENT.fragment}` }
   ];
-  // const ACTIVE_BREADCRUMB_NEW =
+  const BREADCRUMBS__FUNC = (data) => BREADCRUMBS.concat({
+    name: data.id ? data.site_name : 'New',
+    link: data.id ? `#${VIEW__CURRENT.fragment}/${data.id}` : null
+  });
 
-  const DATAACCESS_URL = '/* @echo C3DATA_LOCATIONS_URL */';
+  const ITEM = 'Location Note';
+
+  const DATAACCESS_URL = '/* @echo C3DATA_LOCATION_NOTES_URL */';
+  const DATAACCESS_URL__PARENT = '/* @echo C3DATA_LOCATIONS_URL */';
+
+  const TABS = `
+    <div class="navbar">
+      <ul class="nav nav-tabs">
+        <li class="nav-item" role="presentation">
+          <a href="#${PARENT_VIEW__CURRENT.fragment}/${id1}" class="nav-link">Location</a>
+        </li>
+        <li class="nav-item active" role="presentation">
+          <a href="#${VIEW__CURRENT.fragment}" class="nav-link">Notes</a>
+        </li>
+      </ul>
+    </div>
+  `;
 
   const MODEL = Backbone.Model.extend({
     defaults: {
-      municipality: 'Toronto',
-      province: 'Ontario',
+      location: id1,
+      date: new Date(),
       __Status: 'Active'
     }
   });
@@ -43,125 +72,12 @@ function locationNotesDetailsPage(app, $container, router, auth, opt, id, query)
       rows: [
         {
           fields: [
-            Object.assign({}, locationsEntity__fields.site_name, { className: 'col-md-4' }),
-            Object.assign({}, locationsEntity__fields.description, { className: 'col-md-8' })
+            Object.assign({}, entityLocationNoteDetails__fields.date, { className: 'col-md-4' })
           ]
         },
         {
           fields: [
-            Object.assign({}, locationsEntity__fields.civic_address, { className: 'col-md-8' })
-          ]
-        },
-        {
-          fields: [
-            locationsEntity__fields.municipality,
-            locationsEntity__fields.province({ auth }),
-            locationsEntity__fields.postal_code
-          ]
-        }
-      ]
-    },
-    {
-      title: 'Contacts',
-
-      rows: [
-        {
-          fields: [
-            {
-              type: 'html',
-              html: '<h4>Primary Contact</h4>'
-            }
-          ]
-        },
-        {
-          fields: [
-            Object.assign({}, locationsEntity__fields.primary_contact_first_name, { title: 'First Name', className: 'col-md-4' }),
-            Object.assign({}, locationsEntity__fields.primary_contact_last_name, { title: 'Last Name', className: 'col-md-4' })
-          ]
-        },
-        {
-          fields: [
-            Object.assign({}, locationsEntity__fields.primary_contact_email, { title: 'Email' }),
-            Object.assign({}, locationsEntity__fields.primary_contact_primary_phone, { title: 'Primary Phone' }),
-            Object.assign({}, locationsEntity__fields.primary_contact_alternate_phone, { title: 'Alternate Phone' })
-          ]
-        },
-        {
-          fields: [
-            {
-              type: 'html',
-              html: '<h4>Alternate Contact</h4>'
-            }
-          ]
-        },
-        {
-          fields: [
-            Object.assign({}, locationsEntity__fields.alternate_contact_first_name, { title: 'First Name', className: 'col-md-4' }),
-            Object.assign({}, locationsEntity__fields.alternate_contact_last_name, { title: 'Last Name', className: 'col-md-4' })
-          ]
-        },
-        {
-          fields: [
-            Object.assign({}, locationsEntity__fields.alternate_contact_email, { title: 'Email' }),
-            Object.assign({}, locationsEntity__fields.alternate_contact_primary_phone, { title: 'Primary Phone' }),
-            Object.assign({}, locationsEntity__fields.alternate_contact_alternate_phone, { title: 'Alternate Phone' })
-          ]
-        }
-      ]
-    },
-    {
-      title: 'Latest Note',
-      id: 'latest_note',
-      postRender({ model, section }) {
-        function handler() {
-          if (model.isNew()) {
-            $(`#${section.id}`).hide();
-          } else {
-            $(`#${section.id}`).show();
-          }
-        }
-        handler();
-        model.on(`change:${model.idAttribute}`, handler);
-      },
-
-      rows: [
-        {
-          fields: [
-            Object.assign({}, locationsEntity__fields.latest_note__date, { title: 'Date', className: 'col-md-4' })
-          ]
-        },
-        {
-          fields: [
-            Object.assign({}, locationsEntity__fields.latest_note__note, { title: 'Note' })
-          ]
-        }
-      ]
-    },
-    {
-      title: 'Latest Inspection',
-      id: 'latest_inspection',
-      postRender({ model, section }) {
-        function handler() {
-          if (model.isNew()) {
-            $(`#${section.id}`).hide();
-          } else {
-            $(`#${section.id}`).show();
-          }
-        }
-        handler();
-        model.on(`change:${model.idAttribute}`, handler);
-      },
-
-      rows: [
-        {
-          fields: [
-            Object.assign({}, locationsEntity__fields.latest_inspection__date, { title: 'Date', className: 'col-md-4' }),
-            Object.assign({}, locationsEntity__fields.latest_inspection__result, { title: 'Result', className: 'col-md-4' })
-          ]
-        },
-        {
-          fields: [
-            Object.assign({}, locationsEntity__fields.latest_inspection__note, { title: 'Note' })
+            entityLocationNoteDetails__fields.note
           ]
         }
       ]
@@ -184,47 +100,30 @@ function locationNotesDetailsPage(app, $container, router, auth, opt, id, query)
       rows: [
         {
           fields: [
-            Object.assign({}, locationsEntity__fields.id, { className: 'col-md-8' }),
-            Object.assign({}, locationsEntity__fields.__Status(auth), { className: 'col-md-4' })
+            Object.assign({}, entityLocationNoteDetails__fields.id, { className: 'col-md-8' }),
+            Object.assign({}, entityLocationNoteDetails__fields.__Status(auth), { className: 'col-md-4' })
           ]
         },
         {
           fields: [
-            locationsEntity__fields.__CreatedOn,
-            locationsEntity__fields.__ModifiedOn,
-            locationsEntity__fields.__Owner
+            entityLocationNoteDetails__fields.__CreatedOn,
+            entityLocationNoteDetails__fields.__ModifiedOn,
+            entityLocationNoteDetails__fields.__Owner
           ]
         }
       ]
     }
   ];
-
-  const GET_TAB_HTML = function (id) {
-    return `
-      <div class="navbar">
-        <ul class="nav nav-tabs">
-          <li class="nav-item active" role="presentation">
-            <a href="#${DEFAULT_REDIRECT_TO_FRAGMENT}/${id}" class="nav-link">Location</a>
-          </li>
-          <li class="nav-item" role="presentation">
-            <a href="#${DEFAULT_REDIRECT_TO_FRAGMENT}/${id}/notes/${locationNotesPage_opt2}" class="nav-link">Notes</a>
-          </li>
-        </ul>
-      </div>
-    `;
-
-
-    //       <li class="nav-item" role="presentation">
-    //         <a href="#${DEFAULT_REDIRECT_TO_FRAGMENT}/${id}/inspections/${renderLocationDetailsInspectionsPage__currentView}" class="nav-link">Inspections</a>
-    //       </li>
-    //       <li class="nav-item" role="presentation">
-    //         <a href="#" class="nav-link">Lockers</a>
-    //       </li>
-  };
   // ---
 
-  if (!(opt in ENTITY_VIEWS)) {
-    return router.navigate(`${ENTITY_VIEW_DEFAULT.fragment}?${query__objectToString({ resetState: 'yes' })}`,
+  if (!(opt1 in PARENT_VIEWS)) {
+    return router.navigate(`${PARENT_VIEW__DEFAULT.fragment}/${id1}/${VIEW__DEFAULT.fragment}?${query__objectToString({ resetState: 'yes' })}`,
+      { trigger: true, replace: true });
+    // EXIT
+  }
+
+  if (!(opt2 in VIEWS)) {
+    return router.navigate(`${VIEW__DEFAULT.fragment}?${query__objectToString({ resetState: 'yes' })}`,
       { trigger: true, replace: true });
     // EXIT
   }
@@ -236,27 +135,37 @@ function locationNotesDetailsPage(app, $container, router, auth, opt, id, query)
     }
 
     const {
-      redirectTo = DEFAULT_REDIRECT_TO,
-      redirectToFragment = DEFAULT_REDIRECT_TO_FRAGMENT
+      redirectTo = DEFAULT_REDIRECT,
+      redirectToFragment = DEFAULT_REDIRECT_FRAGMENT,
     } = query__stringToObject(query);
 
     $container.empty();
 
+    // SET TITLE AND BREADCRUMB
+    ajaxes({
+      beforeSend(jqXHR) {
+        if (auth && auth.sId) {
+          jqXHR.setRequestHeader('Authorization', `AuthSession ${auth.sId}`);
+        }
+      },
+      contentType: 'application/json; charset=utf-8',
+      method: 'GET',
+      url: `${DATAACCESS_URL__PARENT}('${id1}')`
+    }).then(({ data }) => {
+      app.setBreadcrumb(BREADCRUMBS__FUNC(data), true);
+      app.setTitle(TITLE__FUNC(data));
+    });
+
     // ADD REDIRECT
     $container.append(`<p><a href="#${redirectToFragment}">Back to ${redirectTo}</a></p>`);
 
-    // ADD TABS
+    // ADD TABS REGION
     const $tabContainer = $('<div></div>').appendTo($container);
-    function renderNavBar(id) {
-      $tabContainer.html(GET_TAB_HTML(id));
-      fixButtonLinks($tabContainer);
-    }
-    if (id !== 'new') {
-      renderNavBar(id);
-    }
+    $tabContainer.html(TABS);
+    fixButtonLinks($tabContainer);
 
     return Promise.resolve().then(() => {
-      if (id !== 'new') {
+      if (id2 !== 'new') {
         return ajaxes({
           beforeSend(jqXHR) {
             if (auth && auth.sId) {
@@ -265,7 +174,7 @@ function locationNotesDetailsPage(app, $container, router, auth, opt, id, query)
           },
           contentType: 'application/json; charset=utf-8',
           method: 'GET',
-          url: `${DATAACCESS_URL}('${id}')`
+          url: `${DATAACCESS_URL}('${id2}')`
         });
       }
 
@@ -274,6 +183,13 @@ function locationNotesDetailsPage(app, $container, router, auth, opt, id, query)
       const model = new MODEL(data);
 
       let snapShot = toSnapShot(model.toJSON());
+
+      // $tabContainer.html(TABS__FUNC(model.toJSON()));
+      // fixButtonLinks($tabContainer);
+      // model.on('change:id', () => {
+      //   $tabContainer.html(TABS__FUNC(model.toJSON()));
+      //   fixButtonLinks($tabContainer);
+      // });
 
       const definition = {
         successCore(data, options = {}) {
@@ -293,10 +209,7 @@ function locationNotesDetailsPage(app, $container, router, auth, opt, id, query)
           }).then(({ data, textStatus, jqXHR }) => {
             snapShot = toSnapShot(data);
 
-            router.navigate(`${ENTITY_VIEW.fragment}/${data.id}`, { trigger: false, replace: true });
-
-            app.setBreadcrumb(BREADCRUMBS.concat({ name: data.site_name, link: `#${ENTITY_VIEW.fragment}/${data.id}` }), true);
-            app.setTitle(data.site_name);
+            router.navigate(`${VIEW__CURRENT.fragment}/${data.id}`, { trigger: false, replace: true });
 
             return { data, textStatus, jqXHR };
           }).catch((error) => {
@@ -321,7 +234,7 @@ function locationNotesDetailsPage(app, $container, router, auth, opt, id, query)
           saveButtonLabel: (model) => model.isNew() ? `Create ${ITEM}` : `Update ${ITEM}`,
 
           cancelButtonLabel: 'Cancel',
-          cancelButtonFragment: ENTITY_VIEW.fragment,
+          cancelButtonFragment: VIEW__CURRENT.fragment,
 
           removeButtonLabel: `Remove ${ITEM}`,
           removePromptValue: 'DELETE'
@@ -329,13 +242,12 @@ function locationNotesDetailsPage(app, $container, router, auth, opt, id, query)
       }).then(() => {
 
         // SET TITLE AND BREADCRUMB
-        if (id === 'new') {
-          app.setBreadcrumb(BREADCRUMBS.concat({ name: 'New', link: `#${ENTITY_VIEW.fragment}/new` }), true);
-          app.setTitle(`New ${ITEM}`);
-        } else {
-          app.setBreadcrumb(BREADCRUMBS.concat({ name: data.site_name, link: `#${ENTITY_VIEW.fragment}/${data.id}` }), true);
-          app.setTitle(data.site_name);
-        }
+        // app.setBreadcrumb(BREADCRUMBS__FUNC(model.toJSON()), true);
+        // app.setTitle(TITLE__FUNC(model.toJSON()));
+        // model.on('change:id', () => {
+        //   app.setBreadcrumb(BREADCRUMBS__FUNC(model.toJSON()), true);
+        //   app.setTitle(TITLE__FUNC(model.toJSON()));
+        // });
 
         // RETURN CLEANUP FUNCTION
         return () => {
