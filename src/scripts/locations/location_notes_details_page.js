@@ -5,12 +5,8 @@
 /* global locations__views locationsEntity__fields */
 /* global locationNotesPage_opt2 */
 
-console.log('hello world');
-
 /* exported locationNotesDetailsPage */
 function locationNotesDetailsPage(app, $container, router, auth, opt, id, query) {
-
-  console.log(locationNotesDetailsPage);
 
   // ---
   const ENTITY_VIEWS = locations__views;
