@@ -15,21 +15,11 @@ const entityLocationInspectionDetails__fields = {
       },
       contentType: 'application/json; charset=utf-8',
       method: 'GET',
-      url: '/* @echo C3DATA_LOCATIONS_URL */?$select=id,site_name&$filter=__Status eq \'Active\''
+      url: '/* @echo C3DATA_LOCATIONS_URL */?$select=id,site_name&$filter=__Status eq \'Active\'&$orderby=tolower(site_name)'
     },
     choicesMap(data) {
       if (data && data.value) {
-        return data.value.sort((a, b) => {
-          const a_site_name = a.site_name.toLowerCase();
-          const b_site_name = b.site_name.toLowerCase();
-          if (a_site_name > b_site_name) {
-            return 1;
-          }
-          if (a_site_name < b_site_name) {
-            return -1;
-          }
-          return 0;
-        }).map((item) => {
+        return data.value.map((item) => {
           return {
             text: item.site_name,
             value: item.id

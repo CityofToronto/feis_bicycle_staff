@@ -167,12 +167,12 @@ $(function () {
       // ---
 
       ['entities/lockers/:opt/:id(/)'](opt, id, query) {
-        /* global renderEntityLockerDetailsPage */
-        return renderEntityLockerDetailsPage(app, $container, router, auth, opt, id, query);
+        /* global lockersEntityDetailsPage */
+        return lockersEntityDetailsPage(app, $container, router, auth, opt, id, query);
       },
       ['entities/lockers(/:opt)(/)'](opt, query) {
-        /* global renderEntityLockersPage */
-        return renderEntityLockersPage(app, $container, router, auth, opt, query);
+        /* global lockersEntityPage */
+        return lockersEntityPage(app, $container, router, auth, opt, query);
       },
 
       // ---

@@ -49,14 +49,14 @@ function renderEntitiesPage(app, $container, router, auth) {
       </div>
     `).appendTo($container);
 
-    /* global renderEntityLockersPage__views renderEntityLockerNotesPage__views renderEntityLockerInspectionsPage__views */
+    /* global lockersEntity__views renderEntityLockerNotesPage__views renderEntityLockerInspectionsPage__views */
     $(`
       <div class="row">
         <div class="col-md-4">
           <h3>Lockers</h3>
 
           <div class="list-group">
-            ${listGroupItem(renderEntityLockersPage__views)}
+            ${listGroupItem(lockersEntity__views)}
           </div>
         </div>
 
