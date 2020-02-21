@@ -1,4 +1,4 @@
-/* global $ Backbone */
+/* global $ Backbone moment */
 /* global ajaxes auth__checkLogin modal__showConfirm query__objectToString query__stringToObject renderAlert toSnapShot */
 /* global renderForm */
 /* global locationInspectionsEntity__views entityLocationInspectionDetails__fields */
@@ -98,7 +98,12 @@ function locatioInspectionsEntityDetailsPage(app, $container, router, auth, opt1
     }
   ];
 
-  const FINALIZE_DATA = () => {};
+  const FINALIZE_DATA = (data) => {
+    const momentDate = moment(data.date, 'YYYY/MM/DD h:mm A');
+    if (momentDate.isValid()) {
+      data.date = momentDate.format();
+    }
+  };
   // ---
 
   if (!(opt1 in VIEWS)) {

@@ -156,12 +156,12 @@ $(function () {
       // ---
 
       ['entities/locker_notes/:opt/:id(/)'](opt, id, query) {
-        /* global renderEntityLockerNoteDetailsPage */
-        return renderEntityLockerNoteDetailsPage(app, $container, router, auth, opt, id, query);
+        /* global lockerNotesEntityDetailsPage */
+        return lockerNotesEntityDetailsPage(app, $container, router, auth, opt, id, query);
       },
       ['entities/locker_notes(/:opt)(/)'](opt, query) {
-        /* global renderEntityLockerNotesPage */
-        return renderEntityLockerNotesPage(app, $container, router, auth, opt, query);
+        /* global lockerNotesEntityPage */
+        return lockerNotesEntityPage(app, $container, router, auth, opt, query);
       },
 
       // ---

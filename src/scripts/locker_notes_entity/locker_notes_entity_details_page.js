@@ -1,42 +1,42 @@
 /* global $ Backbone moment */
 /* global ajaxes auth__checkLogin modal__showConfirm query__objectToString query__stringToObject renderAlert toSnapShot */
 /* global renderForm */
-/* global locationNotesEntity__views entityLocationNotesDetails__fields */
+/* global lockerNotesEntity__views lockerNotesEntity__fields */
 
-/* exported locationNotesEntityDetailsPage */
-function locationNotesEntityDetailsPage(app, $container, router, auth, opt1, id1, query) {
+/* exported lockerNotesEntityDetailsPage */
+function lockerNotesEntityDetailsPage(app, $container, router, auth, opt1, id1, query) {
 
   // ---
-  const VIEWS = locationNotesEntity__views;
+  const VIEWS = lockerNotesEntity__views;
 
   const VIEW__DEFAULT = VIEWS.all;
   const VIEW__CURRENT = VIEWS[opt1];
 
-  const DEFAULT_REDIRECT = 'Location Notes';
+  const DEFAULT_REDIRECT = 'Locker Notes';
   const DEFAULT_REDIRECT_FRAGMENT = VIEW__DEFAULT.fragment;
 
   const TITLE__FUNC = function (data) {
     if (data.id) {
-      return data.date;
+      return data.site_name;
     } else {
-      return 'New Location';
+      return 'New Locker Note';
     }
   };
 
   const BREADCRUMBS = [
     { name: app.name, link: '#home' },
     { name: 'Entities', link: `#entities` },
-    { name: 'Location Notes', link: `#${VIEW__DEFAULT.fragment}` },
+    { name: 'Locker Notes', link: `#${VIEW__DEFAULT.fragment}` },
     { name: VIEW__CURRENT.breadcrumb, link: `#${VIEW__CURRENT.fragment}` }
   ];
   const BREADCRUMBS__FUNC = (data) => BREADCRUMBS.concat({
-    name: data.id ? data.date : 'New',
+    name: data.id ? data.site_name : 'New',
     link: data.id ? `#${VIEW__CURRENT.fragment}/${data.id}` : null
   });
 
-  const ITEM = 'Location Note';
+  const ITEM = 'Locker Note';
 
-  const DATAACCESS_URL = '/* @echo C3DATA_LOCATION_NOTES_URL */';
+  const DATAACCESS_URL = '/* @echo C3DATA_LOCKER_NOTES_URL */';
 
   const MODEL = Backbone.Model.extend({
     defaults: {
@@ -52,44 +52,43 @@ function locationNotesEntityDetailsPage(app, $container, router, auth, opt1, id1
       rows: [
         {
           fields: [
-            Object.assign({}, entityLocationNotesDetails__fields.location({ auth }), { className: 'col-md-4' }),
-            Object.assign({}, entityLocationNotesDetails__fields.date, { className: 'col-md-4' })
+            Object.assign({}, lockerNotesEntity__fields.locker(auth), { className: 'col-md-4' }),
+            Object.assign({}, lockerNotesEntity__fields.date, { className: 'col-md-4' })
           ]
         },
         {
           fields: [
-            entityLocationNotesDetails__fields.note
+            lockerNotesEntity__fields.note
           ]
         }
       ]
     },
     {
-      title: 'Details',
-      id: 'details',
+      title: 'Meta',
+      id: 'meta',
       postRender({ model, section }) {
-        function handler() {
+        const $element = $(`#${section.id}`);
+        model.on('init change:id', () => {
           if (model.isNew()) {
-            $(`#${section.id}`).hide();
+            $element.hide();
           } else {
-            $(`#${section.id}`).show();
+            $element.show();
           }
-        }
-        handler();
-        model.on(`change:${model.idAttribute}`, handler);
+        });
       },
 
       rows: [
         {
           fields: [
-            Object.assign({}, entityLocationNotesDetails__fields.id, { className: 'col-md-8' }),
-            Object.assign({}, entityLocationNotesDetails__fields.__Status({ auth }), { className: 'col-md-4' })
+            Object.assign({}, lockerNotesEntity__fields.id, { className: 'col-md-8' }),
+            Object.assign({}, lockerNotesEntity__fields.__Status({ auth }), { className: 'col-md-4' })
           ]
         },
         {
           fields: [
-            entityLocationNotesDetails__fields.__CreatedOn,
-            entityLocationNotesDetails__fields.__ModifiedOn,
-            entityLocationNotesDetails__fields.__Owner
+            lockerNotesEntity__fields.__CreatedOn,
+            lockerNotesEntity__fields.__ModifiedOn,
+            lockerNotesEntity__fields.__Owner
           ]
         }
       ]
